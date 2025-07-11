@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { oneShinhan } from "@/styles/fonts";
 import "./globals.css";
+import { Header } from "@/components/layout/Header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${oneShinhan.variable} antialiased`}>{children}</body>
+      <body className={`${oneShinhan.variable} antialiased`}>
+        <Header />
+        <main>{children}</main>
+      </body>
     </html>
   );
 }
