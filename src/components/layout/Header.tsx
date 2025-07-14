@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 // import { User } from "lucide-react";
-import UserIcon from "@/assets/icons/mypage.png";
+import UserIcon from "@/assets/icons/account.png";
 import logoImg from "@/assets/icons/mainlogo.png";
 import { useEffect, useRef, useState } from "react";
 
@@ -83,8 +83,7 @@ export const Header = () => {
             <Image
               src={UserIcon}
               alt="User"
-              width={20}
-              height={25}
+              className="w-6 h-6"
             />
           </button>
         </div>
