@@ -1,13 +1,43 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
-import { User } from "lucide-react";
-import UserIcon from "@/assets/icons/User Thumb.png";
-import logoImg from "@/assets/icons/Easy To Find 로고.png";
+// import { User } from "lucide-react";
+import UserIcon from "@/assets/icons/mypage.png";
+import logoImg from "@/assets/icons/mainlogo.png";
+import { useEffect, useRef, useState } from "react";
+
+export function useScrollHideHeader() {
+  const [hidden, setHidden] = useState(false);
+  const lastScroll = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScroll.current && current > 60) {
+        setHidden(true); // 아래로 스크롤 → 헤더 숨김
+      } else {
+        setHidden(false); // 위로 스크롤 → 헤더 보임
+      }
+      lastScroll.current = current;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return hidden;
+}
 
 export const Header = () => {
+  const hidden = useScrollHideHeader();
+
   return (
-    <header className="sticky top-0 z-50 w-full h-20 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-full max-w-screen-2xl items-center">
+    <header
+      className={`fixed top-0 z-50 w-full h-20 border-b bg-[#F1F3F8] transition-transform duration-300 ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
+      <div className="container mx-auto flex h-full max-w-[1600px] items-center">
         {/* 로고 */}
         <Link href="/" className="mr-6 flex items-center space-x-6">
           <Image
@@ -19,7 +49,14 @@ export const Header = () => {
         </Link>
 
         {/* 네비게이션 메뉴 */}
-        <nav className="flex flex-1 justify-center items-center gap-20 text-lg">
+        <nav className="flex flex-1 justify-center items-center gap-24 text-lg">
+          <Link
+            href="/"
+            className="text-foreground/60 transition-colors hover:text-foreground/80"
+          >
+            Home
+          </Link>
+
           <Link
             href="/explore"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
@@ -46,9 +83,8 @@ export const Header = () => {
             <Image
               src={UserIcon}
               alt="User"
-              width={32}
-              height={32}
-              className="h-10 w-10"
+              width={20}
+              height={25}
             />
           </button>
         </div>
