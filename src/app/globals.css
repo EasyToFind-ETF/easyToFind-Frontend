@@ -7,7 +7,7 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -18,4 +18,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-one-shinhan);
+}
+
+html {
+  scroll-behavior: smooth;
 }
