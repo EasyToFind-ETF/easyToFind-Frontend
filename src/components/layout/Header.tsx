@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import Image from "next/image";
 import UserIcon from "@/assets/icons/account.png";
 import logoImg from "@/assets/icons/mainlogo.png";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/ui";
 
 export function useScrollHideHeader() {
   const [hidden, setHidden] = useState(false);
@@ -33,9 +34,11 @@ export const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full h-20 border-b bg-[#F1F3F8] transition-transform duration-300 ${
+      className={cn(
+        "h-20",
+        `fixed top-0 z-50 w-full border-b bg-[#F1F3F8] transition-transform duration-300`,
         hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      )}
     >
       <div className="container mx-auto flex h-full max-w-[1600px] items-center">
         {/* 로고 */}
@@ -80,11 +83,7 @@ export const Header = () => {
         {/* 프로필 아이콘 */}
         <div className="flex items-center justify-end">
           <button className="p-2 rounded-full hover:bg-accent">
-            <Image
-              src={UserIcon}
-              alt="User"
-              className="w-6 h-6"
-            />
+            <Image src={UserIcon} alt="User" className="w-6 h-6" />
           </button>
         </div>
       </div>

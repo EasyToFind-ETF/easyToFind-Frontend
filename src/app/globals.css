@@ -5,10 +5,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --header-height: 5rem; /* 80px */
 }
 
 @media (prefers-color-scheme: light) {
   :root {
+
     --background: #ffffff;
     --foreground: #171717;
   }
