@@ -11,7 +11,6 @@ const ETFDetailInfo: React.FC = () => {
             <hr className="border-b-2 border-gray-200 mb-10" />
             {/* <div className="text-xs text-gray-400 mt-5 mb-10">기준일 : 25.7.11</div> */}
         </div>
-        {/* 파란색+표 전체를 감싸는 div에 네 모서리 모두 radius */}
         <div className="border border-gray-200 rounded-3xl overflow-hidden" style={{ borderRadius: '2rem' }}>
           {/* 하늘색 상단 박스 */}
           <div
