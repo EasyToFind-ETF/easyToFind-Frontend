@@ -3,9 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const sidebarItems = [
-  { label: '투자포인트', href: '#point' },
   { label: '상품정보', href: '#info' },
   { label: '수익률', href: '#yield' },
+  { label: '위험도', href: '#risk' },
   { label: '기준가', href: '#nav' },
   { label: '투자구성종목(PDF)', href: '#pdf' },
   { label: '관련콘텐츠', href: '#content' },
@@ -57,7 +57,7 @@ const ETFDetailSidebar: React.FC = () => {
 
   return (
     <aside
-      className="sticky top-0 h-screen w-full md:w-[380px] flex-shrink-0 py-10 px-6 bg-white rounded-r-3xl"
+      className="sticky top-0 h-screen w-full md:w-[280px] flex-shrink-0 py-10 bg-white rounded-r-3xl"
       style={{ marginTop: 50, backgroundColor: '#F1F3F8'}}
     >
       {/* 상단 로고/ETF명 */}
@@ -80,7 +80,7 @@ const ETFDetailSidebar: React.FC = () => {
               e.preventDefault();
               handleTabClick(index, item.href);
             }}
-            className={`px-5 py-3 rounded-xl text-xl font-medium transition-colors cursor-pointer ${
+            className={`px-5 py-3 rounded-xl text-lg font-medium transition-colors cursor-pointer ${
               activeTabIndex === index
                 ? 'bg-[#0046ff] text-white'
                 : 'text-gray-700 hover:bg-gray-200'

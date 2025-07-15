@@ -5,7 +5,7 @@ import React from 'react';
 const ETFVisualHeader: React.FC = () => {
   return (
       <div
-        className="bg-[#4DB6FF] rounded-3xl p-6 sm:p-10 flex flex-col shadow-lg relative max-w-[1600px] mx-auto w-full h-auto md:h-[500px]"
+        className="bg-[#4DB6FF] rounded-3xl p-6 sm:p-10 flex flex-col shadow-lg relative mx-auto w-full h-auto md:h-[500px]"
         style={{ marginTop: 130, borderRadius: '4rem' }}
       >
         {/* 반응형 배치 */}
