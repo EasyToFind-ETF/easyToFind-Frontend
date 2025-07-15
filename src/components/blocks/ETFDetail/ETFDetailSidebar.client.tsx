@@ -6,9 +6,8 @@ const sidebarItems = [
   { label: '상품정보', href: '#info' },
   { label: '수익률', href: '#yield' },
   { label: '위험도', href: '#risk' },
-  { label: '기준가', href: '#nav' },
-  { label: '투자구성종목(PDF)', href: '#pdf' },
-  { label: '관련콘텐츠', href: '#content' },
+  { label: '기준가', href: '#standard-price' },
+  { label: '구성종목', href: '#holdings' }
 ];
 
 function scrollToSectionById(id: string) {

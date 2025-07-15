@@ -7,7 +7,7 @@ const periods = [
 ];
 
 
-const ETFYield: React.FC = () => {
+const ETFDetailYield: React.FC = () => {
   const [activePeriod, setActivePeriod] = useState('1주');
 
   return (
@@ -140,4 +140,4 @@ const ETFYield: React.FC = () => {
   );
 };
 
-export default ETFYield; 
+export default ETFDetailYield; 
