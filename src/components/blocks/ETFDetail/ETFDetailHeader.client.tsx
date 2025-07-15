@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const ETFVisualHeader: React.FC = () => {
+const ETFDetailHeader: React.FC = () => {
   return (
       <div
         className="bg-[#4DB6FF] rounded-3xl p-6 sm:p-10 flex flex-col shadow-lg relative mx-auto w-full h-auto md:h-[500px]"
@@ -57,4 +57,4 @@ const ETFVisualHeader: React.FC = () => {
   );
 };
 
-export default ETFVisualHeader; 
+export default ETFDetailHeader; 
