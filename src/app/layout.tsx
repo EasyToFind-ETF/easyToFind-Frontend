@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${oneShinhan.variable} antialiased bg-[#F1F3F8]`}>
         <Header />
-        <main>{children}</main>
+        <main className={"mt-20"}>{children}</main>
       </body>
     </html>
   );
