@@ -4,10 +4,10 @@ import React from 'react';
 
 const ETFDetailInfo: React.FC = () => {
   return (
-    <div id="info" className="max-w-[1600px] mx-auto w-full flex-1 min-w-0 pl-10 pt-14">
-      <div className="bg-white rounded-3xl w-full px-20 py-20 shadow" style={{ borderRadius: '4rem' }}>
+    <div id="info" className="mx-auto w-full flex-1 min-w-0 pl-10 pt-14">
+      <div className="bg-white rounded-3xl w-full px-16 py-16 shadow" style={{ borderRadius: '4rem' }}>
         <div>
-            <div className="text-4xl font-semibold mb-10">상품정보</div>
+            <div className="text-2xl font-semibold mb-4">상품정보</div>
             <hr className="border-b-2 border-gray-200 mb-10" />
             {/* <div className="text-xs text-gray-400 mt-5 mb-10">기준일 : 25.7.11</div> */}
         </div>
@@ -42,13 +42,13 @@ const ETFDetailInfo: React.FC = () => {
               <span className="font-semibold">50,000좌</span>
             </div>
             <div className="flex justify-between items-center bg-[#F2F8FC] rounded-xl px-6 py-3">
-              <span className="text-gray-500">사무수탁사</span>
+              <span className="text-gray-500">자산운용사</span>
               <span className="font-semibold">신한펀드파트너스</span>
             </div>
-            <div className="flex justify-between items-center bg-[#F2F8FC] rounded-xl px-6 py-3">
+            {/* <div className="flex justify-between items-center bg-[#F2F8FC] rounded-xl px-6 py-3">
               <span className="text-gray-500">수탁은행</span>
               <span className="font-semibold">한국씨티은행</span>
-            </div>
+            </div> */}
           </div>
         </div>
         {/* 안내문구 */}

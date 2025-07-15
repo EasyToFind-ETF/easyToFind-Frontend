@@ -40,7 +40,7 @@ export const Header = () => {
         hidden ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="container mx-auto flex h-full max-w-[1600px] items-center">
+      <div className="max-w-screen-xl mx-auto px-4 flex h-full items-center">
         {/* 로고 */}
         <Link href="/" className="mr-6 flex items-center space-x-6">
           <Image
