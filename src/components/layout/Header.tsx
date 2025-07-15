@@ -61,7 +61,7 @@ export const Header = () => {
           </Link>
 
           <Link
-            href="/explore"
+            href="/find"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
           >
             ETF 탐색
