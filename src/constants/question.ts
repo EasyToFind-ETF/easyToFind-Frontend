@@ -1,6 +1,21 @@
 export type QuestionType = "risk" | "theme";
 
-export type ThemeEnum = "AI" | "GREEN" | "SEMI" | "BIO" | "GLOBAL";
+export type ThemeEnum =
+  | "게임"
+  | "금융"
+  | "기술"
+  | "배당"
+  | "산업재"
+  | "소비재"
+  | "에너지"
+  | "인공지능"
+  | "친환경"
+  | "헬스케어"
+  | "미국"
+  | "인도"
+  | "일본"
+  | "중국"
+  | "기타";
 
 export interface Option {
   text: string;
@@ -12,6 +27,7 @@ export interface Question {
   type: QuestionType;
   question: string;
   options: Option[];
+  icon: string; // 아이콘 경로
 }
 
 export const mbtiQuestions: Question[] = [
@@ -26,6 +42,7 @@ export const mbtiQuestions: Question[] = [
       { text: "손실은 피하고 싶다", score: 2 },
       { text: "절대 투자 안 한다", score: 0 },
     ],
+    icon: "/mbtiTest1.png",
   },
   {
     type: "risk",
@@ -37,6 +54,7 @@ export const mbtiQuestions: Question[] = [
       { text: "5년", score: 2 },
       { text: "10년 이상", score: 0 },
     ],
+    icon: "/mbtiTest2.png",
   },
   {
     type: "risk",
@@ -48,6 +66,7 @@ export const mbtiQuestions: Question[] = [
       { text: "너무 위험해 보여 피한다", score: 2 },
       { text: "투자 대상 아님", score: 0 },
     ],
+    icon: "/mbtiTest3.png",
   },
   {
     type: "risk",
@@ -59,6 +78,7 @@ export const mbtiQuestions: Question[] = [
       { text: "손절하고 정리", score: 2 },
       { text: "바로 매도", score: 0 },
     ],
+    icon: "/mbtiTest4.png",
   },
   {
     type: "risk",
@@ -70,6 +90,7 @@ export const mbtiQuestions: Question[] = [
       { text: "원금 보존 우선", score: 2 },
       { text: "안전성 및 장기 보유", score: 0 },
     ],
+    icon: "/mbtiTest5.png",
   },
   {
     type: "risk",
@@ -81,6 +102,7 @@ export const mbtiQuestions: Question[] = [
       { text: "10~30%", score: 2 },
       { text: "10% 미만", score: 0 },
     ],
+    icon: "/mbtiTest6.png",
   },
 
   // ✅ 테마 판단용 (4문항)
@@ -88,44 +110,48 @@ export const mbtiQuestions: Question[] = [
     type: "theme",
     question: "가장 관심 있는 산업은?",
     options: [
-      { text: "AI / 로봇 / 클라우드", value: "AI" },
-      { text: "친환경 / 수소차 / 탄소중립", value: "GREEN" },
-      { text: "반도체 / 전기차", value: "SEMI" },
-      { text: "바이오 / 정밀의료", value: "BIO" },
-      { text: "글로벌 분산 투자", value: "GLOBAL" },
+      { text: "AI / 로봇 / 클라우드", value: "인공지능" },
+      { text: "친환경 / 수소차 / 탄소중립", value: "친환경" },
+      { text: "반도체 / 전기차", value: "산업재" },
+      { text: "바이오 / 정밀의료", value: "헬스케어" },
+      { text: "글로벌 분산 투자", value: "미국" },
     ],
+    icon: "/mbtiTest7.png",
   },
   {
     type: "theme",
     question: "평소 가장 자주 보는 뉴스는?",
     options: [
-      { text: "테크 트렌드, 챗GPT 등 IT 이슈", value: "AI" },
-      { text: "탄소중립, 기후위기 대응 정책", value: "GREEN" },
-      { text: "반도체 수급, 삼성전자 관련 기사", value: "SEMI" },
-      { text: "감염병, 고령화, 의료산업 기사", value: "BIO" },
-      { text: "미국/중국/글로벌 경제 뉴스", value: "GLOBAL" },
+      { text: "테크 트렌드, 챗GPT 등 IT 이슈", value: "인공지능" },
+      { text: "탄소중립, 기후위기 대응 정책", value: "친환경" },
+      { text: "반도체 수급, 삼성전자 관련 기사", value: "산업재" },
+      { text: "감염병, 고령화, 의료산업 기사", value: "헬스케어" },
+      { text: "미국, 중국 등 글로벌 경제 뉴스", value: "미국" },
     ],
+    icon: "/mbtiTest8.png",
   },
   {
     type: "theme",
     question: "투자 목표는?",
     options: [
-      { text: "기술 혁신 산업 선점", value: "AI" },
-      { text: "환경 변화에 따른 미래 산업 대응", value: "GREEN" },
-      { text: "대한민국 핵심 제조업 투자", value: "SEMI" },
-      { text: "헬스케어/바이오 장기 수익", value: "BIO" },
-      { text: "전 세계 자산에 분산 투자", value: "GLOBAL" },
+      { text: "기술 혁신 산업 선점", value: "인공지능" },
+      { text: "환경 변화에 따른 미래 산업 대응", value: "친환경" },
+      { text: "대한민국 핵심 제조업 투자", value: "산업재" },
+      { text: "헬스케어/바이오 장기 수익", value: "헬스케어" },
+      { text: "전 세계 자산에 분산 투자", value: "미국" },
     ],
+    icon: "/mbtiTest1.png",
   },
   {
     type: "theme",
     question: "가장 중요하다고 느끼는 사회 이슈는?",
     options: [
-      { text: "디지털 전환 / 자동화", value: "AI" },
-      { text: "기후 위기 / ESG", value: "GREEN" },
-      { text: "반도체 공급망 / 제조 경쟁", value: "SEMI" },
-      { text: "고령화 / 보건복지", value: "BIO" },
-      { text: "국가 간 경제 리스크", value: "GLOBAL" },
+      { text: "디지털 전환 / 자동화", value: "인공지능" },
+      { text: "기후 위기 / ESG", value: "친환경" },
+      { text: "반도체 공급망 / 제조 경쟁", value: "산업재" },
+      { text: "고령화 / 보건복지", value: "헬스케어" },
+      { text: "국가 간 경제 리스크", value: "미국" },
     ],
+    icon: "/mbtiTest7.png",
   },
 ];
