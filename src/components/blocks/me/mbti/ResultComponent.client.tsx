@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -78,4 +79,3 @@ export default function ResultComponentClient({ riskType, theme }: Props) {
       </div>
     </div>
   );
-}

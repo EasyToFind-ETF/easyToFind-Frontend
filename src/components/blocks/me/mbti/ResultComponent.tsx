@@ -1,4 +1,5 @@
 import ResultComponentClient from "./ResultComponent.client";
+
 export default function ResultComponent({
   riskType,
   theme,
@@ -7,4 +8,4 @@ export default function ResultComponent({
   theme: string;
 }) {
   return <ResultComponentClient riskType={riskType} theme={theme} />;
-}
+

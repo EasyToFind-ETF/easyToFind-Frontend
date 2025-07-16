@@ -39,6 +39,7 @@ export default function TestComponentClient() {
     return "공격형";
   }
 
+
   //점수바뀔 때마다 투자유형 변경
   useEffect(() => {
     setRiskType(getRiskType(riskScore)); // 점수에 따라 투자유형 분류
@@ -123,4 +124,5 @@ export default function TestComponentClient() {
       </div>
     </div>
   );
+
 }
