@@ -48,9 +48,9 @@ export default function TestComponentClient() {
   //10문제 끝났을 때
   if (step >= mbtiQuestions.length) {
     const most = getMostFrequentTheme(themeAnswers);
-    console.log("최종 점수:", riskType);
+    console.log("최종 점수:", riskScore);
     console.log("테마 답변:", most);
-    return <ResultComponent riskType={riskType} theme={most} />;
+    return <ResultComponent riskType={riskType} theme={most} riskScore={riskScore}/>;
   }
 
   return (

@@ -2,18 +2,45 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ETFCard from "./recommendETFcard";
 
 interface Props {
   riskType: string;
   theme: string;
+  riskScore: number;
 }
 
-export default function ResultComponentClient({ riskType, theme }: Props) {
+export default function ResultComponentClient({ riskType, theme, riskScore }: Props) {
   const [selectedTab, setSelectedTab] = useState<"theme" | "type">("theme");
+  console.log("riskScore result",riskScore);
+  
+  const [etfList, setEtfList] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('http://localhost:3000/api/me/mbti', {
+      let url = "http://localhost:3001/api/recommendation";
+      let body: any = { riskScore };
+
+      if (selectedTab === "theme") {
+        url = "http://localhost:3001/api/recommendation/theme";
+        body.theme = theme;
+      }
+
+      const etfResponse = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const etfData = await etfResponse.json();
+      setEtfList(Array.isArray(etfData.data) ? etfData.data : []);
+    };
+    fetchData();
+  }, [selectedTab, riskScore, theme]);
+
+  useEffect(() => {
+    
+    const fetchData = async () => {
+      const response = await fetch('http://localhost:3001/api/me/mbti', {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -21,6 +48,7 @@ export default function ResultComponentClient({ riskType, theme }: Props) {
         body: JSON.stringify({
           mbtiType: riskType,
           userId: 1,
+          riskScore: riskScore,
         }),
       });
       const data = await response.json();
@@ -50,6 +78,12 @@ export default function ResultComponentClient({ riskType, theme }: Props) {
     }
   };
 
+  // 순자산 총액을 억원 단위로 변환하는 함수
+  const formatAum = (aum: string | number) => {
+    const num = typeof aum === "string" ? parseFloat(aum) : aum;
+    return `${(num / 100000000).toLocaleString(undefined, { maximumFractionDigits: 1 })}억원`;
+  };
+
   return (
     <div className="flex flex-col items-center mt-10">
       {/* 제목 */}
@@ -77,5 +111,22 @@ export default function ResultComponentClient({ riskType, theme }: Props) {
           유형별
         </button>
       </div>
+
+      
+      <div className="flex flex-col gap-8 mt-10 w-full items-center">
+        {etfList.map((etf) => (
+          <ETFCard
+            key={etf.etf_code}
+            name={etf.etf_name}
+            score={etf.match_score}
+            details={[
+              { label: "1년 수익률", value: etf.return_1y, color: "#22c55e" },
+              { label: "총보수", value: etf.expense_ratio, color: "#22c55e" },
+              { label: "순자산 총액", value: formatAum(etf.latest_aum), color: "#22c55e" },
+            ]}
+          />
+        ))}
+      </div>
     </div>
   );
+}
