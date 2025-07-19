@@ -15,9 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${oneShinhan.variable} antialiased`}>
+      <body className={`${oneShinhan.variable} antialiased bg-[#F1F3F8]`}>
         <Header />
-        <main>{children}</main>
+        <div className="max-w-screen-xl mx-auto">
+          <main className={"mt-20"}>{children}</main>
+        </div>
       </body>
     </html>
   );
