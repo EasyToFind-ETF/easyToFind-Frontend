@@ -6,6 +6,7 @@ import Image from "next/image";
 import UserIcon from "@/assets/icons/account.png";
 import logoImg from "@/assets/icons/mainlogo.png";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/ui";
 
 export function useScrollHideHeader() {
@@ -31,6 +32,31 @@ export function useScrollHideHeader() {
 
 export const Header = () => {
   const hidden = useScrollHideHeader();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  useEffect(() => {
+    setIsLoggedIn(typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true");
+    const handleStorage = () => {
+      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("authChanged", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("authChanged", handleStorage);
+    };
+  }, []);
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:3001/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      // 실패해도 클라이언트 상태는 정리
+    }
+    localStorage.removeItem("isLoggedIn");
+    window.dispatchEvent(new Event("authChanged"));
+    setIsLoggedIn(false);
+    router.push("/");
+  };
 
   return (
     <header
@@ -73,7 +99,7 @@ export const Header = () => {
             전략 분석
           </Link>
           <Link
-            href="/recommend"
+            href="/me/mbti"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
           >
             맞춤 추천
@@ -81,10 +107,15 @@ export const Header = () => {
         </nav>
 
         {/* 프로필 아이콘 */}
-        <div className="flex items-center justify-end">
-          <button className="p-2 rounded-full hover:bg-accent">
-            <Image src={UserIcon} alt="User" className="w-6 h-6" />
-          </button>
+        <div className="flex items-center justify-end gap-2">
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">로그아웃</button>
+          ) : (
+            <>
+              <Link href="/login" className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">로그인</Link>
+              <Link href="/signup" className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">회원가입</Link>
+            </>
+          )}
         </div>
       </div>
     </header>
