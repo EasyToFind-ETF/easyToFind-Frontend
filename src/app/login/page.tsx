@@ -32,8 +32,13 @@ export default function LoginPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || "로그인 실패");
       }
+      const data = await res.json();
+      if (!data.token) {
+        throw new Error("토큰이 응답에 없습니다.");
+      }
+      // 토큰을 쿠키에 저장 (예: 1일간 유효)
+      document.cookie = `token=${data.token}; path=/; max-age=86400`;
       alert("로그인 성공!");
-      localStorage.setItem("isLoggedIn", "true");
       window.dispatchEvent(new Event("authChanged"));
       router.push("/");
     } catch (err: any) {
