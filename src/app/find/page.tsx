@@ -22,6 +22,8 @@ export default function FindPage() {
   const [holdingsData, setHoldingsData] = useState<HoldingView[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState("ETF로 보기");
+  const [selected, setSelected] = useState<number[]>([]);
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = ["전체", "주식", "채권", "멀티에셋", "부동산", "원자재", "통화", "파킹형"];
@@ -138,9 +140,9 @@ export default function FindPage() {
             </div>
           ) : (
             viewMode === "ETF로 보기" ? (
-              <ETFTable etfData={etfData} />
+              <ETFTable etfData={etfData} selected={selected} setSelected={setSelected} favorites={favorites} setFavorites={setFavorites} />
             ) : (
-              <HoldingTable holdingsData={holdingsData} />
+              <HoldingTable holdingsData={holdingsData} selected={selected} setSelected={setSelected} favorites={favorites} setFavorites={setFavorites} />
             )
           )}
         </div>
