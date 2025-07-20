@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { ETFDetail } from '@/types/etf';
 
 const sidebarItems = [
   { label: '상품정보', href: '#info' },
@@ -17,11 +18,51 @@ function scrollToSectionById(id: string) {
   }
 }
 
-const ETFDetailSidebar: React.FC = () => {
+interface ETFDetailSidebarProps {
+  etf_code: string;
+}
+
+const ETFDetailSidebar: React.FC<ETFDetailSidebarProps> = ({ etf_code }) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [etfData, setEtfData] = useState<ETFDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  // 탭 키로 네비게이션 이동
+  // ETF 데이터 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const etfResponse = await fetch(`http://localhost:3000/api/etfs/${etf_code}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!etfResponse.ok) {
+          throw new Error(`HTTP error! status: ${etfResponse.status}`);
+        }
+
+        const etfResult = await etfResponse.json();
+        
+        if (etfResult.status === 200 && etfResult.data) {
+          setEtfData(etfResult.data);
+        } else {
+          setError('ETF 데이터를 불러올 수 없습니다.');
+        }
+      } catch (err) {
+        setError('데이터 로딩 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [etf_code]);
+
+  // 네비게이션
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
@@ -47,23 +88,26 @@ const ETFDetailSidebar: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [activeTabIndex]);
 
-  // 마우스 클릭으로 탭 변경 및 섹션 이동
+  // 클릭하면 섹션 이동
   const handleTabClick = (index: number, href: string) => {
     setActiveTabIndex(index);
     const id = href.replace('#', '');
     scrollToSectionById(id);
   };
 
+  const { etf_name } = etfData || {};
+
   return (
     <aside
       className="sticky top-0 h-screen w-full md:w-[280px] flex-shrink-0 py-10 bg-white rounded-r-3xl"
       style={{ marginTop: 50, backgroundColor: '#F1F3F8'}}
     >
-      {/* 상단 로고/ETF명 */}
       <div className="mb-10 flex flex-col items-start">
-        <div className="text-2xl font-bold text-gray-800 text-left leading-tight">Kodex 한국부동산리츠인프라</div>
+        <div className="text-2xl font-bold text-gray-800 text-left leading-tight">
+          {etf_name}
+        </div>
       </div>
-      {/* 탭 메뉴 */}
+      
       <nav className="flex-1 flex flex-col gap-2" role="tablist">
         {sidebarItems.map((item, index) => (
           <a

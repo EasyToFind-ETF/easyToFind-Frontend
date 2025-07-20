@@ -6,18 +6,22 @@ import ETFDetailRisk from "./ETFDetailRisk.client";
 import ETFDetailStandardPrice from "./ETFDetailStandardPrice.client";
 import ETFDetailHoldings from "./ETFDetailHoldings.client";
 
-export default function ETFDetail() {
+interface ETFDetailProps {
+  etf_code: string;
+}
+
+export default function ETFDetail({ etf_code }: ETFDetailProps) {
     return (
         <div>
-            <ETFDetailHeader />
+            <ETFDetailHeader etf_code={etf_code} />
             <div className="flex">
-                <ETFDetailSidebar />
+                <ETFDetailSidebar etf_code={etf_code} />
                 <div className="flex-1">
-                    <ETFDetailInfo />
-                    <ETFDetailYield />
-                    <ETFDetailRisk />
-                    <ETFDetailStandardPrice />
-                    <ETFDetailHoldings />
+                    <ETFDetailInfo etf_code={etf_code} />
+                    <ETFDetailYield etf_code={etf_code} />
+                    <ETFDetailRisk etf_code={etf_code} />
+                    <ETFDetailStandardPrice etf_code={etf_code} />
+                    <ETFDetailHoldings etf_code={etf_code} />
                 </div>
             </div>
         </div>
