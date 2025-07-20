@@ -1,39 +1,46 @@
-export interface EtfReturns {
-    [key: string]: string | number;
-  }
+import { ETFView } from "@/types/ETFView";
+import { HoldingView } from "@/types/HoldingView";
+
+export const fetchEtfData = async (params: any): Promise<ETFView[]> => {
+    const queryParams = new URLSearchParams();
   
-  export interface Etf {
-    etf_code: string;
-    etf_name: string;
-    provider: string;
-    asset_class: string;
-    theme: string;
-    expense_ratio: number;
-    returns: EtfReturns;
-  }
+    if (params.query) queryParams.append("query", params.query);
+    if (params.sort) queryParams.append("sort", params.sort);
+    if (params.assetClass) queryParams.append("assetClass", params.assetClass);
+    if (params.theme) queryParams.append("theme", params.theme);
+    if (params.isFavorite) queryParams.append("isFavorite", "true");
   
-  export const fetchEtfs = async (
-    query = "",
-    sort = "etf_code",
-    assetClass = "",
-    theme = "미국",
-    isFavorite = false
-  ): Promise<Etf[]> => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const url = new URL(`${baseUrl}/api/etfs`);
-      url.searchParams.set("query", query);
-      url.searchParams.set("sort", sort);
-      url.searchParams.set("assetClass", assetClass);
-      url.searchParams.set("theme", theme);
-      url.searchParams.set("isFavorite", isFavorite.toString());
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs?${queryParams.toString()}`;
   
-      const res = await fetch(url.toString());
-      const json = await res.json();
-      return json.data || [];
-    } catch (err) {
-      console.error("❌ ETF 데이터 가져오기 실패:", err);
-      return [];
+    console.log("📡 [ETF API] 요청함!! URL:", url);
+  
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error("❌ [ETF API] 요청 실패!", res.status, res.statusText);
+      throw new Error("데이터 불러오기 실패");
     }
+    const result = await res.json();
+    return result.data;
   };
-  
+
+  export const fetchHoldingsData = async (params: any): Promise<HoldingView[]> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.query) queryParams.append("query", params.query);
+    if (params.sort) queryParams.append("sort", params.sort);
+    if (params.assetClass) queryParams.append("assetClass", params.assetClass);
+    if (params.theme) queryParams.append("theme", params.theme);
+    if (params.isFavorite) queryParams.append("isFavorite", "true");
+
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/holdings?${queryParams.toString()}`;
+
+    console.log("📡 [ETF API] 요청함!! URL:", url);
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error("❌ [ETF API] 요청 실패!", res.status, res.statusText);
+      throw new Error("데이터 불러오기 실패");
+    }
+    const result = await res.json();
+    return result.data;
+  }

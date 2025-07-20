@@ -1,24 +1,18 @@
 import { useState } from "react";
-import { ETFView } from "../../types/ETFView";
+import { HoldingView } from "../../types/HoldingView";
 
 const MAX_SELECT = 5;
 
-interface ETFTableProps {
-  etfData: ETFView[];
+interface HoldingTableProps {
+  holdingsData: HoldingView[];
   selected: number[];
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
   favorites: number[];
   setFavorites: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites }: ETFTableProps) {
+export default function HoldingTable({ holdingsData, selected, setSelected, favorites, setFavorites }: HoldingTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
-
-  const renderRate = (value: string) => {
-    const number = parseFloat(value);
-    if (isNaN(number)) return value;
-    return <span className={number >= 0 ? "text-red-600" : "text-blue-600"}>{value}</span>;
-  };
 
   const toggleSelect = (idx: number) => {
     if (selected.includes(idx)) {
@@ -43,18 +37,14 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
         <thead className="bg-gray-50">
           <tr>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">상품명</th>
-            <th className="py-3 px-2 font-semibold text-gray-900">기준가(원)</th>
-            {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map((period) => (
-              <th key={period} className="py-3 px-2 font-semibold text-gray-900">
-                {period}
-              </th>
-            ))}
+            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">ETF명</th>
+            <th className="py-3 px-2 font-semibold text-gray-900">종목명</th>
+            <th className="py-3 px-2 font-semibold text-gray-900">비중(%)</th>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
           </tr>
         </thead>
         <tbody>
-          {etfData.map((etf, i) => (
+          {holdingsData.map((holding, i) => (
             <tr key={i} className="hover:bg-gray-50 border-t">
               {/* 체크박스 */}
               <td className="py-3 px-2">
@@ -66,15 +56,9 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
                   disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
                 />
               </td>
-              <td className="py-3 px-2 text-left font-medium">{etf.name}</td>
-              <td className="py-3 px-2">{etf.nav}</td>
-              <td className="py-3 px-2">{renderRate(etf.week1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month3)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month6)}</td>
-              <td className="py-3 px-2">{renderRate(etf.year1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.year3)}</td>
-              <td className="py-3 px-2">{renderRate(etf.inception)}</td>
+              <td className="py-3 px-2 text-left font-medium">{holding.etfName}</td>
+              <td className="py-3 px-2">{holding.holdingName}</td>
+              <td className="py-3 px-2">{holding.weight}</td>
               {/* 하트 아이콘 */}
               <td className="py-3 px-2">
                 <span
@@ -128,5 +112,4 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
       )}
     </div>
   );
-}
-  
+} 
