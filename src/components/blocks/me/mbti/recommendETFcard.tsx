@@ -1,4 +1,5 @@
 import React from "react";
+import CircleProgress from "./CircleProgress";
 
 interface ETFCardProps {
   name: string;
@@ -15,21 +16,19 @@ export default function ETFCard({ name, score, details }: ETFCardProps) {
     <div className="bg-white rounded-2xl shadow p-6 flex flex-col min-w-[800px]">
       <h2 className="text-2xl font-bold mb-2">{name}</h2>
       <div className="flex items-center mb-4">
-        {/* 원형 차트 대신 점수만 표시 */}
-        <div className="text-center mr-6 flex flex-col items-start">
-          <div className="text-lg font-semibold">종합점수</div>
-          <div className="text-2xl font-bold text-green-600">{score}%</div>
+        {/* 원형 차트로 점수 표시 */}
+        <div className="text-center mr-6 flex flex-col items-center">
+          <div className="text-lg font-semibold mb-2">종합점수</div>
+          <CircleProgress percentage={score}>
+            {score}%
+          </CircleProgress>
         </div>
         {/* 점수 구성 */}
         <div >
           <div className="font-semibold mb-2">점수구성</div>
-          <div className="flex gap-4">
+          <div className="flex ms-24 gap-12">
             {details.map((d) => (
               <div key={d.label} className="flex flex-col items-end">
-                <span
-                  className={`w-6 h-6 rounded-full mb-1`}
-                  style={{ background: d.color }}
-                ></span>
                 <span className="text-sm">{d.label}</span>
                 <span className="font-bold">{d.value}</span>
               </div>
