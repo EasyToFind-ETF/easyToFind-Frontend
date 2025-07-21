@@ -61,6 +61,7 @@ export const Header = () => {
         method: "POST",
         credentials: "include", // ✅ 쿠키 전송
       });
+
     } catch (e) {
       // 실패해도 클라이언트 상태는 초기화
     }

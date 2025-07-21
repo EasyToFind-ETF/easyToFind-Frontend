@@ -1,5 +1,6 @@
 export type ETFView = {
     name: string;
+    etfCode: string;
     nav: string;
     week1: string;
     month1: string;
@@ -7,6 +8,5 @@ export type ETFView = {
     month6: string;
     year1: string;
     year3: string;
-    ytd: string;
     inception: string;
 }

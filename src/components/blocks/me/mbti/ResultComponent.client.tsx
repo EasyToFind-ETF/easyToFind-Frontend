@@ -18,11 +18,11 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
 
   useEffect(() => {
     const fetchData = async () => {
-      let url = "http://localhost:3001/api/recommendation";
+      let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation`;
       let body: any = { riskScore };
 
       if (selectedTab === "theme") {
-        url = "http://localhost:3001/api/recommendation/theme";
+        url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation/theme`;
         body.theme = theme;
       }
 
@@ -41,7 +41,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   useEffect(() => {
     
     const fetchData = async () => {
-      const response = await fetch('http://localhost:3001/api/me/mbti', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
