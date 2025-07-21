@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { fetchEtfData, fetchHoldingsData } from "@/services/etfFindService"
 import { ETFView } from "@/types/ETFView";
 import { HoldingView } from "@/types/HoldingView";
+import { toggleFavorite as toggleFavoriteAPI } from "@/services/etfFavoriteService";
+import { fetchFavoriteEtfCodes } from "@/services/etfFavoriteService";
 
 import FilterTabs from "@/components/ETFFind/FilterTabs";
 import FilterButtons from "@/components/ETFFind/FilterButtons";
@@ -11,7 +13,8 @@ import ResultHeader from "@/components/ETFFind/ResultHeader";
 import ETFTable from "@/components/ETFFind/ETFTable";
 import HoldingTable from "@/components/ETFFind/HoldingTable";
 import CompareModal from "@/components/ETFCompare/ETFComapreModal";
-import ETFCompareToast from "@/components/ETFCompare/ETFCompareToast";
+
+
 
 export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
@@ -53,6 +56,20 @@ export default function FindPage() {
     else setSelectedInterest(value);
   };
 
+  const handleToggleFavorite = async (etfCode: string, isAlreadyFavorite: boolean, idx: number) => {
+    try {
+      await toggleFavoriteAPI(etfCode, isAlreadyFavorite); // POST/DELETE 요청
+  
+      // 로컬 상태 반영
+      setFavorites((prev) =>
+        isAlreadyFavorite ? prev.filter((i) => i !== idx) : [...prev, idx]
+      );
+    } catch (err) {
+      console.error("❌ 관심 ETF 토글 실패:", err);
+      alert("관심 ETF 변경 중 오류가 발생했습니다.");
+    }
+  };
+
   // 🔥 API 요청 트리거
   useEffect(() => {
     const fetchData = async () => {
@@ -83,6 +100,18 @@ export default function FindPage() {
             inception: etf.inception ?? "-",
           }));
           setEtfData(formatted);
+
+          // 관심 ETF 세팅
+          try {
+            const favoriteCodes = await fetchFavoriteEtfCodes(); // 예: ["104520", "123456"]
+            const favoriteIndices = formatted
+              .map((etf, index) => favoriteCodes.includes(etf.etfCode) ? index : -1)
+              .filter((i) => i !== -1);
+            setFavorites(favoriteIndices);
+          } catch (err) {
+            console.warn("💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)");
+            setFavorites([]); // 실패 시 초기화
+          }
         } else {
           const data: any[] = await fetchHoldingsData(params);
           const formatted = (data as any[]).map((holding) => ({
@@ -205,6 +234,7 @@ export default function FindPage() {
                 favorites={favorites}
                 setFavorites={setFavorites}
                 onCompare={handleCompareClick}
+                onToggleFavorite={handleToggleFavorite}
               />
             ) : (
               <HoldingTable

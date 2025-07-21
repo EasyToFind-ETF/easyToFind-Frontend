@@ -10,9 +10,10 @@ interface ETFTableProps {
   favorites: number[];
   setFavorites: React.Dispatch<React.SetStateAction<number[]>>;
   onCompare: () => void; // 추가
+  onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean, idx: number) => void;
 }
 
-export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites, onCompare }: ETFTableProps) {
+export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites, onCompare, onToggleFavorite }: ETFTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
 
   const renderRate = (value: string) => {
@@ -80,7 +81,10 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
               <td className="py-3 px-2">
                 <span
                   style={{ cursor: "pointer" }}
-                  onClick={() => toggleFavorite(i)}
+                  onClick={() => {
+                    // console.log("❤️ 하트 눌림!", etf.etfCode);
+                    onToggleFavorite(etf.etfCode, favorites.includes(i), i);
+                  }}
                   className={favorites.includes(i) ? "text-red-500" : "text-gray-300"}
                   title={favorites.includes(i) ? "관심 해제" : "관심 등록"}
                 >
