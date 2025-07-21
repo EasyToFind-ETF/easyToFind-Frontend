@@ -6,14 +6,16 @@ import { mbtiQuestions } from "@/constants/question";
 
 export default function TestComponentClient() {
   const [step, setStep] = useState(0); // 현재 몇 번째 문제인지
-  const [riskScore, setRiskScore] = useState(0);
+  const [riskScore, setRiskScore] = useState([0, 0, 0, 0]); // [수익률, 유동성, 추적오차, 규모]
   const [riskType, setRiskType] = useState(""); // 투자 유형
   const [themeAnswers, setThemeAnswers] = useState<string[]>([]);
 
   //선택지 하나 누를때 실행되는 함수
   const handleSelect = (option: any) => {
     if (current.type === "risk") {
-      setRiskScore((prev) => prev + (option.score || 0));
+      if (option.weights) {
+        setRiskScore((prev) => prev.map((v, i) => v + (option.weights[i] || 0)));
+      }
     } else if (current.type === "theme") {
       setThemeAnswers((prev) => [...prev, option.value]);
     }
@@ -31,12 +33,20 @@ export default function TestComponentClient() {
 
   const current = mbtiQuestions[step];
   // 점수 → 투자유형 분류
-  function getRiskType(score: number): string {
-    if (score <= 5) return "안정형";
-    if (score <= 10) return "안정추구형";
-    if (score <= 17) return "위험중립형";
-    if (score <= 24) return "적극투자형";
-    return "공격형";
+  function getRiskType(scores: number[]): string {
+    const maxIdx = scores.indexOf(Math.max(...scores));
+    switch (maxIdx) {
+      case 0:
+        return "수익률형";
+      case 1:
+        return "유동성형";
+      case 2:
+        return "추적오차형";
+      case 3:
+        return "규모형";
+      default:
+        return "기타";
+    }
   }
 
 
@@ -72,7 +82,7 @@ export default function TestComponentClient() {
             style={{ textShadow: "5px 0px 4px rgba(0, 0, 0, 0.25)" }}
           >
             Q.{step + 1}/
-            <span className="text-[#BCBCBC] text-3xl font-bold">8</span>
+            <span className="text-[#BCBCBC] text-3xl font-bold">6</span>
             <p className="text-[64] font-semibold mt-40">{current.question}</p>
           </h3>
           <img
@@ -84,41 +94,16 @@ export default function TestComponentClient() {
 
         {/* 선택지 */}
         <div className="flex flex-col gap-6 w-full max-w-4xl mt-16 self-center">
-          {/* 첫 번째 줄 - 중앙 정렬 */}
-          <div className="flex justify-center gap-6">
-            {current.options.slice(0, 2).map((opt, idx) => (
+          <div className="flex flex-wrap justify-center gap-6">
+            {current.options.map((opt, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSelect(opt)}
-                className="w-[50%] h-20 bg-white text-xl text-black py-3 px-5 rounded-lg shadow hover:bg-blue-200"
+                className="w-[45%] h-20 bg-white text-xl text-black py-3 px-5 rounded-lg shadow hover:bg-blue-200 mb-4"
               >
                 {opt.text}
               </button>
             ))}
-          </div>
-
-          {/* 두 번째 줄 - 중앙 정렬 */}
-          <div className="flex justify-center gap-6">
-            {current.options.slice(2, 4).map((opt, idx) => (
-              <button
-                key={idx + 2}
-                onClick={() => handleSelect(opt)}
-                className="w-[50%]  h-20 bg-white text-xl text-black py-3 px-5 rounded-lg shadow hover:bg-blue-200"
-              >
-                {opt.text}
-              </button>
-            ))}
-          </div>
-
-          {/* 세 번째 줄 - 왼쪽 정렬 (중앙 기준 왼쪽) */}
-          <div className="flex justify-start gap-6 w-full">
-            {/* 중앙 기준 왼쪽으로 보내기 */}
-            <button
-              onClick={() => handleSelect(current.options[4])}
-              className="w-[49%]  h-20 bg-white text-black text-xl py-3 px-5 rounded-lg shadow hover:bg-blue-200"
-            >
-              {current.options[4].text}
-            </button>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ export default function ResultComponent({
 }: {
   riskType: string;
   theme: string;
-  riskScore: number;
+  riskScore: number[];
 }) {
   return <ResultComponentClient riskType={riskType} theme={theme} riskScore={riskScore}/>;
 
