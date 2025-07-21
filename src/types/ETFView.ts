@@ -1,5 +1,6 @@
 export type ETFView = {
     name: string;
+    etfCode: string;
     nav: string;
     week1: string;
     month1: string;
