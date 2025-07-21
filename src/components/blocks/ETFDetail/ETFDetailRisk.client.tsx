@@ -77,12 +77,12 @@ const ETFDetailRisk: React.FC<ETFDetailRiskProps> = ({ etf_code }) => {
 
   // 위험도 계산
   const calculateRiskValue = (score: number): number => {
-    // score 범위에 따른 위험도 계산 (1단계가 가장 위험)
-    if (score <= 0) return 5;      // 가장 안전
-    if (score <= 10) return 4;      // 안전
+    // score 범위에 따른 위험도 계산 (1단계가 가장 안전, 5단계가 가장 위험)
+    if (score <= 0) return 1;      // 가장 안전
+    if (score <= 10) return 2;      // 안전
     if (score <= 20) return 3;      // 보통
-    if (score <= 30) return 2;      // 위험
-    return 1;                       // 가장 위험 (40 이상)
+    if (score <= 30) return 4;      // 위험
+    return 5;                       // 가장 위험 (40 이상)
   };
 
   // 위험도 라벨 함수
