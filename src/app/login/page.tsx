@@ -21,13 +21,15 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`, {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_email: email,
           password,
         }),
+        credentials: "include",
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

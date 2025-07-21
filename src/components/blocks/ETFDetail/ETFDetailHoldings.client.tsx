@@ -133,7 +133,7 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
         try {
             const formattedDate = formatDate(date);
             
-            const url = `http://localhost:3000/api/etfs/${etf_code}`;
+            const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs/${etf_code}`;
             
             const response = await fetch(url, {
                 method: 'GET',

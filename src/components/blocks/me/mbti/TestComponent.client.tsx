@@ -72,7 +72,7 @@ export default function TestComponentClient() {
             style={{ textShadow: "5px 0px 4px rgba(0, 0, 0, 0.25)" }}
           >
             Q.{step + 1}/
-            <span className="text-[#BCBCBC] text-3xl font-bold">10</span>
+            <span className="text-[#BCBCBC] text-3xl font-bold">8</span>
             <p className="text-[64] font-semibold mt-40">{current.question}</p>
           </h3>
           <img
