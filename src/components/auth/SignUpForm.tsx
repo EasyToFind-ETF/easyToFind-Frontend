@@ -25,21 +25,32 @@ export const useSignUpForm = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_email: email,
-          password,
-          birth,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // 쿠키 포함
+          body: JSON.stringify({
+            user_email: email,
+            password,
+            birth,
+          }),
+        }
+      );
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || "회원가입 실패");
       }
-      alert("회원가입이 완료되었습니다! 로그인 해주세요.");
-      localStorage.setItem("isLoggedIn", "true");
+
+      // 회원가입 성공 후 자동 로그인
+      alert("회원가입이 완료되었습니다! 자동으로 로그인됩니다.");
+
+      // 쿠키 기반 인증으로 통일
+      // 서버에서 Set-Cookie 헤더로 HttpOnly + Secure 쿠키를 설정하므로
+      // 클라이언트에서 별도로 쿠키를 설정할 필요가 없습니다.
+
+      // 인증 상태 변경 이벤트 발생
       window.dispatchEvent(new Event("authChanged"));
       router.push("/");
     } catch (err: any) {

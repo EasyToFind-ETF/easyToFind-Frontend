@@ -8,6 +8,15 @@ interface UserRiskProfile {
   isLoading: boolean;
 }
 
+// 쿠키 가져오기 함수
+const getCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+};
+
 export const useUserRiskProfile = () => {
   const [userProfile, setUserProfile] = useState<UserRiskProfile>({
     isLoggedIn: false,
@@ -17,7 +26,9 @@ export const useUserRiskProfile = () => {
 
   useEffect(() => {
     const checkLoginStatus = async () => {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      // 쿠키 기반 인증으로 변경
+      const token = getCookie("authToken");
+      const isLoggedIn = !!token;
 
       if (isLoggedIn) {
         try {
@@ -29,7 +40,7 @@ export const useUserRiskProfile = () => {
               headers: {
                 "Content-Type": "application/json",
               },
-              // 실제로는 쿠키나 토큰을 사용해야 함
+              credentials: "include", // 쿠키 포함
             }
           );
 
