@@ -28,6 +28,7 @@ export default function LoginPage() {
           user_email: email,
           password,
         }),
+        credentials: "include",
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

@@ -2,13 +2,20 @@
 
 import Link from "next/link";
 import Image from "next/image";
-// import { User } from "lucide-react";
-import UserIcon from "@/assets/icons/account.png";
 import logoImg from "@/assets/icons/mainlogo.png";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/ui";
 
+// ✅ 쿠키 파싱 유틸 함수
+const getCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
+  const cookies = document.cookie.split(";").map((c) => c.trim());
+  const match = cookies.find((c) => c.startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.split("=")[1]) : null;
+};
+
+// ✅ 스크롤 시 헤더 숨김 커스텀 훅
 export function useScrollHideHeader() {
   const [hidden, setHidden] = useState(false);
   const lastScroll = useRef(0);
@@ -17,9 +24,9 @@ export function useScrollHideHeader() {
     const handleScroll = () => {
       const current = window.scrollY;
       if (current > lastScroll.current && current > 60) {
-        setHidden(true); // 아래로 스크롤 → 헤더 숨김
+        setHidden(true);
       } else {
-        setHidden(false); // 위로 스크롤 → 헤더 보임
+        setHidden(false);
       }
       lastScroll.current = current;
     };
@@ -34,25 +41,30 @@ export const Header = () => {
   const hidden = useScrollHideHeader();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
-    setIsLoggedIn(typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true");
-    const handleStorage = () => {
-      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    const checkLogin = () => {
+      const token = getCookie("authToken"); // ✅ 쿠키 이름 맞게 수정
+      setIsLoggedIn(!!token);
     };
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener("authChanged", handleStorage);
+
+    checkLogin(); // 초기 체크
+    window.addEventListener("authChanged", checkLogin);
     return () => {
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("authChanged", handleStorage);
+      window.removeEventListener("authChanged", checkLogin);
     };
   }, []);
+
   const handleLogout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logout`, { method: "POST" });
+      await fetch("http://localhost:3001/api/auth/logout", {
+        method: "POST",
+        credentials: "include", // ✅ 쿠키 전송
+      });
+
     } catch (e) {
-      // 실패해도 클라이언트 상태는 정리
+      // 실패해도 클라이언트 상태는 초기화
     }
-    localStorage.removeItem("isLoggedIn");
     window.dispatchEvent(new Event("authChanged"));
     setIsLoggedIn(false);
     router.push("/");
@@ -69,12 +81,7 @@ export const Header = () => {
       <div className="max-w-screen-xl mx-auto px-4 flex h-full items-center">
         {/* 로고 */}
         <Link href="/" className="mr-6 flex items-center space-x-6">
-          <Image
-            src={logoImg}
-            alt="Easy To Find 로고"
-            width={180}
-            height={100}
-          />
+          <Image src={logoImg} alt="Easy To Find 로고" width={180} height={100} />
         </Link>
 
         {/* 네비게이션 메뉴 */}
@@ -85,7 +92,6 @@ export const Header = () => {
           >
             Home
           </Link>
-
           <Link
             href="/find"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
@@ -106,14 +112,29 @@ export const Header = () => {
           </Link>
         </nav>
 
-        {/* 프로필 아이콘 */}
+        {/* 로그인/로그아웃 UI */}
         <div className="flex items-center justify-end gap-2">
           {isLoggedIn ? (
-            <button onClick={handleLogout} className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">로그아웃</button>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
+            >
+              로그아웃
+            </button>
           ) : (
             <>
-              <Link href="/login" className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">로그인</Link>
-              <Link href="/signup" className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline">회원가입</Link>
+              <Link
+                href="/login"
+                className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signup"
+                className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
+              >
+                회원가입
+              </Link>
             </>
           )}
         </div>
