@@ -7,13 +7,19 @@ interface ETFTableProps {
   etfData: ETFView[];
   selected: number[];
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
-  favorites: number[];
-  setFavorites: React.Dispatch<React.SetStateAction<number[]>>;
-  onCompare: () => void; // 추가
-  onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean, idx: number) => void;
+  favoriteEtfCodes: string[];
+  onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean) => void;
+  onCompare: () => void;
 }
 
-export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites, onCompare, onToggleFavorite }: ETFTableProps) {
+export default function ETFTable({
+  etfData,
+  selected,
+  setSelected,
+  favoriteEtfCodes,
+  onToggleFavorite,
+  onCompare,
+}: ETFTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
 
   const renderRate = (value: string) => {
@@ -24,7 +30,7 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
 
   const toggleSelect = (idx: number) => {
     if (selected.includes(idx)) {
-      setSelected(selected.filter(i => i !== idx));
+      setSelected(selected.filter((i) => i !== idx));
     } else {
       if (selected.length >= MAX_SELECT) {
         setShowMaxToast(true);
@@ -35,9 +41,13 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
     }
   };
 
-  const toggleFavorite = (idx: number) => {
-    setFavorites(favorites.includes(idx) ? favorites.filter(i => i !== idx) : [...favorites, idx]);
-  };
+  if (!etfData || etfData.length === 0) {
+    return (
+      <div className="py-20 text-center text-gray-500">
+        해당하는 ETF가 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto rounded-2xl relative">
@@ -56,43 +66,43 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
           </tr>
         </thead>
         <tbody>
-          {etfData.map((etf, i) => (
-            <tr key={i} className="hover:bg-gray-50 border-t">
-              {/* 체크박스 */}
-              <td className="py-3 px-2">
-                <input
-                  type="checkbox"
-                  checked={selected.includes(i)}
-                  onChange={() => toggleSelect(i)}
-                  className="accent-blue-500 w-5 h-5"
-                  disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
-                />
-              </td>
-              <td className="py-3 px-2 text-left font-medium">{etf.name}</td>
-              <td className="py-3 px-2">{etf.nav}</td>
-              <td className="py-3 px-2">{renderRate(etf.week1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month3)}</td>
-              <td className="py-3 px-2">{renderRate(etf.month6)}</td>
-              <td className="py-3 px-2">{renderRate(etf.year1)}</td>
-              <td className="py-3 px-2">{renderRate(etf.year3)}</td>
-              <td className="py-3 px-2">{renderRate(etf.inception)}</td>
-              {/* 하트 아이콘 */}
-              <td className="py-3 px-2">
-                <span
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    // console.log("❤️ 하트 눌림!", etf.etfCode);
-                    onToggleFavorite(etf.etfCode, favorites.includes(i), i);
-                  }}
-                  className={favorites.includes(i) ? "text-red-500" : "text-gray-300"}
-                  title={favorites.includes(i) ? "관심 해제" : "관심 등록"}
-                >
-                  &#10084;
-                </span>
-              </td>
-            </tr>
-          ))}
+          {etfData.map((etf, i) => {
+            const isFavorite = favoriteEtfCodes.includes(etf.etfCode);
+            return (
+              <tr key={i} className="hover:bg-gray-50 border-t">
+                {/* 체크박스 */}
+                <td className="py-3 px-2">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(i)}
+                    onChange={() => toggleSelect(i)}
+                    className="accent-blue-500 w-5 h-5"
+                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                  />
+                </td>
+                <td className="py-3 px-2 text-left font-medium">{etf.name}</td>
+                <td className="py-3 px-2">{etf.nav}</td>
+                <td className="py-3 px-2">{renderRate(etf.week1)}</td>
+                <td className="py-3 px-2">{renderRate(etf.month1)}</td>
+                <td className="py-3 px-2">{renderRate(etf.month3)}</td>
+                <td className="py-3 px-2">{renderRate(etf.month6)}</td>
+                <td className="py-3 px-2">{renderRate(etf.year1)}</td>
+                <td className="py-3 px-2">{renderRate(etf.year3)}</td>
+                <td className="py-3 px-2">{renderRate(etf.inception)}</td>
+                {/* 하트 아이콘 */}
+                <td className="py-3 px-2">
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onToggleFavorite(etf.etfCode, isFavorite)}
+                    className={isFavorite ? "text-red-500" : "text-gray-300"}
+                    title={isFavorite ? "관심 해제" : "관심 등록"}
+                  >
+                    &#10084;
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {/* 하단 토스트바 */}

@@ -7,17 +7,24 @@ interface HoldingTableProps {
   holdingsData: HoldingView[];
   selected: number[];
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
-  favorites: number[];
-  setFavorites: React.Dispatch<React.SetStateAction<number[]>>;
-  onCompare: () => void; // 추가
+  favoriteEtfCodes: string[];
+  onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean) => void;
+  onCompare: () => void;
 }
 
-export default function HoldingTable({ holdingsData, selected, setSelected, favorites, setFavorites, onCompare }: HoldingTableProps) {
+export default function HoldingTable({
+  holdingsData,
+  selected,
+  setSelected,
+  favoriteEtfCodes,
+  onToggleFavorite,
+  onCompare,
+}: HoldingTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
 
   const toggleSelect = (idx: number) => {
     if (selected.includes(idx)) {
-      setSelected(selected.filter(i => i !== idx));
+      setSelected(selected.filter((i) => i !== idx));
     } else {
       if (selected.length >= MAX_SELECT) {
         setShowMaxToast(true);
@@ -28,9 +35,13 @@ export default function HoldingTable({ holdingsData, selected, setSelected, favo
     }
   };
 
-  const toggleFavorite = (idx: number) => {
-    setFavorites(favorites.includes(idx) ? favorites.filter(i => i !== idx) : [...favorites, idx]);
-  };
+  if (!holdingsData || holdingsData.length === 0) {
+    return (
+      <div className="py-20 text-center text-gray-500">
+        해당하는 ETF가 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto rounded-2xl relative">
@@ -45,34 +56,37 @@ export default function HoldingTable({ holdingsData, selected, setSelected, favo
           </tr>
         </thead>
         <tbody>
-          {holdingsData.map((holding, i) => (
-            <tr key={i} className="hover:bg-gray-50 border-t">
-              {/* 체크박스 */}
-              <td className="py-3 px-2">
-                <input
-                  type="checkbox"
-                  checked={selected.includes(i)}
-                  onChange={() => toggleSelect(i)}
-                  className="accent-blue-500 w-5 h-5"
-                  disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
-                />
-              </td>
-              <td className="py-3 px-2 text-left font-medium">{holding.etfName}</td>
-              <td className="py-3 px-2">{holding.holdingName}</td>
-              <td className="py-3 px-2">{holding.weight}</td>
-              {/* 하트 아이콘 */}
-              <td className="py-3 px-2">
-                <span
-                  style={{ cursor: "pointer" }}
-                  onClick={() => toggleFavorite(i)}
-                  className={favorites.includes(i) ? "text-red-500" : "text-gray-300"}
-                  title={favorites.includes(i) ? "관심 해제" : "관심 등록"}
-                >
-                  &#10084;
-                </span>
-              </td>
-            </tr>
-          ))}
+          {holdingsData.map((holding, i) => {
+            const isFavorite = favoriteEtfCodes.includes(holding.etfCode);
+            return (
+              <tr key={i} className="hover:bg-gray-50 border-t">
+                {/* 체크박스 */}
+                <td className="py-3 px-2">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(i)}
+                    onChange={() => toggleSelect(i)}
+                    className="accent-blue-500 w-5 h-5"
+                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                  />
+                </td>
+                <td className="py-3 px-2 text-left font-medium">{holding.etfName}</td>
+                <td className="py-3 px-2">{holding.holdingName}</td>
+                <td className="py-3 px-2">{holding.weight}</td>
+                {/* 하트 아이콘 */}
+                <td className="py-3 px-2">
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onToggleFavorite(holding.etfCode, isFavorite)}
+                    className={isFavorite ? "text-red-500" : "text-gray-300"}
+                    title={isFavorite ? "관심 해제" : "관심 등록"}
+                  >
+                    &#10084;
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {/* 하단 토스트바 */}

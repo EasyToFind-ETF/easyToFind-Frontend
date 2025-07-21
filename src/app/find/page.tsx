@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchEtfData, fetchHoldingsData } from "@/services/etfFindService"
+import { fetchEtfData, fetchHoldingsData } from "@/services/etfFindService";
 import { ETFView } from "@/types/ETFView";
 import { HoldingView } from "@/types/HoldingView";
-import { toggleFavorite as toggleFavoriteAPI } from "@/services/etfFavoriteService";
-import { fetchFavoriteEtfCodes } from "@/services/etfFavoriteService";
+import { toggleFavorite as toggleFavoriteAPI, fetchFavoriteEtfCodes } from "@/services/etfFavoriteService";
 
 import FilterTabs from "@/components/ETFFind/FilterTabs";
 import FilterButtons from "@/components/ETFFind/FilterButtons";
@@ -13,8 +12,6 @@ import ResultHeader from "@/components/ETFFind/ResultHeader";
 import ETFTable from "@/components/ETFFind/ETFTable";
 import HoldingTable from "@/components/ETFFind/HoldingTable";
 import CompareModal from "@/components/ETFCompare/ETFComapreModal";
-
-
 
 export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
@@ -28,14 +25,14 @@ export default function FindPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState("ETF로 보기");
   const [selected, setSelected] = useState<number[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+  const [favoriteEtfCodes, setFavoriteEtfCodes] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<any[]>([]);
 
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = ["전체", "주식", "채권", "멀티에셋", "부동산", "원자재", "통화", "파킹형"];
   const themeFilters = ["전체", "반도체", "금융", "게임", "기술", "배당", "산업재", "소비재", "에너지", "인공지능", "전기차", "친환경", "헬스케어", "미국", "인도", "일본", "중국", "기타"];
-  const interestFilters = ["전체", "관심 "];
+  const interestFilters = ["전체", "관심"];
 
   const getFilters = () => {
     if (selectedTab === "유형별") return assetFilters;
@@ -56,13 +53,11 @@ export default function FindPage() {
     else setSelectedInterest(value);
   };
 
-  const handleToggleFavorite = async (etfCode: string, isAlreadyFavorite: boolean, idx: number) => {
+  const handleToggleFavorite = async (etfCode: string, isAlreadyFavorite: boolean) => {
     try {
-      await toggleFavoriteAPI(etfCode, isAlreadyFavorite); // POST/DELETE 요청
-  
-      // 로컬 상태 반영
-      setFavorites((prev) =>
-        isAlreadyFavorite ? prev.filter((i) => i !== idx) : [...prev, idx]
+      await toggleFavoriteAPI(etfCode, isAlreadyFavorite);
+      setFavoriteEtfCodes((prev) =>
+        isAlreadyFavorite ? prev.filter((code) => code !== etfCode) : [...prev, etfCode]
       );
     } catch (err) {
       console.error("❌ 관심 ETF 토글 실패:", err);
@@ -103,14 +98,11 @@ export default function FindPage() {
 
           // 관심 ETF 세팅
           try {
-            const favoriteCodes = await fetchFavoriteEtfCodes(); // 예: ["104520", "123456"]
-            const favoriteIndices = formatted
-              .map((etf, index) => favoriteCodes.includes(etf.etfCode) ? index : -1)
-              .filter((i) => i !== -1);
-            setFavorites(favoriteIndices);
+            const favoriteCodes = await fetchFavoriteEtfCodes();
+            setFavoriteEtfCodes(favoriteCodes);
           } catch (err) {
             console.warn("💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)");
-            setFavorites([]); // 실패 시 초기화
+            setFavoriteEtfCodes([]);
           }
         } else {
           const data: any[] = await fetchHoldingsData(params);
@@ -171,7 +163,7 @@ export default function FindPage() {
           maxDrawdown: parseFloat(d.max_drawdown ?? "0"),
           volatility: parseFloat(d.volatility ?? "0"),
           netAssets: d.latest_aum,
-          listingDate: "2024-01-01", // 실제 값 있으면 d.listing_date
+          listingDate: "2024-01-01",
           managementCompany: d.provider,
         };
       });
@@ -185,14 +177,11 @@ export default function FindPage() {
     }
   };
   
-
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="text-center space-y-6">
           <h1 className="text-3xl font-bold text-gray-900">ETF 찾기</h1>
-          {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
@@ -213,8 +202,6 @@ export default function FindPage() {
             />
           </div>
         </div>
-
-        {/* Main Card */}
         <div className="w-full bg-white rounded-2xl shadow p-6 mt-6">
           <FilterTabs tabs={tabList} selectedTab={selectedTab} onTabChange={setSelectedTab} />
           <FilterButtons filters={getFilters()} selected={selectedFilter} onChange={handleFilterChange} />
@@ -225,35 +212,32 @@ export default function FindPage() {
               <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto" />
               <p className="text-sm mt-2 text-gray-500">ETF 데이터를 불러오는 중...</p>
             </div>
+          ) : viewMode === "ETF로 보기" ? (
+            <ETFTable
+              etfData={etfData}
+              selected={selected}
+              setSelected={setSelected}
+              favoriteEtfCodes={favoriteEtfCodes}
+              onToggleFavorite={handleToggleFavorite}
+              onCompare={handleCompareClick}
+            />
           ) : (
-            viewMode === "ETF로 보기" ? (
-              <ETFTable
-                etfData={etfData}
-                selected={selected}
-                setSelected={setSelected}
-                favorites={favorites}
-                setFavorites={setFavorites}
-                onCompare={handleCompareClick}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            ) : (
-              <HoldingTable
-                holdingsData={holdingsData}
-                selected={selected}
-                setSelected={setSelected}
-                favorites={favorites}
-                setFavorites={setFavorites}
-                onCompare={handleCompareClick}
-              />
-            )
+            <HoldingTable
+              holdingsData={holdingsData}
+              selected={selected}
+              setSelected={setSelected}
+              favoriteEtfCodes={favoriteEtfCodes}
+              onToggleFavorite={handleToggleFavorite}
+              onCompare={handleCompareClick}
+            />
           )}
         </div>
         {modalVisible && (
           <CompareModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          etfs={modalData}
-        />
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            etfs={modalData}
+          />
         )}
       </div>
     </div>
