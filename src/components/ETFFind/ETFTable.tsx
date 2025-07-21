@@ -9,9 +9,10 @@ interface ETFTableProps {
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
   favorites: number[];
   setFavorites: React.Dispatch<React.SetStateAction<number[]>>;
+  onCompare: () => void; // 추가
 }
 
-export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites }: ETFTableProps) {
+export default function ETFTable({ etfData, selected, setSelected, favorites, setFavorites, onCompare }: ETFTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
 
   const renderRate = (value: string) => {
@@ -105,7 +106,7 @@ export default function ETFTable({ etfData, selected, setSelected, favorites, se
           <span className="text-blue-700 font-semibold">{selected.length}/{MAX_SELECT}개 선택됨</span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
-            onClick={() => alert('비교하기 기능은 추후 구현')}
+            onClick={onCompare} // alert 대신 onCompare 호출
           >
             비교하기
           </button>

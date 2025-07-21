@@ -10,6 +10,8 @@ import FilterButtons from "@/components/ETFFind/FilterButtons";
 import ResultHeader from "@/components/ETFFind/ResultHeader";
 import ETFTable from "@/components/ETFFind/ETFTable";
 import HoldingTable from "@/components/ETFFind/HoldingTable";
+import CompareModal from "@/components/ETFCompare/ETFComapreModal";
+import ETFCompareToast from "@/components/ETFCompare/ETFCompareToast";
 
 export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
@@ -24,6 +26,8 @@ export default function FindPage() {
   const [viewMode, setViewMode] = useState("ETF로 보기");
   const [selected, setSelected] = useState<number[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState<any[]>([]);
 
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = ["전체", "주식", "채권", "멀티에셋", "부동산", "원자재", "통화", "파킹형"];
@@ -68,6 +72,7 @@ export default function FindPage() {
           const data: any[] = await fetchEtfData(params);
           const formatted = (data as any[]).map((etf) => ({
             name: etf.etf_name,
+            etfCode: etf.etf_code,
             nav: etf.latest_price,
             week1: etf.week1 ?? "-",
             month1: etf.month1 ?? "-",
@@ -82,6 +87,7 @@ export default function FindPage() {
           const data: any[] = await fetchHoldingsData(params);
           const formatted = (data as any[]).map((holding) => ({
             etfName: holding.etf_name,
+            etfCode: holding.etf_code,
             holdingName: holding.holding_name,
             weight: holding.weight_pct,
           }));
@@ -99,9 +105,61 @@ export default function FindPage() {
     fetchData();
   }, [searchQuery, selectedType, selectedTheme, selectedInterest, viewMode]);
 
+  // 비교하기 버튼 클릭 핸들러
+  const handleCompareClick = async () => {
+    const codes = selected.map((idx) => etfData[idx].etfCode);
+    console.log("📦 비교할 ETF 코드 목록:", codes);
+  
+    try {
+      const responses = await Promise.all(
+        codes.map((code) => {
+          const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
+          console.log(`🚀 API 호출: ${url}`);
+          return fetch(url).then((res) => res.json());
+        })
+      );
+  
+      console.log("✅ 비교 API 응답 결과 (raw):", responses);
+  
+      const mappedData = responses.map((res) => {
+        const d = res.data;
+        return {
+          id: d.etf_code,
+          name: d.etf_name,
+          code: d.etf_code,
+          price: d.latest_price,
+          returns: {
+            "1주": parseFloat(d.week1 ?? "0"),
+            "1개월": parseFloat(d.month1 ?? "0"),
+            "3개월": parseFloat(d.month3 ?? "0"),
+            "6개월": parseFloat(d.month6 ?? "0"),
+            "1년": parseFloat(d.year1 ?? "0"),
+            "3년": parseFloat(d.year3 ?? "0"),
+            상장이후: parseFloat(d.inception ?? "0"),
+          },
+          overallScore: d.total_score ?? 0,
+          sharpRatio: parseFloat(d.sharpe_ratio ?? "0"),
+          maxDrawdown: parseFloat(d.max_drawdown ?? "0"),
+          volatility: parseFloat(d.volatility ?? "0"),
+          netAssets: d.latest_aum,
+          listingDate: "2024-01-01", // 실제 값 있으면 d.listing_date
+          managementCompany: d.provider,
+        };
+      });
+  
+      console.log("🧩 매핑된 데이터:", mappedData);
+  
+      setModalData(mappedData);
+      setModalVisible(true);
+    } catch (err) {
+      console.error("❌ ETF 비교 API 호출 실패", err);
+    }
+  };
+  
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center space-y-6">
           <h1 className="text-3xl font-bold text-gray-900">ETF 찾기</h1>
@@ -140,12 +198,33 @@ export default function FindPage() {
             </div>
           ) : (
             viewMode === "ETF로 보기" ? (
-              <ETFTable etfData={etfData} selected={selected} setSelected={setSelected} favorites={favorites} setFavorites={setFavorites} />
+              <ETFTable
+                etfData={etfData}
+                selected={selected}
+                setSelected={setSelected}
+                favorites={favorites}
+                setFavorites={setFavorites}
+                onCompare={handleCompareClick}
+              />
             ) : (
-              <HoldingTable holdingsData={holdingsData} selected={selected} setSelected={setSelected} favorites={favorites} setFavorites={setFavorites} />
+              <HoldingTable
+                holdingsData={holdingsData}
+                selected={selected}
+                setSelected={setSelected}
+                favorites={favorites}
+                setFavorites={setFavorites}
+                onCompare={handleCompareClick}
+              />
             )
           )}
         </div>
+        {modalVisible && (
+          <CompareModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          etfs={modalData}
+        />
+        )}
       </div>
     </div>
   );
