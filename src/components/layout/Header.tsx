@@ -111,26 +111,11 @@ export const Header = () => {
         {/* 로그인/로그아웃 UI */}
         <div className="flex items-center justify-end gap-2">
           {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
-            >
-              로그아웃
-            </button>
+            <button onClick={handleLogout} className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그아웃</button>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
-              >
-                로그인
-              </Link>
-              <Link
-                href="/signup"
-                className="px-3 py-1 text-sm font-medium text-blue-600 hover:underline"
-              >
-                회원가입
-              </Link>
+              <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그인</Link>
+              <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">회원가입</Link>
             </>
           )}
         </div>
