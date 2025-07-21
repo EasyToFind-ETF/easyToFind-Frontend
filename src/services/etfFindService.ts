@@ -12,7 +12,7 @@ export const fetchEtfData = async (params: any): Promise<ETFView[]> => {
   
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs?${queryParams.toString()}`;
   
-    console.log("📡 [ETF API] 요청함!! URL:", url);
+    // console.log("📡 [ETF API] 요청함!! URL:", url);
   
     const res = await fetch(url);
     if (!res.ok) {
@@ -34,7 +34,7 @@ export const fetchEtfData = async (params: any): Promise<ETFView[]> => {
 
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/holdings?${queryParams.toString()}`;
 
-    console.log("📡 [ETF API] 요청함!! URL:", url);
+    // console.log("📡 [ETF API] 요청함!! URL:", url);
 
     const res = await fetch(url);
     if (!res.ok) {
