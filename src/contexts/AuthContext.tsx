@@ -1,9 +1,8 @@
-"use client"
-import React, { createContext, useContext, useEffect, useState } from "react";
+"use client";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 
-// 쿠키 파싱 유틸
+// 쿠키에서 authToken 가져오는 함수
 const getCookie = (name: string): string | null => {
-  if (typeof document === "undefined") return null;
   const cookies = document.cookie.split(";").map((c) => c.trim());
   const match = cookies.find((c) => c.startsWith(`${name}=`));
   return match ? decodeURIComponent(match.split("=")[1]) : null;
@@ -11,12 +10,12 @@ const getCookie = (name: string): string | null => {
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  checkLogin: () => void;
+  // 필요 시 checkLogin도 포함
+  checkLogin?: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
-  checkLogin: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -28,18 +27,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    checkLogin();
+    checkLogin(); // 최초 로딩 시 로그인 상태 확인
     window.addEventListener("authChanged", checkLogin);
     return () => {
       window.removeEventListener("authChanged", checkLogin);
     };
   }, []);
 
+  const contextValue = useMemo(() => ({ isLoggedIn, checkLogin }), [isLoggedIn]);
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, checkLogin }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);
