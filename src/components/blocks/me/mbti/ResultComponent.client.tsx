@@ -81,9 +81,9 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
     }
   };
 
-  // 순자산 총액을 억원 단위로 변환하는 함수
-  const formatAum = (aum: string | number) => {
-    const num = typeof aum === "string" ? parseFloat(aum) : aum;
+  // 억원 단위 변환 함수 (string 또는 number 입력)
+  const formatToEokwon = (value: string | number) => {
+    const num = typeof value === "string" ? parseFloat(value) : value;
     return `${(num / 100000000).toLocaleString(undefined, { maximumFractionDigits: 1 })}억원`;
   };
 
@@ -121,11 +121,12 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
           <ETFCard
             key={etf.etf_code}
             name={etf.etf_name}
-            score={etf.final_score}
+            score={parseFloat(etf.final_score)}
             details={[
-              { label: "1년 수익률", value: etf.return_1y, color: "#22c55e" },
-              { label: "총보수", value: etf.expense_ratio, color: "#22c55e" },
-              { label: "순자산 총액", value: formatAum(etf.latest_aum), color: "#22c55e" },
+              { label: "최대낙폭", value: etf.mdd, color: "#22c55e" },
+              { label: "변동성", value: etf.volatility, color: "#22c55e" },
+              { label: "시가총액", value: formatToEokwon(etf.mkt_cap), color: "#22c55e" },
+              { label: "순자산총액", value: formatToEokwon(etf.aum), color: "#22c55e" },
             ]}
           />
         ))}

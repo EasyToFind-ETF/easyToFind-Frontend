@@ -6,6 +6,7 @@ import logoImg from "@/assets/icons/mainlogo.png";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/ui";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ✅ 쿠키 파싱 유틸 함수
 const getCookie = (name: string): string | null => {
@@ -39,15 +40,10 @@ export function useScrollHideHeader() {
 
 export const Header = () => {
   const hidden = useScrollHideHeader();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, checkLogin } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const checkLogin = () => {
-      const token = getCookie("authToken"); // 쿠키 이름을 'authToken'으로 고정
-      setIsLoggedIn(!!token);
-    };
-
     checkLogin(); // 초기 체크
     window.addEventListener("authChanged", checkLogin);
     return () => {
@@ -66,7 +62,7 @@ export const Header = () => {
       // 실패해도 클라이언트 상태는 초기화
     }
     window.dispatchEvent(new Event("authChanged"));
-    setIsLoggedIn(false);
+    checkLogin();
     router.push("/");
   };
 
