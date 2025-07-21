@@ -39,6 +39,6 @@ export async function toggleFavorite(etfCode: string, isFavorite: boolean) {
     if (!res.ok) throw new Error("관심 ETF 목록 조회 실패");
   
     const json = await res.json();
-    console.log("관심 ETF 목록: ", json.data);
+    // console.log("관심 ETF 목록: ", json.data);
     return json.data;
   }
