@@ -7,20 +7,34 @@ import ETFCard from "./recommendETFcard";
 interface Props {
   riskType: string;
   theme: string;
-  riskScore: number;
+  riskScore: number[];
 }
 
 export default function ResultComponentClient({ riskType, theme, riskScore }: Props) {
   const [selectedTab, setSelectedTab] = useState<"theme" | "type">("theme");
-  console.log("riskScore result",riskScore);
+  console.log("riskScore result", riskScore);
+
+  const normalizeRiskScore = (scores: number[]) => {
+    const sum = scores.reduce((acc, val) => acc + val, 0);
+    return scores.map((val) => parseFloat((val / sum).toFixed(4))); // 소수점 4자리까지
+  };
   
   const [etfList, setEtfList] = useState<any[]>([]);
-
+  //결과 불러오기
   useEffect(() => {
     const fetchData = async () => {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       let url = `${API_BASE_URL}/api/recommendation`;
-      let body: any = { riskScore };
+      let body: any = {};
+      let normalized = [0.25, 0.25, 0.25, 0.25]; //디폴트값
+
+      if (Array.isArray(riskScore) && riskScore.length === 4) {
+        normalized = normalizeRiskScore(riskScore);
+        body.returnRate = normalized[0];
+        body.liquidity = normalized[1];
+        body.trackingError = normalized[2];
+        body.aum = normalized[3];
+      }
 
       if (selectedTab === "theme") {
         url = `${API_BASE_URL}/api/recommendation/theme`;
@@ -33,14 +47,15 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         body: JSON.stringify(body),
       });
       const etfData = await etfResponse.json();
-      console.log("body",body)
+      console.log("body", body)
       setEtfList(Array.isArray(etfData.data) ? etfData.data : []);
     };
     fetchData();
   }, [selectedTab, riskScore, theme]);
 
+
+  //결과 저장
   useEffect(() => {
-    
     const fetchData = async () => {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
@@ -51,7 +66,10 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          riskScore: riskScore,
+          returnRate: riskScore[0],
+          liquidity: riskScore[1],
+          trackingError: riskScore[2],
+          aum: riskScore[3],
         }),
       });
       const data = await response.json();
@@ -81,9 +99,9 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
     }
   };
 
-  // 순자산 총액을 억원 단위로 변환하는 함수
-  const formatAum = (aum: string | number) => {
-    const num = typeof aum === "string" ? parseFloat(aum) : aum;
+  // 억원 단위 변환 함수 (string 또는 number 입력)
+  const formatToEokwon = (value: string | number) => {
+    const num = typeof value === "string" ? parseFloat(value) : value;
     return `${(num / 100000000).toLocaleString(undefined, { maximumFractionDigits: 1 })}억원`;
   };
 
@@ -117,15 +135,16 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
 
       
       <div className="flex flex-col gap-8 mt-10 w-full items-center">
-        {etfList.map((etf) => (
+        {etfList.map((etf, idx) => (
           <ETFCard
-            key={etf.etf_code}
+            key={etf.etf_name + idx}
             name={etf.etf_name}
-            score={etf.final_score}
+            score={parseFloat(etf.total_score)}
             details={[
-              { label: "1년 수익률", value: etf.return_1y, color: "#22c55e" },
-              { label: "총보수", value: etf.expense_ratio, color: "#22c55e" },
-              { label: "순자산 총액", value: formatAum(etf.latest_aum), color: "#22c55e" },
+              { label: "수익률", value: etf.return_rate, color: "#22c55e" },
+              { label: "유동성", value: etf.liquidity, color: "#22c55e" },
+              { label: "순자산총액", value: formatToEokwon(etf.aum), color: "#22c55e" },
+              { label: "안정성점수", value: etf.stability_risk_score, color: "#22c55e" },
             ]}
           />
         ))}

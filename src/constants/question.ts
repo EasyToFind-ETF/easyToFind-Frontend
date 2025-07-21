@@ -19,7 +19,7 @@ export type ThemeEnum =
 
 export interface Option {
   text: string;
-  score?: number; // risk용
+  weights?: [number, number, number, number]; // [수익률, 유동성, 추적오차, 규모]
   value?: ThemeEnum; // theme용
 }
 
@@ -27,97 +27,68 @@ export interface Question {
   type: QuestionType;
   question: string;
   options: Option[];
-  icon: string; // 아이콘 경로
+  icon: string;
 }
 
 export const mbtiQuestions: Question[] = [
-  // ✅ 투자성향 판단용 (7문항)
+  // ✅ 성향 판단 (4요소 가중치)
   {
     type: "risk",
-    question: "여윳돈 500만원이 생긴다면 어떤걸 하실건가요?",
+    question: "ETF를 고를 때 가장 중요한 기준은 무엇인가요?",
     options: [
-      { text: "단타 매매나 인기 ETF에 몰빵", score: 5 },
-      { text: "절반은 투자, 절반은 보관", score: 4 },
-      { text: "저위험 ETF에 분산 투자", score: 3 },
-      { text: "예적금과 소액 ETF로 나눔", score: 2 },
-      { text: "일단 은행에 넣고 고민", score: 0 },
+      { text: "수익률이 가장 중요하다", weights: [5, 2, 1, 2] },
+      { text: "언제든 사고팔 수 있어야 한다", weights: [2, 5, 1, 2] },
+      { text: "지수와의 오차가 적은 것이 좋다", weights: [1, 2, 5, 2] },
+      { text: "운용규모가 크고 안정적인 게 좋다", weights: [1, 2, 1, 5] },
     ],
     icon: "/mbtiTest1.png",
   },
   {
     type: "risk",
-    question: "친구가 추천한 ETF가 일주일 새 10% 올랐다면?",
+    question: "ETF에 투자하려는 이유는 무엇인가요?",
     options: [
-      { text: "당장 따라 산다", score: 5 },
-      { text: "더 오르기 전에 일부만 산다", score: 4 },
-      { text: "뉴스와 차트를 좀 더 본다", score: 3 },
-      { text: "일단 보류한다", score: 2 },
-      { text: "따라 사는 건 위험하다 생각", score: 0 },
+      { text: "주식보다 수익률이 더 높아 보여서", weights: [5, 2, 1, 2] },
+      { text: "원할 때 사고팔 수 있어서", weights: [2, 5, 1, 2] },
+      { text: "시장 지수를 그대로 따르니까", weights: [1, 2, 5, 2] },
+      { text: "안정적으로 오래 투자할 수 있어서", weights: [1, 2, 1, 5] },
+    ],
+    icon: "/mbtiTest2.png",
+  },
+  {
+    type: "risk",
+    question: "내가 투자하려는 ETF가 갑자기 거래량이 확 줄었다면?",
+    options: [
+      { text: "수익률만 괜찮으면 상관없다", weights: [5, 1, 2, 2] },
+      { text: "매도 타이밍을 위해 거래량이 중요하다", weights: [2, 5, 1, 2] },
+      { text: "지수 추종이 정확한지가 더 중요하다", weights: [1, 2, 5, 2] },
+      { text: "운용사 규모를 확인한다", weights: [1, 2, 1, 5] },
     ],
     icon: "/mbtiTest3.png",
   },
   {
     type: "risk",
-    question: "투자로 10% 손실이 발생했다면 어떻게 하시겠어요?",
+    question: "ETF를 추천받았는데 수익률이 좋아도 규모가 작다면?",
     options: [
-      { text: "같은 종목을 더 산다 (물타기)", score: 5 },
-      { text: "다른 ETF로 리밸런싱", score: 4 },
-      { text: "일단 기다려본다", score: 3 },
-      { text: "손절하고 ETF를 바꾼다", score: 2 },
-      { text: "더 이상 투자는 안 한다", score: 0 },
+      { text: "수익률이 좋으면 투자한다", weights: [5, 1, 2, 1] },
+      { text: "거래량이 많다면 상관 없다", weights: [3, 5, 1, 1] },
+      { text: "규모가 작으면 불안하다", weights: [1, 2, 2, 5] },
+      { text: "시장 대표 ETF인지 먼저 본다", weights: [2, 2, 5, 3] },
     ],
     icon: "/mbtiTest4.png",
   },
   {
     type: "risk",
-    question: "본인의 투자 목적은 무엇인가요?",
+    question: "처음 ETF를 접했을 때 어떤 부분이 가장 인상 깊었나요?",
     options: [
-      { text: "단기 수익 극대화", score: 5 },
-      { text: "1~2년 내 차익 실현", score: 4 },
-      { text: "중간 위험의 장기 투자", score: 3 },
-      { text: "노후 대비 안정적 투자", score: 2 },
-      { text: "목돈 보관 및 원금 보전", score: 0 },
-    ],
-    icon: "/mbtiTest9.png",
-  },
-  {
-    type: "risk",
-    question: "ETF에 대한 투자 비중은 얼마나 되나요?",
-    options: [
-      { text: "80% 이상", score: 5 },
-      { text: "절반 이상", score: 4 },
-      { text: "30~50%", score: 3 },
-      { text: "10~30%", score: 2 },
-      { text: "10% 미만 또는 없음", score: 0 },
-    ],
-    icon: "/mbtiTest6.png",
-  },
-  {
-    type: "risk",
-    question: "다음 중 가장 공감되는 문장은?",
-    options: [
-      { text: "기회는 위기 속에 있다", score: 5 },
-      { text: "남들이 두려워할 때 나는 산다", score: 4 },
-      { text: "균형 잡힌 투자가 중요하다", score: 3 },
-      { text: "수익보다 안정이 중요하다", score: 2 },
-      { text: "안전한 게 최고다", score: 0 },
+      { text: "높은 수익률 가능성", weights: [5, 2, 1, 2] },
+      { text: "언제든 거래 가능한 유연함", weights: [2, 5, 1, 2] },
+      { text: "지수를 따라가는 구조", weights: [1, 2, 5, 2] },
+      { text: "믿을 수 있는 운용사와 안정성", weights: [1, 2, 1, 5] },
     ],
     icon: "/mbtiTest5.png",
   },
-  {
-    type: "risk",
-    question: "ETF나 투자 뉴스는 언제 주로 확인하시나요?",
-    options: [
-      { text: "매일 여러 번 확인한다", score: 5 },
-      { text: "출퇴근/점심시간에 본다", score: 4 },
-      { text: "퇴근 후 한번 본다", score: 3 },
-      { text: "주말에 정리해서 본다", score: 2 },
-      { text: "거의 안 본다", score: 0 },
-    ],
-    icon: "/mbtiTest8.png",
-  },
 
-  // ✅ 테마 판단용 
+  // ✅ 테마 판단
   {
     type: "theme",
     question: "가장 관심 있는 산업은?",
