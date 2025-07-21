@@ -48,7 +48,7 @@ export const Header = () => {
   }, []);
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3001/api/auth/logout", { method: "POST" });
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logout`, { method: "POST" });
     } catch (e) {
       // 실패해도 클라이언트 상태는 정리
     }
