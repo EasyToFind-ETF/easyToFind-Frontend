@@ -18,11 +18,12 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
 
   useEffect(() => {
     const fetchData = async () => {
-      let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation`;
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      let url = `${API_BASE_URL}/api/recommendation`;
       let body: any = { riskScore };
 
       if (selectedTab === "theme") {
-        url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation/theme`;
+        url = `${API_BASE_URL}/api/recommendation/theme`;
         body.theme = theme;
       }
 
@@ -41,14 +42,15 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   useEffect(() => {
     
     const fetchData = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mbti`, {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          userId: 1,
           riskScore: riskScore,
         }),
       });

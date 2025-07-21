@@ -44,7 +44,7 @@ export const Header = () => {
 
   useEffect(() => {
     const checkLogin = () => {
-      const token = getCookie("authToken"); // ✅ 쿠키 이름 맞게 수정
+      const token = getCookie("authToken"); // 쿠키 이름을 'authToken'으로 고정
       setIsLoggedIn(!!token);
     };
 
@@ -55,13 +55,13 @@ export const Header = () => {
     };
   }, []);
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3001/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include", // ✅ 쿠키 전송
       });
-
     } catch (e) {
       // 실패해도 클라이언트 상태는 초기화
     }

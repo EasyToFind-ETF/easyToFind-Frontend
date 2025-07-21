@@ -17,7 +17,7 @@ const ETFDetailStandardPrice: React.FC<ETFDetailStandardPriceProps> = ({ etf_cod
     const fetchPriceData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/etfs/${etf_code}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs/${etf_code}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
