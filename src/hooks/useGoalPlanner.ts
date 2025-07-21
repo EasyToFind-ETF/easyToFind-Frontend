@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { GoalPlannerRequest, GoalPlannerResponse } from "@/types/goal";
+import { useUserRiskProfile } from "./useUserRiskProfile";
 
 // 백엔드 API URL 설정
 const API_BASE_URL =
@@ -9,14 +10,27 @@ const API_BASE_URL =
 const GOAL_PLANNER_URL = `${API_BASE_URL}/api/goal-planner`;
 
 export const useGoalPlanner = () => {
+  const {
+    isLoggedIn,
+    riskScore,
+    isLoading: isUserLoading,
+  } = useUserRiskProfile();
+
   // 1. 사용자 입력 상태 관리 (5년 한정 MVP)
   const [input, setInput] = useState<GoalPlannerRequest>({
     targetAmount: 100_000_000,
     targetYears: 5, // 기본값을 5년으로 변경
     initialAmount: 0,
     monthlyContribution: 300_000,
-    riskProfile: 50,
+    riskProfile: 50, // 기본값, 나중에 사용자 위험 성향으로 업데이트
   });
+
+  // 사용자 위험 성향이 로드되면 자동으로 설정
+  useEffect(() => {
+    if (!isUserLoading && riskScore !== null) {
+      setInput((prev) => ({ ...prev, riskProfile: riskScore }));
+    }
+  }, [isUserLoading, riskScore]);
 
   // 2. API 연동 관련 상태 관리
   const [results, setResults] = useState<GoalPlannerResponse | null>(null);
@@ -112,5 +126,8 @@ export const useGoalPlanner = () => {
     neededCagr,
     validation,
     handleSubmit,
+    isLoggedIn,
+    riskScore,
+    isUserLoading,
   };
 };
