@@ -32,6 +32,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         body: JSON.stringify(body),
       });
       const etfData = await etfResponse.json();
+      console.log("body",body)
       setEtfList(Array.isArray(etfData.data) ? etfData.data : []);
     };
     fetchData();
@@ -118,7 +119,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
           <ETFCard
             key={etf.etf_code}
             name={etf.etf_name}
-            score={etf.match_score}
+            score={etf.final_score}
             details={[
               { label: "1년 수익률", value: etf.return_1y, color: "#22c55e" },
               { label: "총보수", value: etf.expense_ratio, color: "#22c55e" },

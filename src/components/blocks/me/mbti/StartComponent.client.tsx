@@ -6,7 +6,12 @@ import TestComponent from "./TestComponent";
 const StartComponentClient: React.FC = () => {
   const [isStarted, setIsStarted] = useState(false);
   function startbtn() {
-
+    // 쿠키에서 token 존재 여부 확인
+    const hasToken = typeof document !== 'undefined' && document.cookie.split(';').some(c => c.trim().startsWith('token='));
+    if (!hasToken) {
+      alert('로그인 후 이용해 주세요.');
+      return;
+    }
     setIsStarted(true); // 상태 변경
   }
   if (isStarted) {
