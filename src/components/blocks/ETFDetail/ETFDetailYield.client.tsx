@@ -19,6 +19,15 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
   const [dailyPriceData, setDailyPriceData] = useState<ETFPricesDaily[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredValues, setHoveredValues] = useState<{
+    nav: { return: number; price: number };
+    market: { return: number; price: number };
+    index: { return: number; price: number };
+  }>({
+    nav: { return: -1.76, price: 4634.78 },
+    market: { return: -2.63, price: 4625 },
+    index: { return: -1.62, price: 1312.62 }
+  });
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
 
@@ -132,10 +141,10 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
       timeScale: {
         visible: true,
         borderColor: '#374151',
-        timeVisible: true,
+        timeVisible: false,
         secondsVisible: false,
         tickMarkFormatter: (time: number) => {
-          return dayjs.unix(time).format('MMM DD');
+          return dayjs.unix(time).format('YYYY.MM.DD');
         },
       },
     });
@@ -306,6 +315,45 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
 
     // 차트 크기 조정
     chart.timeScale().fitContent();
+
+    // Hover 이벤트 처리
+    chart.subscribeCrosshairMove((param) => {
+      if (param.time) {
+        // 해당 날짜의 실제 데이터 찾기
+        const hoverDate = dayjs.unix(param.time as number);
+        const actualData = filteredData.find(data => 
+          dayjs(data.trade_date).format('YYYY-MM-DD') === hoverDate.format('YYYY-MM-DD')
+        );
+        
+        if (actualData) {
+          const navPrice = typeof actualData.nav_price === 'string' ? parseFloat(actualData.nav_price) : actualData.nav_price;
+          const marketPrice = typeof actualData.close_price === 'string' ? parseFloat(actualData.close_price) : actualData.close_price;
+          const indexPrice = typeof actualData.obj_stk_prc_idx === 'string' ? parseFloat(actualData.obj_stk_prc_idx) : actualData.obj_stk_prc_idx;
+          
+          // 기준가격 대비 수익률 계산
+          const baseNav = typeof filteredData[0]?.nav_price === 'string' ? parseFloat(filteredData[0].nav_price) : filteredData[0]?.nav_price || 1;
+          const baseMarket = typeof filteredData[0]?.close_price === 'string' ? parseFloat(filteredData[0].close_price) : filteredData[0]?.close_price || 1;
+          const baseIndex = typeof filteredData[0]?.obj_stk_prc_idx === 'string' ? parseFloat(filteredData[0].obj_stk_prc_idx) : filteredData[0]?.obj_stk_prc_idx || 1;
+          
+          const navReturn = ((navPrice - baseNav) / baseNav) * 100;
+          const marketReturn = ((marketPrice - baseMarket) / baseMarket) * 100;
+          const indexReturn = ((indexPrice - baseIndex) / baseIndex) * 100;
+          
+          setHoveredValues({
+            nav: { return: navReturn, price: navPrice || 0 },
+            market: { return: marketReturn, price: marketPrice || 0 },
+            index: { return: indexReturn, price: indexPrice || 0 }
+          });
+        }
+      } else {
+        // hover가 해제되면 기본값으로 복원
+        setHoveredValues({
+          nav: { return: -1.76, price: 4634.78 },
+          market: { return: -2.63, price: 4625 },
+          index: { return: -1.62, price: 1312.62 }
+        });
+      }
+    });
 
     // 반응형 처리
     const handleResize = () => {
@@ -494,21 +542,21 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
               <span className="w-4 h-4 rounded bg-red-400 inline-block"></span>
               <span className="text-gray-500 text-sm font-medium">기준가격(NAV)</span>
             </div>
-            <span className="text-base">-1.76%(4,634.78원)</span>
+            <span className="text-base">{`${hoveredValues.nav.return.toFixed(2)}%(${hoveredValues.nav.price.toLocaleString()}원)`}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 rounded bg-cyan-400 inline-block"></span>
               <span className="text-gray-500 text-sm font-medium">시장가격(종가)</span>
             </div>
-            <span className="text-base">-2.63%(4,625원)</span>
+            <span className="text-base">{`${hoveredValues.market.return.toFixed(2)}%(${hoveredValues.market.price.toLocaleString()}원)`}</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 rounded bg-green-300 inline-block"></span>
               <span className="text-gray-500 text-sm font-medium">기초지수</span>
             </div>
-            <span className="text-base">-1.62%(1,312.62pt)</span>
+            <span className="text-base">{`${hoveredValues.index.return.toFixed(2)}%(${hoveredValues.index.price.toLocaleString()}pt)`}</span>
           </div>
         </div>
         

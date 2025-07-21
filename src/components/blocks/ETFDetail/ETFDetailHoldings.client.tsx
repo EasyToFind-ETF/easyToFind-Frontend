@@ -181,7 +181,7 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
         const topHoldings = holdingsData.slice(0, 10);
         const otherHoldings = holdingsData.slice(10);
         
-        // 중복된 종목명 처리
+        // stock_code 기반으로 중복된 종목코드 처리
         const stockCodeCount = new Map<string, number>();
         
         const pieData = topHoldings.map((holding, index) => {
@@ -189,12 +189,14 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
             const count = stockCodeCount.get(stockCode) || 0;
             stockCodeCount.set(stockCode, count + 1);
             
-            const uniqueId = count === 0 ? stockCode : `${stockCode} (${count + 1})`;
+            // stock_code를 기반으로 uniqueId 생성
+            const uniqueId = count === 0 ? stockCode : `${stockCode}_${count + 1}`;
             
             return {
                 id: uniqueId,
                 value: holding.weight_pct,
                 color: getColorByIndex(index),
+                stockCode: stockCode, // 원본 stock_code도 저장
             };
         });
 
@@ -205,6 +207,7 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
                 id: '기타',
                 value: otherWeight,
                 color: '#A8A8A8',
+                stockCode: '기타',
             });
         }
 
@@ -307,12 +310,20 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
                                             from: 'color',
                                             modifiers: [['darker', 0.2]]
                                         }}
-                                        arcLinkLabelsSkipAngle={15}
+                                        arcLinkLabelsSkipAngle={20}
+                                        arcLinkLabelsDiagonalLength={8}
+                                        arcLinkLabelsStraightLength={12}
                                         arcLinkLabelsTextColor="#333333"
                                         arcLinkLabelsThickness={2}
                                         arcLinkLabelsColor={{ from: 'color' }}
                                         arcLinkLabel={(d) => {
-                                            return d.data.value >= 5 ? d.data.id : '';
+                                            if (d.data.value < 5) return '';
+                                            if (d.data.id === '기타') return '기타';
+                                            
+                                            // stockCode를 사용해서 종목명 찾기
+                                            const stockCode = (d.data as any).stockCode || d.data.id.split('_')[0];
+                                            const holding = holdingsData.find(h => h.stock_code === stockCode);
+                                            return holding?.stock_name || d.data.id;
                                         }}
                                         arcLabelsSkipAngle={0}
                                         arcLabelsTextColor={{
@@ -329,17 +340,22 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
                                 <div className="flex-1">
                                     <div className="text-base font-medium text-gray-700 whitespace-nowrap text-left ml-10 mb-8">구성종목 Top 10</div>
                                     <div className="space-y-3 ml-6">
-                                        {pieChartData.filter(item => item.id !== '기타').map((item, index) => (
-                                            <div key={`${item.id}-${index}`} className="flex items-center gap-3">
-                                                <div 
-                                                    className="w-4 h-4 rounded-full" 
-                                                    style={{ backgroundColor: item.color }}
-                                                ></div>
-                                                <span className="text-sm font-medium text-gray-700">
-                                                    {item.id}
-                                                </span>
-                                            </div>
-                                        ))}
+                                        {pieChartData.filter(item => item.id !== '기타').map((item, index) => {
+                                            // stockCode를 사용해서 종목명 찾기
+                                            const stockCode = (item as any).stockCode || item.id.split('_')[0];
+                                            const holding = holdingsData.find(h => h.stock_code === stockCode);
+                                            return (
+                                                <div key={`${item.id}-${index}`} className="flex items-center gap-3">
+                                                    <div 
+                                                        className="w-4 h-4 rounded-full" 
+                                                        style={{ backgroundColor: item.color }}
+                                                    ></div>
+                                                    <span className="text-sm font-medium text-gray-700">
+                                                        {holding?.stock_name || item.id}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>

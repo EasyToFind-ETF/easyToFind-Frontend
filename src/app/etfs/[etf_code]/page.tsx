@@ -9,4 +9,4 @@ interface ETFDetailPageProps {
 export default async function ETFDetailPage({ params }: ETFDetailPageProps) {
   const { etf_code } = await params;
   return <ETFDetail etf_code={etf_code} />;
-} 
+}
