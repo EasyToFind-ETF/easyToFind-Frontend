@@ -51,79 +51,96 @@ export default function LoginPage() {
     }
   };
 
+  
   return (
-    <div className="grid min-h-screen w-full lg:grid-cols-4">
-      <div className="hidden items-start justify-center pt-20 lg:flex">
-        <h1 className="text-4xl font-bold">로그인</h1>
-      </div>
-      <div className="flex items-center justify-center bg-white p-6 lg:col-span-2">
-        <div className="w-full max-w-md space-y-6">
-          <div>
-            <h2 className="text-3xl font-bold">로그인</h2>
+    <div className="flex">
+      {/* <aside
+        className="sticky top-0 w-full md:w-[280px] flex-shrink-0 py-10 bg-white rounded-r-3xl"
+        style={{ marginTop: 50, backgroundColor: '#F1F3F8'}}
+      >
+        <div className="mb-10 flex flex-col items-start">
+          <div className="text-2xl font-bold text-gray-800 text-left leading-tight">
+            로그인
           </div>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="text-sm font-medium" htmlFor="email">
-                이메일 (아이디)
-              </label>
-              <IconInput
-                id="email"
-                type="email"
-                placeholder="example@email.com"
-                icon={<Mail className="h-4 w-4 text-gray-400" />}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                autoComplete="email"
-              />
+        </div>
+      </aside> */}
+
+      {/* 메인 콘텐츠 */}
+      <div className="mx-auto w-full flex-1 min-w-0 pl-10 pt-24 max-w-[720px]">
+        <div className="bg-white rounded-3xl w-full px-16 py-16 shadow min-h-[500px] flex items-center" style={{ borderRadius: '4rem' }}>
+          <div className="flex flex-col items-center justify-center w-full gap-4">
+            {/* 로그인 폼 */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">로그인</h2>
+              <p className="text-gray-600 mt-2">계정에 로그인하세요</p>
             </div>
-            <div>
-              <label className="text-sm font-medium" htmlFor="password">
-                비밀번호
-              </label>
-              <div className="relative">
+            
+            <form className="w-full max-w-sm" onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="text-sm font-medium text-gray-700 mb-6" htmlFor="email">
+                  아이디 (이메일)
+                </label>
                 <IconInput
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="비밀번호를 입력하세요"
-                  icon={<Lock className="h-4 w-4 text-gray-400" />}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  autoComplete="current-password"
+                  id="email"
+                  type="email"
+                  placeholder="example@email.com"
+                  icon={<Mail className="h-4 w-4 text-gray-400" />}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  autoComplete="email"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
-                </button>
               </div>
+              <div className="mb-0">
+                <label className="text-sm font-medium text-gray-700 mb-2" htmlFor="password">
+                  비밀번호
+                </label>
+                <div className="relative">
+                  <IconInput
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="비밀번호를 입력하세요"
+                    icon={<Lock className="h-4 w-4 text-gray-400" />}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-2 mt-10 rounded-xl bg-[#0046ff] py-3 font-semibold text-white hover:bg-[#0046ff] disabled:opacity-60 transition-colors"
+                disabled={loading}
+              >
+                {loading ? "로그인 중..." : "로그인"}
+              </button>
+            </form>
+            
+            <div>
+              <p className="text-center text-sm text-gray-600">
+                  계정이 없으신가요?
+                  <Link
+                    href="/signup"
+                    className="text-sm text-[#0046ff] hover:bold ml-4"
+                  >
+                    회원가입
+                  </Link>
+                </p>
             </div>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-              disabled={loading}
-            >
-              {loading ? "로그인 중..." : "로그인"}
-            </button>
-          </form>
-          <p className="text-center text-sm">
-            계정이 없으신가요?{" "}
-            <Link
-              href="/signup"
-              className="font-semibold text-blue-600 hover:underline"
-            >
-              회원가입
-            </Link>
-          </p>
+          </div>
         </div>
       </div>
-      <div className="bg-white"></div>
     </div>
   );
 } 
