@@ -37,7 +37,7 @@ export const useSignUpForm = () => {
             name,
           }),
         }
-      );
+      );ashed changes
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || "회원가입 실패");

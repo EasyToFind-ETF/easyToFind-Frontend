@@ -50,7 +50,9 @@ export default function HoldingTable({
         <thead className="bg-gray-50">
           <tr>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">ETF명</th>
+            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">
+              ETF명
+            </th>
             <th className="py-3 px-2 font-semibold text-gray-900">종목명</th>
             <th className="py-3 px-2 font-semibold text-gray-900">비중(%)</th>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
@@ -68,11 +70,16 @@ export default function HoldingTable({
                     checked={selected.includes(i)}
                     onChange={() => toggleSelect(i)}
                     className="accent-blue-500 w-5 h-5"
-                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                    disabled={
+                      !selected.includes(i) && selected.length >= MAX_SELECT
+                    }
                   />
                 </td>
                 <td className="py-3 px-2 text-left font-medium">
-                  <Link href={`/etfs/${holding.etfCode}`} className="text-black hover:underline">
+                  <Link
+                    href={`/etfs/${holding.etfCode}`}
+                    className="text-black hover:underline"
+                  >
                     {holding.etfName}
                   </Link>
                 </td>
@@ -82,7 +89,9 @@ export default function HoldingTable({
                 <td className="py-3 px-2">
                   <span
                     style={{ cursor: "pointer" }}
-                    onClick={() => onToggleFavorite(holding.etfCode, isFavorite)}
+                    onClick={() =>
+                      onToggleFavorite(holding.etfCode, isFavorite)
+                    }
                     className={isFavorite ? "text-red-500" : "text-gray-300"}
                     title={isFavorite ? "관심 해제" : "관심 등록"}
                   >
@@ -106,7 +115,9 @@ export default function HoldingTable({
           }}
           className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">{selected.length}/{MAX_SELECT}개 선택됨</span>
+          <span className="text-blue-700 font-semibold">
+            {selected.length}/{MAX_SELECT}개 선택됨
+          </span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
             onClick={onCompare}
@@ -132,4 +143,4 @@ export default function HoldingTable({
       )}
     </div>
   );
-} 
+}

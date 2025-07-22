@@ -26,7 +26,11 @@ export default function ETFTable({
   const renderRate = (value: string) => {
     const number = parseFloat(value);
     if (isNaN(number)) return value;
-    return <span className={number >= 0 ? "text-red-600" : "text-blue-600"}>{value}</span>;
+    return (
+      <span className={number >= 0 ? "text-red-600" : "text-blue-600"}>
+        {value}
+      </span>
+    );
   };
 
   const toggleSelect = (idx: number) => {
@@ -56,13 +60,22 @@ export default function ETFTable({
         <thead className="bg-gray-50">
           <tr>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">상품명</th>
-            <th className="py-3 px-2 font-semibold text-gray-900">기준가(원)</th>
-            {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map((period) => (
-              <th key={period} className="py-3 px-2 font-semibold text-gray-900">
-                {period}
-              </th>
-            ))}
+            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">
+              상품명
+            </th>
+            <th className="py-3 px-2 font-semibold text-gray-900">
+              기준가(원)
+            </th>
+            {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map(
+              (period) => (
+                <th
+                  key={period}
+                  className="py-3 px-2 font-semibold text-gray-900"
+                >
+                  {period}
+                </th>
+              )
+            )}
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
           </tr>
         </thead>
@@ -78,15 +91,24 @@ export default function ETFTable({
                     checked={selected.includes(i)}
                     onChange={() => toggleSelect(i)}
                     className="accent-blue-500 w-5 h-5"
-                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                    disabled={
+                      !selected.includes(i) && selected.length >= MAX_SELECT
+                    }
                   />
                 </td>
                 <td className="py-3 px-2 text-left font-medium">
-                <Link href={`/etfs/${etf.etfCode}`} className="text-black hover:underline">
-                  {etf.name}
-                </Link>
+                  <Link
+                    href={`/etfs/${etf.etfCode}`}
+                    className="text-black hover:underline"
+                  >
+                    {etf.name}
+                  </Link>
                 </td>
-                <td className="py-3 px-2">{isNaN(Number(etf.nav)) ? etf.nav : Number(etf.nav).toLocaleString()}</td>
+                <td className="py-3 px-2">
+                  {isNaN(Number(etf.nav))
+                    ? etf.nav
+                    : Number(etf.nav).toLocaleString()}
+                </td>
                 <td className="py-3 px-2">{renderRate(etf.week1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month3)}</td>
@@ -122,7 +144,9 @@ export default function ETFTable({
           }}
           className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">{selected.length}/{MAX_SELECT}개 선택됨</span>
+          <span className="text-blue-700 font-semibold">
+            {selected.length}/{MAX_SELECT}개 선택됨
+          </span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
             onClick={onCompare} // alert 대신 onCompare 호출
@@ -149,4 +173,3 @@ export default function ETFTable({
     </div>
   );
 }
-  

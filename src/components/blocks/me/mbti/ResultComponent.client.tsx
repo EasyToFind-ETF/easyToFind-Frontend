@@ -19,20 +19,11 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   //결과 불러오기
   useEffect(() => {
     const fetchData = async () => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      let url = `${API_BASE_URL}/api/recommendation`;
-      let body: any = {};
-  
-
-      if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.stabilityScore = riskScore[0];
-        body.liquidityScore = riskScore[1];
-        body.growthScore = riskScore[2];
-        body.divScore = riskScore[3];
-      }
+      let url = "http://localhost:3001/api/recommendation";
+      let body: any = { riskScore };
 
       if (selectedTab === "theme") {
-        url = `${API_BASE_URL}/api/recommendation/theme`;
+        url = "http://localhost:3001/api/recommendation/theme";
         body.theme = theme;
       }
 
@@ -52,14 +43,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   //결과 저장
   useEffect(() => {
     const fetchData = async () => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      // riskScore 정규화 함수
-      const normalize = (arr: number[]) => {
-        const sum = arr.reduce((a, b) => a + b, 0);
-        return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
-      };
-      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
-      const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
+      const response = await fetch('http://localhost:3001/api/me/mbti', {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
