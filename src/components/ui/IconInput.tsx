@@ -12,7 +12,7 @@ export const IconInput = React.forwardRef<HTMLInputElement, IconInputProps>(
           {icon}
         </div>
         <input
-          className={`w-full rounded-xl border border-gray-300 py-2 pl-10 pr-3 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 ${className}`}
+          className={`w-full rounded-xl border border-gray-300 px-3 py-3 pl-10 pr-3 focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 text-sm [&:not(:placeholder-shown)]:text-gray-900 ${className}`}
           ref={ref}
           {...props}
         />
