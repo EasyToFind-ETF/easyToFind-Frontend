@@ -1,35 +1,12 @@
 "use client"
 import { X } from "lucide-react"
-import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-
-interface ETF {
-  id: string
-  name: string
-  code: string
-  price: number
-  returns: {
-    "1주": number
-    "1개월": number
-    "3개월": number
-    "6개월": number
-    "1년": number
-    "3년": number
-    상장이후: number
-  }
-  overallScore: number
-  sharpRatio: number
-  maxDrawdown: number
-  volatility: number
-  netAssets: string
-  listingDate: string
-  managementCompany: string
-}
+import { ETFCompare } from "@/types/ETFCompare"
 
 interface ETFComparisonViewProps {
-  etfs: ETF[]
+  etfs: ETFCompare[]
   onRemoveETF?: (etfId: string) => void
   onBackToList?: () => void
 }
@@ -94,7 +71,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
     {
       label: "종합점수",
       key: "overallScore",
-      render: (etf: ETF) => {
+      render: (etf: ETFCompare) => {
         const risk = getRiskLevel(etf.overallScore)
         return (
           <div className="flex flex-col items-center gap-2">
@@ -107,7 +84,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
     {
       label: "기준가",
       key: "price",
-      render: (etf: ETF) => (
+      render: (etf: ETFCompare) => (
         <div className="text-center">
           <span className="font-bold text-lg">{etf.price != null ? etf.price.toLocaleString() : "-"}</span>
           <span className="text-gray-500 text-sm ml-1">원</span>
@@ -117,7 +94,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
     {
       label: "최대낙폭",
       key: "maxDrawdown",
-      render: (etf: ETF) => (
+      render: (etf: ETFCompare) => (
         <div className="text-center">
           <span className="font-medium text-blue-600">{etf.maxDrawdown}%</span>
         </div>
@@ -126,7 +103,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
     {
       label: "샤프비율",
       key: "sharpRatio",
-      render: (etf: ETF) => (
+      render: (etf: ETFCompare) => (
         <div className="text-center">
           <span className="font-medium text-green-600">{etf.sharpRatio}</span>
         </div>
@@ -135,25 +112,32 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
     {
       label: "변동성",
       key: "volatility",
-      render: (etf: ETF) => (
+      render: (etf: ETFCompare) => (
         <div className="text-center">
           <span className="font-medium text-blue-600">{etf.volatility}%</span>
         </div>
       ),
     },
     {
-      label: "순자산 총액",
-      key: "netAssets",
-      render: (etf: ETF) => (
-        <div className="text-center">
-          <span className="font-medium">{etf.netAssets}</span>
-        </div>
-      ),
+        label: "순자산 총액",
+        key: "netAssets",
+        render: (etf: ETFCompare) => {
+          const inHundredMillion = (Number(etf.netAssets ?? 0) / 100000000).toLocaleString("ko-KR", {
+            maximumFractionDigits: 2,
+          });
+      
+          return (
+            <div className="text-center">
+              <span className="font-bold text-lg">{inHundredMillion}</span>
+              <span className="text-gray-500 text-sm ml-1">억 원</span>
+            </div>
+          );
+        },
     },
     {
       label: "자산운용사",
       key: "managementCompany",
-      render: (etf: ETF) => (
+      render: (etf: ETFCompare) => (
         <div className="text-center">
           <span className="font-medium text-sm">{etf.managementCompany}</span>
         </div>
@@ -230,10 +214,10 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
           </CardContent>
         </Card>
 
+        <h3 className="text-lg font-bold mt-8">기간별 수익률 비교</h3>
         {/* Additional Performance Comparison */}
-        <Card className="mt-6 shadow-sm">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-bold mb-4">기간별 수익률 비교</h3>
+        <Card className="mt-4 shadow-sm overflow-hidden">
+          <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>

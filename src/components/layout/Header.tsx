@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/ui";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserCircle2 } from "lucide-react";
 
 
 // ✅ 스크롤 시 헤더 숨김 커스텀 훅
@@ -101,14 +102,27 @@ export const Header = () => {
 
         {/* 로그인/로그아웃 UI */}
         <div className="flex items-center justify-end gap-2">
-          {isLoggedIn ? (
-            <button onClick={handleLogout} className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그아웃</button>
-          ) : (
-            <>
-              <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그인</Link>
-              <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">회원가입</Link>
-            </>
-          )}
+        {isLoggedIn ? (
+    <>
+      <button
+        onClick={handleLogout}
+        className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold"
+      >
+        로그아웃
+      </button>
+      <button
+        onClick={() => router.push("/mypage")}
+        className="hover:opacity-80"
+      >
+        <UserCircle2 className="w-8 h-8 text-gray-400" />
+      </button>
+      </>
+      ) : (
+      <>
+        <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그인</Link>
+        <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">회원가입</Link>
+      </>
+      )}
         </div>
       </div>
     </header>
