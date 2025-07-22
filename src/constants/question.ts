@@ -52,7 +52,7 @@ export const mbtiQuestions: Question[] = [
       { text: "이럴 때일수록 더 공격적으로 투자", weights: [1, 1, 5, 2] },
       { text: "분산된 자산으로 리스크를 줄인다", weights: [3, 2, 1, 5] },
     ],
-    icon: "/mbti2.png",
+    icon: "/mbtiTest10.png",
   },
   {
     type: "risk",
@@ -63,7 +63,7 @@ export const mbtiQuestions: Question[] = [
       { text: "언제든 사고팔 수 있는 유동 자산이다.", weights: [2, 5, 1, 2] },
       { text: "다양한 자산에 한번에 투자할 수 있는 수단이다.", weights: [2, 2, 1, 5] },
     ],
-    icon: "/mbti3.png",
+    icon: "/mbtiTest6.png",
   },
   {
     type: "risk",
@@ -74,7 +74,7 @@ export const mbtiQuestions: Question[] = [
       { text: "조금 불안하지만 단기 고수익 기대", weights: [1, 2, 5, 1] },
       { text: "다양한 자산에 골고루 담긴 ETF", weights: [3, 2, 1, 5] },
     ],
-    icon: "/mbti4.png",
+    icon: "/mbtiTest6.png",
   },
   {
     type: "risk",
@@ -85,7 +85,7 @@ export const mbtiQuestions: Question[] = [
       { text: "어차피 시장에 따라 움직일 것 같다", weights: [2, 2, 3, 3] },
       { text: "분산이 안되면 리스크가 크다", weights: [3, 1, 1, 5] },
     ],
-    icon: "/mbti5.png",
+    icon: "/mbtiTest5.png",
   },
 
   // ✅ 테마 판단
