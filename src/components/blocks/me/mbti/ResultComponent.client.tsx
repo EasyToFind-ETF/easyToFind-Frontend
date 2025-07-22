@@ -14,10 +14,6 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   const [selectedTab, setSelectedTab] = useState<"theme" | "type">("theme");
   console.log("riskScore result", riskScore);
 
-  const normalizeRiskScore = (scores: number[]) => {
-    const sum = scores.reduce((acc, val) => acc + val, 0);
-    return scores.map((val) => parseFloat((val / sum).toFixed(4))); // 소수점 4자리까지
-  };
   
   const [etfList, setEtfList] = useState<any[]>([]);
   //결과 불러오기
@@ -26,14 +22,13 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       let url = `${API_BASE_URL}/api/recommendation`;
       let body: any = {};
-      let normalized = [0.25, 0.25, 0.25, 0.25]; //디폴트값
+  
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        normalized = normalizeRiskScore(riskScore);
-        body.returnRate = normalized[0];
-        body.liquidity = normalized[1];
-        body.trackingError = normalized[2];
-        body.aum = normalized[3];
+        body.stabilityScore = riskScore[0];
+        body.liquidityScore = riskScore[1];
+        body.growthScore = riskScore[2];
+        body.divScore = riskScore[3];
       }
 
       if (selectedTab === "theme") {
@@ -58,6 +53,12 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   useEffect(() => {
     const fetchData = async () => {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      // riskScore 정규화 함수
+      const normalize = (arr: number[]) => {
+        const sum = arr.reduce((a, b) => a + b, 0);
+        return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
+      };
+      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
       const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
@@ -66,14 +67,14 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          returnRate: riskScore[0],
-          liquidity: riskScore[1],
-          trackingError: riskScore[2],
-          aum: riskScore[3],
+          stabilityWeight,
+          liquidityWeight,
+          growthWeight,
+          divWeight,
         }),
       });
       const data = await response.json();
-      console.log(data);
+      console.log("normal",stabilityWeight, liquidityWeight, growthWeight, divWeight);
     };
     fetchData();
   }, []);
@@ -141,10 +142,10 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
             name={etf.etf_name}
             score={parseFloat(etf.total_score)}
             details={[
-              { label: "수익률", value: etf.return_rate, color: "#22c55e" },
-              { label: "유동성", value: etf.liquidity, color: "#22c55e" },
-              { label: "순자산총액", value: formatToEokwon(etf.aum), color: "#22c55e" },
-              { label: "안정성점수", value: etf.stability_risk_score, color: "#22c55e" },
+              { label: "안정성", value: etf.stability_score, color: "#22c55e" },
+              { label: "유동성", value: etf.liquidity_score, color: "#22c55e" },
+              { label: "성장성", value: etf.growth_score, color: "#22c55e" },
+              { label: "분산도", value: etf.diversification_score, color: "#22c55e" },
             ]}
           />
         ))}
