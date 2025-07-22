@@ -14,10 +14,6 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   const [selectedTab, setSelectedTab] = useState<"theme" | "type">("theme");
   console.log("riskScore result", riskScore);
 
-  const normalizeRiskScore = (scores: number[]) => {
-    const sum = scores.reduce((acc, val) => acc + val, 0);
-    return scores.map((val) => parseFloat((val / sum).toFixed(4))); // 소수점 4자리까지
-  };
   
   const [etfList, setEtfList] = useState<any[]>([]);
   //결과 불러오기
@@ -26,14 +22,13 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       let url = `${API_BASE_URL}/api/recommendation`;
       let body: any = {};
-      let normalized = [0.25, 0.25, 0.25, 0.25]; //디폴트값
+  
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        normalized = normalizeRiskScore(riskScore);
-        body.returnRate = normalized[0];
-        body.liquidity = normalized[1];
-        body.trackingError = normalized[2];
-        body.aum = normalized[3];
+        body.returnRate = riskScore[0];
+        body.liquidity = riskScore[1];
+        body.trackingError = riskScore[2];
+        body.aum = riskScore[3];
       }
 
       if (selectedTab === "theme") {
@@ -66,10 +61,10 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          returnRate: riskScore[0],
-          liquidity: riskScore[1],
-          trackingError: riskScore[2],
-          aum: riskScore[3],
+          stabilityWeight: riskScore[0],
+          liquidityWeight: riskScore[1],
+          growthWeight: riskScore[2],
+          divWeight: riskScore[3],
         }),
       });
       const data = await response.json();
@@ -141,10 +136,10 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
             name={etf.etf_name}
             score={parseFloat(etf.total_score)}
             details={[
-              { label: "수익률", value: etf.return_rate, color: "#22c55e" },
-              { label: "유동성", value: etf.liquidity, color: "#22c55e" },
-              { label: "순자산총액", value: formatToEokwon(etf.aum), color: "#22c55e" },
-              { label: "안정성점수", value: etf.stability_risk_score, color: "#22c55e" },
+              { label: "안정성", value: etf.stability_score, color: "#22c55e" },
+              { label: "유동성", value: etf.liquidity_score, color: "#22c55e" },
+              { label: "성장성", value: etf.growth_score, color: "#22c55e" },
+              { label: "분산도", value: etf.diversification_score, color: "#22c55e" },
             ]}
           />
         ))}
