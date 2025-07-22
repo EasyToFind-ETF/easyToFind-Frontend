@@ -19,7 +19,7 @@ export const useSignUpForm = () => {
       alert("이용약관에 동의해야 합니다.");
       return;
     }
-    if (!email || !password || !birth) {
+    if (!name || !email || !password || !birth) {
       alert("이메일, 비밀번호, 생년월일을 모두 입력하세요.");
       return;
     }
@@ -30,11 +30,11 @@ export const useSignUpForm = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include", // 쿠키 포함
           body: JSON.stringify({
             user_email: email,
             password,
             birth,
+            name,
           }),
         }
       );
@@ -42,15 +42,8 @@ export const useSignUpForm = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || "회원가입 실패");
       }
-
-      // 회원가입 성공 후 자동 로그인
-      alert("회원가입이 완료되었습니다! 자동으로 로그인됩니다.");
-
-      // 쿠키 기반 인증으로 통일
-      // 서버에서 Set-Cookie 헤더로 HttpOnly + Secure 쿠키를 설정하므로
-      // 클라이언트에서 별도로 쿠키를 설정할 필요가 없습니다.
-
-      // 인증 상태 변경 이벤트 발생
+      alert("회원가입이 완료되었습니다! 로그인 해주세요.");
+      localStorage.setItem("isLoggedIn", "true");
       window.dispatchEvent(new Event("authChanged"));
       router.push("/");
     } catch (err: any) {
