@@ -136,7 +136,10 @@ export default function FindPage() {
         codes.map((code) => {
           const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
           console.log(`🚀 API 호출: ${url}`);
-          return fetch(url).then((res) => res.json());
+          return fetch(url, {
+            method: "GET",
+            credentials: "include", // ⭐️ 쿠키 포함해서 보냄!
+          }).then((res) => res.json());
         })
       );
   

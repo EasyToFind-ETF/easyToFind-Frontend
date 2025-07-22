@@ -57,11 +57,9 @@ const formatReturn = (value: number) => {
 }
 
 const getRiskLevel = (score: number) => {
-  if (score >= 90) return { level: 1, text: "매우 낮은 위험", color: "#10b981" }
-  if (score >= 80) return { level: 2, text: "낮은 위험", color: "#3b82f6" }
-  if (score >= 70) return { level: 3, text: "보통 위험", color: "#f59e0b" }
-  if (score >= 60) return { level: 4, text: "높은 위험", color: "#ef4444" }
-  return { level: 5, text: "매우 높은 위험", color: "#dc2626" }
+  if (score >= 65) return { level: 1, color: "#22c55e" }
+  if (score >= 30) return { level: 2, color: "#f59e0b" }
+  return { level: 3, color: "#ef4444" }
 }
 
 export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: ETFComparisonViewProps) {
@@ -76,7 +74,6 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
         return (
           <div className="flex flex-col items-center gap-2">
             <CircularProgress value={etf.overallScore} color={risk.color} />
-            <span className="text-xs text-gray-500">{risk.text}</span>
           </div>
         )
       },
@@ -86,7 +83,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
       key: "price",
       render: (etf: ETFCompare) => (
         <div className="text-center">
-          <span className="font-bold text-lg">{etf.price != null ? etf.price.toLocaleString() : "-"}</span>
+          <span className="font-bold text-lg">{etf.price != null ? Number(etf.price).toLocaleString() : "-"}</span>
           <span className="text-gray-500 text-sm ml-1">원</span>
         </div>
       ),

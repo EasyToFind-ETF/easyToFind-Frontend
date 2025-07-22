@@ -51,8 +51,8 @@ const ETFScoreCircle = ({ score }: { score: number }) => {
   const strokeDashoffset = strokeDasharray - (strokeDasharray * percentage) / 100
 
   const getScoreColor = (score: number) => {
-    if (score >= 8) return "#22c55e"
-    if (score >= 6) return "#f59e0b"
+    if (score >= 65) return "#22c55e"
+    if (score >= 30) return "#f59e0b"
     return "#ef4444"
   }
 
@@ -88,42 +88,40 @@ const ETFScoreCircle = ({ score }: { score: number }) => {
 export default function MyPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodKey>("month1")
   const [etfCards, setEtfCards] = useState<ETFData[]>([])
-
   const [userName, setUserName] = useState<string>("")
   const [mbtiType, setMbtiType] = useState<string>("")
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-        try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mypage`, {
-            credentials: "include",
-          })
-          const json = await res.json()
-          if (!res.ok) throw new Error("마이페이지 정보 조회 실패")
-  
-          const { name, mbti_type } = json.data
-          setUserName(name)
-          setMbtiType(mbti_type)
-        } catch (err) {
-          console.log("💥 유저 정보 로딩 실패:", err)
-        }
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mypage`, {
+          credentials: "include",
+        })
+        const json = await res.json()
+        if (!res.ok) throw new Error("마이페이지 정보 조회 실패")
+
+        const { name, mbti_type } = json.data
+        setUserName(name)
+        setMbtiType(mbti_type)
+      } catch (err) {
+        console.log("💥 유저 정보 로딩 실패:", err)
       }
+    }
 
     const fetchFavoriteEtfs = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/favorites`, {
-            credentials: "include",
-          })
-          const json = await res.json()
-          
-          if (!res.ok) {
-            throw new Error("좋아요 ETF 불러오기 실패")
-          }
-          
-          const favoriteCodes: string[] = json.data
+          credentials: "include",
+        })
+        const json = await res.json()
+        if (!res.ok) throw new Error("좋아요 ETF 불러오기 실패")
+
+        const favoriteCodes: string[] = json.data
 
         const etfPromises = favoriteCodes.map((code) =>
-          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`, { credentials: "include" }).then((res) => res.json())
+          fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`, {
+            credentials: "include",
+          }).then((res) => res.json())
         )
 
         const responses = await Promise.all(etfPromises)
@@ -137,15 +135,31 @@ export default function MyPage() {
         console.log("💥 ETF 불러오기 실패:", err)
       }
     }
+
     fetchUserInfo()
     fetchFavoriteEtfs()
   }, [])
 
-  const toggleLike = (etf_code: string) => {
-    setEtfCards((cards) =>
-      cards.map((card) => (card.etf_code === etf_code ? { ...card, isLiked: !card.isLiked } : card)),
-    )
-  }
+  const toggleLike = async (etf_code: string, isLiked: boolean) => {
+    try {
+      const method = isLiked ? "DELETE" : "POST";
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/favorites/${etf_code}`, {
+        method,
+        credentials: "include",
+      });
+  
+      if (!res.ok) throw new Error("서버 응답 오류");
+  
+      // 성공 시 UI 업데이트
+      setEtfCards((cards) =>
+        cards.map((card) =>
+          card.etf_code === etf_code ? { ...card, isLiked: !card.isLiked } : card
+        )
+      );
+    } catch (err) {
+      console.error("❌ 관심 ETF 토글 실패:", err);
+    }
+  };
 
   const formatPrice = (price: string) => {
     return Number.parseInt(price).toLocaleString("ko-KR")
@@ -165,15 +179,14 @@ export default function MyPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center py-8">
           <p className="text-lg text-gray-700">
-            <span className="text-2xl font-semibold text-blue-600">{userName}</span>님의 투자 유형은{" "}
-            <span className="text-2xl font-bold text-green-600">"{mbtiType}"</span>입니다.
+            <span className="text-2xl font-semibold text-blue-600">{userName}</span>님의 투자 유형은 
+            <span className="text-2xl font-bold text-green-600"> "{mbtiType}"</span>입니다.
           </p>
         </div>
 
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h2 className="text-xl font-bold text-gray-900">관심 ETF</h2>
-
             <div className="flex flex-wrap gap-2">
               {periodOptions.map((period) => (
                 <Button
@@ -181,9 +194,7 @@ export default function MyPage() {
                   variant={selectedPeriod === period.key ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedPeriod(period.key)}
-                  className={`text-xs ${
-                    selectedPeriod === period.key ? "bg-black text-white hover:bg-black" : "text-gray-600"
-                  }`}
+                  className={`text-xs ${selectedPeriod === period.key ? "bg-black text-white hover:bg-black" : "text-gray-600"}`}
                 >
                   {period.shortLabel}
                 </Button>
@@ -203,7 +214,12 @@ export default function MyPage() {
                       <div className="flex-1 pt-2">
                         <h3 className="font-bold text-base text-gray-900 leading-tight">{etf.etf_name}</h3>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => toggleLike(etf.etf_code)} className="p-2 h-auto">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleLike(etf.etf_code, etf.isLiked)}
+                        className="p-2 h-auto"
+                      >
                         <Heart className={`w-5 h-5 ${etf.isLiked ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
                       </Button>
                     </div>
@@ -220,14 +236,22 @@ export default function MyPage() {
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1 pt-4">
-                          {returnValue > 0 ? (
-                            <TrendingUp className="w-4 h-4 text-red-500" />
+                          {isNaN(returnValue) ? (
+                            <span className="text-sm font-medium text-gray-400">–</span>
                           ) : (
-                            <TrendingDown className="w-4 h-4 text-blue-500" />
+                            <>
+                              {returnValue > 0 ? (
+                                <TrendingUp className="w-4 h-4 text-red-500" />
+                              ) : (
+                                <TrendingDown className="w-4 h-4 text-blue-500" />
+                              )}
+                              <span
+                                className={`text-sm font-medium ${returnValue > 0 ? "text-red-500" : "text-blue-500"}`}
+                              >
+                                {formatChange(currentReturn)}%
+                              </span>
+                            </>
                           )}
-                          <span className={`text-sm font-medium ${returnValue > 0 ? "text-red-500" : "text-blue-500"}`}>
-                            {formatChange(currentReturn)}%
-                          </span>
                         </div>
                         <div className="text-xs text-gray-500">{getCurrentPeriodLabel()}</div>
                       </div>

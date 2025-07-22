@@ -34,7 +34,6 @@ export const fetchEtfData = async (params: any): Promise<ETFView[]> => {
     if (params.assetClass) queryParams.append("assetClass", params.assetClass);
     if (params.theme) queryParams.append("theme", params.theme);
     if (params.isFavorite) queryParams.append("isFavorite", "true");
-
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/holdings?${queryParams.toString()}`;
 
     console.log("📡 [ETF API] 요청함!! URL:", url);

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 type Props = {
     viewMode: string;
     setViewMode: (mode: string) => void;
@@ -5,6 +7,7 @@ type Props = {
   };
   
   export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
+    const yesterday = dayjs().subtract(1, "day").format("YY.MM.DD");
     return (
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -28,7 +31,7 @@ type Props = {
           </div>
         </div>
         <div className="text-xs text-gray-500 ml-2 whitespace-nowrap">
-          기준가(원), 순자산(억), 수익률: 25.0707
+          기준가(원), 수익률: {yesterday}
         </div>
       </div>
     );
