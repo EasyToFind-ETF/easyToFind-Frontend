@@ -32,22 +32,22 @@ export default function TestComponentClient() {
   }
 
   const current = mbtiQuestions[step];
-  // 점수 → 투자유형 분류
   function getRiskType(scores: number[]): string {
     const maxIdx = scores.indexOf(Math.max(...scores));
     switch (maxIdx) {
       case 0:
-        return "수익률형";
+        return "안정성 우선형";      
       case 1:
-        return "유동성형";
+        return "단기매매 중시형";    // 유동성 중심
       case 2:
-        return "추적오차형";
+        return "고수익 추구형";    // 추적오차 중심
       case 3:
-        return "규모형";
+        return "규모중심 추구형";      // 규모/안정성 중심
       default:
-        return "기타";
+        return "균형 투자형";
     }
   }
+  
 
 
   //점수바뀔 때마다 투자유형 변경

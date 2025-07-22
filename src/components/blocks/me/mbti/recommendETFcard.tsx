@@ -1,9 +1,11 @@
 import React from "react";
 import CircleProgress from "./CircleProgress";
+import { useRouter } from "next/navigation";
 
 interface ETFCardProps {
   name: string;
   score: number;
+  etf_code: string;
   details: {
     label: string;
     value: number;
@@ -11,9 +13,18 @@ interface ETFCardProps {
   }[];
 }
 
-export default function ETFCard({ name, score, details }: ETFCardProps) {
+export default function ETFCard({ name, score, etf_code, details }: ETFCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/etfs/${etf_code}`);
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow p-6 flex flex-col min-w-[800px]">
+    <div 
+      className="bg-white rounded-2xl shadow p-6 flex flex-col min-w-[800px] cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={handleClick}
+    >
       <h2 className="text-2xl font-bold mb-2">{name}</h2>
       <div className="flex items-center mb-4">
         {/* 원형 차트로 점수 표시 */}

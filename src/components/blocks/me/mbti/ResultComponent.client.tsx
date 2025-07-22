@@ -141,11 +141,12 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
             key={etf.etf_name + idx}
             name={etf.etf_name}
             score={parseFloat(etf.total_score)}
+            etf_code={etf.etf_code}
             details={[
               { label: "안정성", value: etf.stability_score, color: "#22c55e" },
               { label: "유동성", value: etf.liquidity_score, color: "#22c55e" },
               { label: "성장성", value: etf.growth_score, color: "#22c55e" },
-              { label: "분산도", value: etf.diversification_score, color: "#22c55e" },
+              { label: "분산투자", value: etf.diversification_score, color: "#22c55e" },
             ]}
           />
         ))}
