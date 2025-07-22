@@ -560,39 +560,39 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
           </div>
         </div>
         
-        <hr className="border-0 border-gray-200 mb-32" />
-
-        {/* 기간별 수익률 테이블 (카드 내부, 그래프 아래) */}
+        {/* 기간별 수익률 제목과 hr을 카드 바깥으로 이동 */}
         <div className="mt-16">
           <div className="text-2xl font-semibold mb-4">기간별 수익률</div>
           <hr className="border-b border-gray-200 mb-10" />
-          <div className="flex w-full justify-end mb-2">
-            <span className="text-sm text-gray-400">단위(%)</span>
-          </div>
-
-          {/* 데이터 테이블 */}
-          {!loading && !error && returnsData && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-center border-separate border-spacing-0">
-                <thead>
-                  <tr className="bg-[#F6F7F9] text-gray-500 text-base">
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">종목명</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">1개월</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">3개월</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">6개월</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">1년</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">3년</th>
-                    <th className="py-3 px-4 font-medium border-b border-gray-200">5년</th>
-                  </tr>
-                </thead>
-                <tbody className="text-base">
-                  {renderTableRow('NAV', 'nav')}
-                  {renderTableRow('시장가격(종가)', 'market')}
-                  {renderTableRow('기초지수', 'index')}
-                </tbody>
-              </table>
+          {/* 카드 시작 */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <div className="flex w-full justify-end mb-2">
+              <span className="text-sm text-gray-400">단위(%)</span>
             </div>
-          )}
+            {/* 데이터 테이블 */}
+            {!loading && !error && returnsData && (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-center border-separate border-spacing-0">
+                  <thead>
+                    <tr className="bg-[#F6F7F9] text-gray-500 text-base">
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">종목명</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">1개월</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">3개월</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">6개월</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">1년</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">3년</th>
+                      <th className="py-3 px-4 font-medium border-b border-gray-200">5년</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-base">
+                    {renderTableRow('NAV', 'nav')}
+                    {renderTableRow('시장가격(종가)', 'market')}
+                    {renderTableRow('기초지수', 'index')}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
