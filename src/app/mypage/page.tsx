@@ -45,14 +45,14 @@ const periodOptions: PeriodOption[] = [
 ]
 
 const ETFScoreCircle = ({ score }: { score: number }) => {
-  const percentage = (score / 10) * 100
   const radius = 40
   const strokeDasharray = 2 * Math.PI * radius
-  const strokeDashoffset = strokeDasharray - (strokeDasharray * percentage) / 100
+  const percentage = Math.min(Math.max(score, 0), 100);
+  const strokeDashoffset = strokeDasharray * (1 - percentage / 100);
 
   const getScoreColor = (score: number) => {
-    if (score >= 8) return "#22c55e"
-    if (score >= 6) return "#f59e0b"
+    if (score >= 65) return "#22c55e"
+    if (score >= 30) return "#f59e0b"
     return "#ef4444"
   }
 
@@ -141,10 +141,29 @@ export default function MyPage() {
     fetchFavoriteEtfs()
   }, [])
 
-  const toggleLike = (etf_code: string) => {
-    setEtfCards((cards) =>
-      cards.map((card) => (card.etf_code === etf_code ? { ...card, isLiked: !card.isLiked } : card)),
-    )
+  const toggleLike = async (etf_code: string) => {
+    const target = etfCards.find((etf) => etf.etf_code === etf_code)
+    if (!target) return
+  
+    const isNowLiked = !target.isLiked
+    const method = isNowLiked ? "POST" : "DELETE"
+  
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/favorites/${etf_code}`, {
+        method,
+        credentials: "include",
+      })
+  
+      if (!res.ok) throw new Error("관심 ETF 토글 실패")
+  
+      setEtfCards((cards) =>
+        cards.map((card) =>
+          card.etf_code === etf_code ? { ...card, isLiked: isNowLiked } : card
+        )
+      )
+    } catch (err) {
+      console.error("💥 관심 ETF 요청 실패:", err)
+    }
   }
 
   const formatPrice = (price: string) => {

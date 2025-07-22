@@ -136,7 +136,9 @@ export default function FindPage() {
         codes.map((code) => {
           const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
           console.log(`🚀 API 호출: ${url}`);
-          return fetch(url).then((res) => res.json());
+          return fetch(url, {
+            credentials: "include", // ← 이게 핵심!
+          }).then((res) => res.json());
         })
       );
   
