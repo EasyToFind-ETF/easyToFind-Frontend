@@ -25,10 +25,10 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.returnRate = riskScore[0];
-        body.liquidity = riskScore[1];
-        body.trackingError = riskScore[2];
-        body.aum = riskScore[3];
+        body.stabilityScore = riskScore[0];
+        body.liquidityScore = riskScore[1];
+        body.growthScore = riskScore[2];
+        body.divScore = riskScore[3];
       }
 
       if (selectedTab === "theme") {
@@ -53,6 +53,12 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   useEffect(() => {
     const fetchData = async () => {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      // riskScore 정규화 함수
+      const normalize = (arr: number[]) => {
+        const sum = arr.reduce((a, b) => a + b, 0);
+        return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
+      };
+      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
       const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
@@ -61,14 +67,14 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          stabilityWeight: riskScore[0],
-          liquidityWeight: riskScore[1],
-          growthWeight: riskScore[2],
-          divWeight: riskScore[3],
+          stabilityWeight,
+          liquidityWeight,
+          growthWeight,
+          divWeight,
         }),
       });
       const data = await response.json();
-      console.log(data);
+      console.log("normal",stabilityWeight, liquidityWeight, growthWeight, divWeight);
     };
     fetchData();
   }, []);
