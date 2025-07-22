@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ETFView } from "../../types/ETFView";
+import Link from "next/link";
 
 const MAX_SELECT = 5;
 
@@ -80,7 +81,11 @@ export default function ETFTable({
                     disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
                   />
                 </td>
-                <td className="py-3 px-2 text-left font-medium">{etf.name}</td>
+                <td className="py-3 px-2 text-left font-medium text-gray-900 hover:underline cursor-pointer">
+                  <Link href={`/etfs/${etf.etfCode}`}>
+                    {etf.name}
+                  </Link>
+                </td>
                 <td className="py-3 px-2">{etf.nav}</td>
                 <td className="py-3 px-2">{renderRate(etf.week1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month1)}</td>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { HoldingView } from "../../types/HoldingView";
+import Link from "next/link";
 
 const MAX_SELECT = 5;
 
@@ -70,7 +71,11 @@ export default function HoldingTable({
                     disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
                   />
                 </td>
-                <td className="py-3 px-2 text-left font-medium">{holding.etfName}</td>
+                <td className="py-3 px-2 text-left text-gray-900 hover:underline font-medium">
+                  <Link href={`/etfs/${holding.etfCode}`}>
+                    {holding.etfName}
+                  </Link>
+                </td>
                 <td className="py-3 px-2">{holding.holdingName}</td>
                 <td className="py-3 px-2">{holding.weight}</td>
                 {/* 하트 아이콘 */}
