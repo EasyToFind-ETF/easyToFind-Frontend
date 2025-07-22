@@ -24,9 +24,9 @@ export default function SignUpPage() {
   } = useSignUpForm();
 
   return (
-    <div className="flex">
+    <div className="flex min-h-[calc(100vh-5rem)]">
       {/* 메인 콘텐츠 */}
-      <div className="mx-auto w-full flex-1 min-w-0 pl-10 pt-20 max-w-[720px]">
+      <div className="mx-auto w-full flex-1 min-w-0 pl-10 max-w-[720px] flex items-center">
         <div className="bg-white rounded-3xl w-full px-16 py-16 shadow min-h-[680px] flex items-center" style={{ borderRadius: '4rem' }}>
           <div className="flex flex-col w-full gap-4">
             <div className="mx-auto w-full max-w-sm">
