@@ -40,10 +40,9 @@ export const Header = () => {
   useEffect(() => {
   }, []);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

@@ -11,8 +11,6 @@ import { ETFHoldingsWithStock } from '@/types/etf';
 // 한국어로 포맷팅
 registerLocale('ko', ko);
 
-interface ETFHoldingsData extends ETFHoldingsWithStock { }
-
 // 캘린더 커스텀
 const customDatePickerStyles = `
   .react-datepicker-wrapper {
@@ -113,7 +111,7 @@ interface ETFDetailHoldingsProps {
 
 const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [holdingsData, setHoldingsData] = useState<ETFHoldingsData[]>([]);
+    const [holdingsData, setHoldingsData] = useState<ETFHoldingsWithStock[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     

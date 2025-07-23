@@ -5,9 +5,7 @@ import { GoalPlannerRequest, GoalPlannerResponse } from "@/types/goal";
 import { useUserRiskProfile } from "./useUserRiskProfile";
 
 // 백엔드 API URL 설정
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
-const GOAL_PLANNER_URL = `${API_BASE_URL}/api/goal-planner`;
+const GOAL_PLANNER_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/goal-planner`;
 
 export const useGoalPlanner = () => {
   const {
