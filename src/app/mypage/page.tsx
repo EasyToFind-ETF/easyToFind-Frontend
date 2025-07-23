@@ -45,14 +45,14 @@ const periodOptions: PeriodOption[] = [
 ]
 
 const ETFScoreCircle = ({ score }: { score: number }) => {
+  const percentage = Math.min(Math.max(score, 0), 100)
   const radius = 40
   const strokeDasharray = 2 * Math.PI * radius
-  const percentage = Math.min(Math.max(score, 0), 100);
-  const strokeDashoffset = strokeDasharray * (1 - percentage / 100);
+  const strokeDashoffset = strokeDasharray * (1 - percentage / 100)
 
   const getScoreColor = (score: number) => {
-    if (score >= 65) return "#22c55e"
-    if (score >= 30) return "#f59e0b"
+    if (score >= 8) return "#22c55e"
+    if (score >= 6) return "#f59e0b"
     return "#ef4444"
   }
 
@@ -149,13 +149,19 @@ export default function MyPage() {
     const method = isNowLiked ? "POST" : "DELETE"
   
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/favorites/${etf_code}`, {
-        method,
-        credentials: "include",
-      })
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/favorites/${etf_code}`,
+        {
+          method,
+          credentials: "include",
+        }
+      )
   
-      if (!res.ok) throw new Error("관심 ETF 토글 실패")
+      if (!res.ok) {
+        throw new Error("관심 ETF 토글 실패!")
+      }
   
+      // 성공 시 UI에 반영
       setEtfCards((cards) =>
         cards.map((card) =>
           card.etf_code === etf_code ? { ...card, isLiked: isNowLiked } : card
@@ -163,8 +169,10 @@ export default function MyPage() {
       )
     } catch (err) {
       console.error("💥 관심 ETF 요청 실패:", err)
+      alert("관심 ETF 변경에 실패했어요 😥")
     }
   }
+  
 
   const formatPrice = (price: string) => {
     return Number.parseInt(price).toLocaleString("ko-KR")
@@ -239,14 +247,20 @@ export default function MyPage() {
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1 pt-4">
-                          {returnValue > 0 ? (
-                            <TrendingUp className="w-4 h-4 text-red-500" />
+                          {isNaN(returnValue) ? (
+                            <span className="text-sm font-medium text-gray-400">-</span>
                           ) : (
-                            <TrendingDown className="w-4 h-4 text-blue-500" />
+                            <>
+                              {returnValue > 0 ? (
+                                <TrendingUp className="w-4 h-4 text-red-500" />
+                              ) : (
+                                <TrendingDown className="w-4 h-4 text-blue-500" />
+                              )}
+                              <span className={`text-sm font-medium ${returnValue > 0 ? "text-red-500" : "text-blue-500"}`}>
+                                {formatChange(currentReturn)}%
+                              </span>
+                            </>
                           )}
-                          <span className={`text-sm font-medium ${returnValue > 0 ? "text-red-500" : "text-blue-500"}`}>
-                            {formatChange(currentReturn)}%
-                          </span>
                         </div>
                         <div className="text-xs text-gray-500">{getCurrentPeriodLabel()}</div>
                       </div>
