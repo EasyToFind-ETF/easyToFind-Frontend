@@ -1,7 +1,7 @@
 import { GoalPlannerResponse } from "@/types/goal";
 import { EtfCandidateCard } from "./EtfCandidateCard";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Target, Shield, Zap } from "lucide-react";
+import { TrendingUp, Target, Shield, Zap, BarChart3 } from "lucide-react";
 
 export const GoalPlannerResults = ({
   results,
@@ -130,6 +130,71 @@ export const GoalPlannerResults = ({
           </div>
         )}
 
+        {/* 분석 정보 (Monte Carlo) */}
+        {results.analysis && (
+          <div
+            className="bg-[#F2F8FC] rounded-3xl p-8 mb-8"
+            style={{ borderRadius: "2rem" }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-[#4DB6FF] rounded-full p-3">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">
+                분석 방법
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-lg font-semibold text-gray-800 mb-3">
+                  {results.analysis.method}
+                </h4>
+                <p className="text-gray-600 mb-4">
+                  {results.analysis.description}
+                </p>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">총 시나리오:</span>
+                    <span className="font-semibold">
+                      {results.analysis.riskMetrics.totalScenarios?.toLocaleString() ||
+                        "0"}
+                      개
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">신뢰수준:</span>
+                    <span className="font-semibold">
+                      {results.analysis.riskMetrics.confidenceLevel || "0"}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">계산 시간:</span>
+                    <span className="font-semibold">
+                      {results.analysis.riskMetrics.simulationTime || "0"}초
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="text-md font-semibold text-gray-800 mb-3">
+                  분석의 장점
+                </h5>
+                <ul className="space-y-2">
+                  {results.analysis.advantages.map((advantage, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-[#4DB6FF] rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-sm text-gray-600">{advantage}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ETF 추천 리스트 */}
         {candidateCount > 0 ? (
           <div className="space-y-6">
@@ -138,7 +203,7 @@ export const GoalPlannerResults = ({
                 추천 ETF 리스트
               </h3>
               <p className="text-gray-600 text-lg">
-                목표 달성 확률과 위험 성향을 고려한 최적의 ETF들입니다
+                목표 달성 확률과 개인 맞춤 점수를 고려한 최적의 ETF들입니다
               </p>
             </div>
 
