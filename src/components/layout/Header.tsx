@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/assets/icons/mainlogo.png";
+import logoImg from "@/assets/icons/logo.png";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/ui";
@@ -73,56 +73,56 @@ export const Header = () => {
         </Link>
 
         {/* 네비게이션 메뉴 */}
-        <nav className="flex flex-1 justify-center items-center gap-24 text-lg">
+        <nav className="flex flex-1 justify-center items-center gap-4 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-24 text-lg flex-nowrap">
           <Link
             href="/"
-            className="text-foreground/60 transition-colors hover:text-foreground/80"
+            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
           >
             Home
           </Link>
           <Link
             href="/find"
-            className="text-foreground/60 transition-colors hover:text-foreground/80"
+            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
           >
             ETF 탐색
           </Link>
           <Link
             href="/goal"
-            className="text-foreground/60 transition-colors hover:text-foreground/80"
+            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
           >
             전략 분석
           </Link>
           <Link
             href="/me/mbti"
-            className="text-foreground/60 transition-colors hover:text-foreground/80"
+            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
           >
             맞춤 추천
           </Link>
         </nav>
 
         {/* 로그인/로그아웃 UI */}
-        <div className="flex items-center justify-end gap-2">
-        {isLoggedIn ? (
-    <>
-      <button
-        onClick={handleLogout}
-        className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold"
-      >
-        로그아웃
-      </button>
-      <button
-        onClick={() => router.push("/mypage")}
-        className="hover:opacity-80"
-      >
-        <UserCircle2 className="w-8 h-8 text-gray-400" />
-      </button>
-      </>
-      ) : (
-      <>
-        <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그인</Link>
-        <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">회원가입</Link>
-      </>
-      )}
+        <div className="flex items-center justify-end gap-2 flex-nowrap">
+          {isLoggedIn ? (
+            <>
+              <button
+                onClick={handleLogout}
+                className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap"
+              >
+                로그아웃
+              </button>
+              <button
+                onClick={() => router.push("/mypage")}
+                className="hover:opacity-80"
+              >
+                <UserCircle2 className="w-8 h-8 text-gray-400" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap">로그인</Link>
+              <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap">회원가입</Link>
+            </>
+          )}
         </div>
       </div>
     </header>

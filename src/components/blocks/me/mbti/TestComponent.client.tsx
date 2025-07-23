@@ -64,42 +64,43 @@ export default function TestComponentClient() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-4">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-2 sm:p-4">
       <div
         style={{
-          width: "70rem",
+          width: "100%",
+          maxWidth: "70rem",
           height: "70vh",
           backgroundColor: "#2196F3",
           borderRadius: 40,
           position: "relative",
         }}
-        className="flex flex-col items-start justify-start p-6"
+        className="flex flex-col items-start p-4 sm:p-6"
       >
         {/* 질문 */}
-        <div className="flex flex-row ">
+        <div className="flex flex-col sm:flex-row w-full mt-4 sm:mt-8 gap-4">
           <h3
-            className="text-white text-3xl font-bold"
+            className="text-white text-xl sm:text-2xl md:text-3xl font-bold flex-1"
             style={{ textShadow: "5px 0px 4px rgba(0, 0, 0, 0.25)" }}
           >
             Q.{step + 1}/
-            <span className="text-[#BCBCBC] text-3xl font-bold">6</span>
-            <p className="text-[64] font-semibold mt-40">{current.question}</p>
+            <span className="text-[#BCBCBC] text-xl sm:text-2xl md:text-3xl font-bold">6</span>
+            <p className="text-2xl sm:text-3xl md:text-4xl font-semibold mt-4 sm:mt-6">{current.question}</p>
           </h3>
           <img
             src={current.icon}
             alt="Question Icon"
-            className="w-48 h-48 absolute top-16 right-20"
+            className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex-shrink-0 self-center sm:self-start"
           />
         </div>
 
         {/* 선택지 */}
-        <div className="flex flex-col gap-6 w-full max-w-4xl mt-16 self-center">
-          <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-col gap-4 w-full mt-auto mb-4 sm:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full">
             {current.options.map((opt, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSelect(opt)}
-                className="w-[45%] h-20 bg-white text-xl text-black py-3 px-5 rounded-lg shadow hover:bg-blue-200 mb-4"
+                className="w-full h-14 sm:h-16 md:h-20 bg-white text-sm sm:text-lg md:text-xl text-black py-2 sm:py-3 px-3 sm:px-4 rounded-lg shadow hover:bg-blue-200 transition-colors"
               >
                 {opt.text}
               </button>
