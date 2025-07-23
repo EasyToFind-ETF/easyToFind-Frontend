@@ -86,7 +86,7 @@ export default function ETFTable({
                     {etf.name}
                   </Link>
                 </td>
-                <td className="py-3 px-2">{etf.nav}</td>
+                <td className="py-3 px-2">{etf.nav ? Number(etf.nav).toLocaleString("ko-KR") : "-"}</td>
                 <td className="py-3 px-2">{renderRate(etf.week1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month3)}</td>

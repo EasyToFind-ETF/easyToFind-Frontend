@@ -84,7 +84,7 @@ export default function ETFComparisonView({ etfs, onRemoveETF, onBackToList }: E
       key: "price",
       render: (etf: ETFCompare) => (
         <div className="text-center">
-          <span className="font-bold text-lg">{etf.price != null ? etf.price.toLocaleString() : "-"}</span>
+          <span className="font-bold text-lg">{etf.price != null ? Number(etf.price).toLocaleString("ko-KR") : "-"}</span>
           <span className="text-gray-500 text-sm ml-1">원</span>
         </div>
       ),
