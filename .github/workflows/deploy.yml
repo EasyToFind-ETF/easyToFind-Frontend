@@ -27,6 +27,6 @@ jobs:
           git pull origin main
           
           pnpm install
-          pnpm build
+          pnpm run build
           pm2 restart easytofind-frontend
         EOF
