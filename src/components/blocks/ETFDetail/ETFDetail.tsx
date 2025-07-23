@@ -12,7 +12,7 @@ interface ETFDetailProps {
 
 export default function ETFDetail({ etf_code }: ETFDetailProps) {
     return (
-        <div>
+        <div className="px-4">
             <ETFDetailHeader etf_code={etf_code} />
             <div className="flex">
                 <ETFDetailSidebar etf_code={etf_code} />

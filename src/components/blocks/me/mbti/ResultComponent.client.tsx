@@ -113,47 +113,59 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
     return `${(num / 100000000).toLocaleString(undefined, { maximumFractionDigits: 1 })}억원`;
   };
 
-  return (
-    <div className="flex flex-col items-center mt-10">
-      {/* 제목 */}
-      <h1 className="text-3xl font-bold text-center mt-10">{getTitle()}</h1>
-      {/* 탭 버튼 */}
-      <div className="flex w-full max-w-2xl border-b-2 mb-6 mt-16">
-        <button
-          className={`flex-1 pb-2 text-lg font-semibold ${
-            selectedTab === "theme"
-              ? "border-b-4 border-black text-black"
-              : "text-gray-400"
-          }`}
-          onClick={() => setSelectedTab("theme")}
-        >
-          테마별
-        </button>
-        <button
-          className={`flex-1 pb-2 text-lg font-semibold ${
-            selectedTab === "type"
-              ? "border-b-4 border-black text-black"
-              : "text-gray-400"
-          }`}
-          onClick={() => setSelectedTab("type")}
-        >
-          유형별
-        </button>
-      </div>
+  // 점수에 따른 색상 반환 함수
+  const getScoreColor = (score: number) => {
+    if (score >= 70) return "#22c55e"; // 초록색
+    if (score >= 40) return "#f97316"; // 주황색
+    if (score >= 15) return "#eab308"; // 노란색
+    return "#ef4444"; // 빨간색
+  };
 
-      
-      <div className="flex flex-col gap-8 mt-10 w-full items-center">
+  return (
+    <div className="w-full">
+      {/* 제목 */}
+      {/* <div className="bg-white rounded-2xl shadow p-12 mx-4 mt-28"> */}
+        <h1 className="text-3xl font-bold text-center mt-28">{getTitle()}</h1>
+      {/* </div> */}
+
+      {/* 탭 버튼 */}
+      <div className="flex w-full mb-6 mt-28">
+  <button
+    className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+      selectedTab === "theme"
+        ? "border-black text-black"
+        : "border-transparent text-gray-400"
+    }`}
+    onClick={() => setSelectedTab("theme")}
+  >
+    테마별
+  </button>
+  <button
+    className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+      selectedTab === "type"
+        ? "border-black text-black"
+        : "border-transparent text-gray-400"
+    }`}
+    onClick={() => setSelectedTab("type")}
+  >
+    유형별
+  </button>
+</div>
+
+
+      {/* 카드 목록 */}
+      <div className="flex flex-col gap-8 mt-10 w-full">
         {etfList.map((etf, idx) => (
           <ETFCard
-            key={etf.etf_name + idx}
+            key={etf.etf_code}
             name={etf.etf_name}
-            score={parseFloat(etf.total_score)}
+            score={etf.total_score}
             etf_code={etf.etf_code}
             details={[
-              { label: "안정성", value: etf.stability_score, color: "#22c55e" },
-              { label: "유동성", value: etf.liquidity_score, color: "#22c55e" },
-              { label: "성장성", value: etf.growth_score, color: "#22c55e" },
-              { label: "분산투자", value: etf.diversification_score, color: "#22c55e" },
+              { label: "안정성", value: etf.stability_score, color: getScoreColor(etf.stability_score) },
+              { label: "유동성", value: etf.liquidity_score, color: getScoreColor(etf.liquidity_score) },
+              { label: "성장도", value: etf.growth_score, color: getScoreColor(etf.growth_score) },
+              { label: "분산도", value: etf.diversification_score, color: getScoreColor(etf.diversification_score) },
             ]}
           />
         ))}

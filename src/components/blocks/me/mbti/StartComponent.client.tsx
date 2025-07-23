@@ -20,7 +20,7 @@ const StartComponentClient: React.FC = () => {
 
 
   return (
-    <div className="justify-center align-center flex flex-col items-center p-8 mt-60">
+    <div className="justify-center flex flex-col items-center">
       <h1 className="text-4xl font-bold ">What's your ETF?</h1>
       <p className="text-sm mt-2 text-center text-gray-600">
         간단한 테스트로 자신에게 가장 맞는<br></br> ETF를 추천 받아보세요!

@@ -115,19 +115,19 @@ export default function Home() {
       <main className="mt-20">
         <div 
           className="w-full bg-cover bg-center bg-no-repeat -mt-20 flex flex-col justify-center items-center relative" 
-          style={{ 
-            // backgroundImage: 'url(/background_main.png)',
-            height: '100vh'
-          }}
+                      style={{ 
+              backgroundImage: 'url(/mailWallpaper2.png)',
+              height: '100vh'
+            }}
         >
           {/* 반투명 흰색 오버레이 */}
-          <div className="absolute inset-0 bg-white/60"></div>
-          
+          {/* <div className="absolute inset-0 bg-white/60"></div>
+           */}
           {/* 하단 블러 그라데이션 */}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
           
-          <div className="relative z-10 min-h-screen flex flex-col justify-center items-center w-full h-full">
-            <h1 className="text-6xl md:text-6xl font-bold text-gray-900 mb-12 leading-tight text-center">
+          <div className="relative z-10 min-h-screen flex flex-col justify-center items-left w-full h-full">
+            <h1 className="text-6xl md:text-4xl font-bold text-gray-900 mb-12 leading-tight text-left px-60">
               <div>ETF의 모든 것</div>
               <div className="text-[#0046ff] mt-4">
                 <span className="text-[#0046ff]">EasyToFind</span>
@@ -250,30 +250,28 @@ export default function Home() {
       </div>
 
       {/* 오른쪽 스크롤 카드 영역 */}
-     {/* 오른쪽 스크롤 카드 영역 */}
-<div className="flex-1">
-  <div className="overflow-x-auto pb-2">
-    <div className="min-w-[700px] whitespace-nowrap">
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0046ff]"></div>
+      <div className="flex-1 overflow-hidden">
+        <div className="overflow-x-auto scrollbar-hover pb-4">
+          <div className="flex gap-4 min-w-max">
+            {loading ? (
+              <div className="flex items-center justify-center h-64 w-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0046ff]"></div>
+              </div>
+            ) : (
+              etfData.map((etf, index) => (
+                <div key={`${etf.etf_code}-${index}`} className="flex-shrink-0">
+                  <ETFCard
+                    etf_code={etf.etf_code}
+                    etf_name={etf.etf_name}
+                    close_price={etf.close_price}
+                    trade_date={etf.trade_date}
+                  />
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="flex gap-4">
-          {etfData.map((etf, index) => (
-            <ETFCard
-              key={`${etf.etf_code}-${index}`}
-              etf_code={etf.etf_code}
-              etf_name={etf.etf_name}
-              close_price={etf.close_price}
-              trade_date={etf.trade_date}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  </div>
-</div>
+      </div>
     </div>
 
     {/* 전체 운용상품 보기 버튼 */}
@@ -293,59 +291,63 @@ export default function Home() {
           <div className="max-w-screen-xl mx-auto mt-20 mb-24">
             <div className="flex gap-6">
               {/* what's your ETF? 카드 */}
-              <div className="flex-1 bg-[#1565C0] rounded-3xl p-12 text-white relative overflow-hidden min-h-60" style={{ borderRadius: '2.5rem' }}>
-                <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-4">What's your ETF?</h3>
-                  <p className="text-sm mb-1">당신에게 가장 잘 맞는 ETF는?</p>
-                  <p className="text-sm">지금 당장 테스트 해보세요!</p>
-                </div>
-                
-                {/* 그래픽 요소 */}
-                    <div className="absolute bottom-6 right-6">
-                      <div className="flex items-center space-x-3">
-                        {/* 차트 아이콘 */}
-                        <div className="backdrop-blur-sm rounded-xl p-3">
-                          <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
+              <Link href="/me/mbti" className="flex-1 block">
+                <div className="bg-[#1565C0] rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full" style={{ borderRadius: '2.5rem' }}>
+                  <div className="relative z-10">
+                    <h3 className="text-3xl font-bold mb-4">What's your ETF?</h3>
+                    <p className="text-sm mb-1">당신에게 가장 잘 맞는 ETF는?</p>
+                    <p className="text-sm">지금 당장 테스트 해보세요!</p>
+                  </div>
+                  
+                  {/* 그래픽 요소 */}
+                      <div className="absolute bottom-6 right-6">
+                        <div className="flex items-center space-x-3">
+                          {/* 차트 아이콘 */}
+                          <div className="backdrop-blur-sm rounded-xl p-3">
+                            <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                          </div>
+                          {/* 분석 아이콘 */}
+                          {/* <div className="backdrop-blur-sm rounded-xl p-3">
+                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                          </div> */}
                         </div>
-                        {/* 분석 아이콘 */}
-                        {/* <div className="backdrop-blur-sm rounded-xl p-3">
-                          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                          </svg>
-                        </div> */}
                       </div>
-                    </div>
-              </div>
+                </div>
+              </Link>
 
               {/* 전략 시뮬레이션 ETF추천 카드 */}
-              <div className="flex-1 bg-[#0D47A1] rounded-3xl p-12 text-white relative overflow-hidden" style={{ borderRadius: '2.5rem' }}>
-                <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-4">전략 시뮬레이션</h3>
-                  <p className="text-sm mb-1">내 목표를 이룰 수 있는</p>
-                  <p className="text-sm">최적의 전략을 찾아보세요!</p>
-                </div>
-                
-                    {/* 그래픽 요소 - 전략 시뮬레이션 아이콘 */}
-                    <div className="absolute bottom-6 right-6">
-                      <div className="flex items-center space-x-3">
-                        {/* 타겟 아이콘 */}
-                        {/* <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
-                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div> */}
-                        {/* 설정 아이콘 */}
-                        <div className="backdrop-blur-sm rounded-xl p-3">
-                          <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor"  viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
+              <Link href="/goal" className="flex-1 block">
+                <div className="bg-[#0D47A1] rounded-3xl p-12 text-white relative overflow-hidden cursor-pointer transition-transform hover:scale-105 h-full" style={{ borderRadius: '2.5rem' }}>
+                  <div className="relative z-10">
+                    <h3 className="text-3xl font-bold mb-4">전략 시뮬레이션</h3>
+                    <p className="text-sm mb-1">내 목표를 이룰 수 있는</p>
+                    <p className="text-sm">최적의 전략을 찾아보세요!</p>
+                  </div>
+                  
+                      {/* 그래픽 요소 - 전략 시뮬레이션 아이콘 */}
+                      <div className="absolute bottom-6 right-6">
+                        <div className="flex items-center space-x-3">
+                          {/* 타겟 아이콘 */}
+                          {/* <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
+                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div> */}
+                          {/* 설정 아이콘 */}
+                          <div className="backdrop-blur-sm rounded-xl p-3">
+                            <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor"  viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
-                    </div>
-              </div>
+                </div>
+              </Link>
             </div>
           </div>
    

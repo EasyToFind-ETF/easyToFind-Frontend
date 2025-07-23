@@ -75,17 +75,16 @@ export default function TestComponentClient() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-2 sm:p-4">
+    <div className="flex flex-col items-center justify-center w-full">
       <div
         style={{
           width: "100%",
-          maxWidth: "70rem",
           height: "70vh",
           backgroundColor: "#2196F3",
           borderRadius: 40,
           position: "relative",
         }}
-        className="flex flex-col items-start justify-start p-4 sm:p-6"
+        className="flex flex-col items-start justify-start sm:px-12"
       >
         {/* 질문 */}
         <div className="flex flex-col sm:flex-row w-full gap-4" style={{ marginTop: '15%' }}>
