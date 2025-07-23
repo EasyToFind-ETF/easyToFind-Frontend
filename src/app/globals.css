@@ -33,3 +33,58 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* 얇은 스크롤바 스타일 */
+.scrollbar-thin {
+  scrollbar-width: thin;  /* Firefox */
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;  /* 스크롤바 너비 */
+  height: 4px;  /* 가로 스크롤바 높이 */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;  /* 트랙 배경 */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;  /* 스크롤바 색상 */
+  border-radius: 2px;  /* 모서리 둥글게 */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;  /* 호버 시 색상 */
+}
+
+/* 호버 시에만 스크롤바 표시 */
+.scrollbar-hover {
+  scrollbar-width: none;  /* Firefox - 기본적으로 숨김 */
+}
+
+.scrollbar-hover::-webkit-scrollbar {
+  width: 0;  /* 기본적으로 숨김 */
+  height: 0;
+}
+
+.scrollbar-hover:hover {
+  scrollbar-width: thin;  /* 호버 시 Firefox에서 얇게 표시 */
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar {
+  width: 4px;  /* 호버 시 너비 */
+  height: 4px;  /* 호버 시 높이 */
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
