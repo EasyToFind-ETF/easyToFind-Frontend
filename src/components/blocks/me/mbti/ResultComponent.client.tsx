@@ -23,12 +23,19 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
       let url = `${API_BASE_URL}/api/recommendation`;
       let body: any = {};
   
-
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.stabilityScore = riskScore[0];
-        body.liquidityScore = riskScore[1];
-        body.growthScore = riskScore[2];
-        body.divScore = riskScore[3];
+        // riskScore 정규화 함수
+        const normalize = (arr: number[]) => {
+          const sum = arr.reduce((a, b) => a + b, 0);
+          return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
+        };
+        
+        const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
+        
+        body.stabilityScore = stabilityWeight;
+        body.liquidityScore = liquidityWeight;
+        body.growthScore = growthWeight;
+        body.divScore = divWeight;
       }
 
       if (selectedTab === "theme") {

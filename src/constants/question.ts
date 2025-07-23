@@ -67,7 +67,7 @@ export const mbtiQuestions: Question[] = [
   },
   {
     type: "risk",
-    question: "아래 ETF 두 개 중 고른다면?",
+    question: "아래 ETF중 하나를 고른다면?",
     options: [
       { text: "거래량은 적지만 꾸준한 수익률", weights: [5, 2, 2, 1] },
       { text: "거래량이 많고 언제든 매도 가능", weights: [2, 5, 1, 2] },
@@ -78,7 +78,7 @@ export const mbtiQuestions: Question[] = [
   },
   {
     type: "risk",
-    question: "ETF 추천을 받았는데 수익률은 좋지만 구성종목이 단 3개뿐이라면?",
+    question: "ETF가 수익률은 좋지만 구성종목이 단 3개뿐이라면?",
     options: [
       { text: "수익률이 좋다면 괜찮다", weights: [1, 2, 5, 1] },
       { text: "구성 종목이 너무 적으면 불안하다", weights: [5, 2, 1, 5] },
