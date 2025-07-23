@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logoImg from "@/assets/icons/logo.png";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/ui";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserCircle2 } from "lucide-react";
@@ -36,6 +36,8 @@ export const Header = () => {
   const hidden = useScrollHideHeader();
   const { isLoggedIn } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   useEffect(() => {
   }, []);
@@ -62,7 +64,8 @@ export const Header = () => {
     <header
       className={cn(
         "h-20",
-        `fixed top-0 z-50 w-full border-b bg-[#F1F3F8] transition-transform duration-300`,
+        `fixed top-0 z-50 w-full border-b transition-transform duration-300`,
+        isHomePage ? "bg-transparent border-transparent" : "bg-gray-50",
         hidden ? "-translate-y-full" : "translate-y-0"
       )}
     >
@@ -76,51 +79,67 @@ export const Header = () => {
         <nav className="flex flex-1 justify-center items-center gap-4 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-24 text-lg flex-nowrap">
           <Link
             href="/"
-            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
+            className={cn(
+              "transition-colors hover:text-foreground/80"
+            )}
           >
             Home
           </Link>
           <Link
             href="/find"
-            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
+            className={cn(
+              "transition-colors hover:text-foreground/80"
+            )}
           >
             ETF 탐색
           </Link>
           <Link
-            href="/goal"
-            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
-          >
-            전략 분석
-          </Link>
-          <Link
             href="/me/mbti"
-            className="text-foreground/60 transition-colors hover:text-foreground/80 whitespace-nowrap"
+            className={cn(
+              "transition-colors hover:text-foreground/80"
+            )}
           >
             맞춤 추천
+          </Link>
+          <Link
+            href="/goal"
+            className={cn(
+              "transition-colors hover:text-foreground/80"
+            )}
+          >
+            전략 분석
           </Link>
         </nav>
 
         {/* 로그인/로그아웃 UI */}
         <div className="flex items-center justify-end gap-2 flex-nowrap">
           {isLoggedIn ? (
-            <>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap"
-              >
-                로그아웃
-              </button>
-              <button
-                onClick={() => router.push("/mypage")}
-                className="hover:opacity-80"
-              >
-                <UserCircle2 className="w-8 h-8 text-gray-400" />
-              </button>
-            </>
+            <button 
+              onClick={handleLogout} 
+              className={cn(
+                "px-3 py-1 text-sm font-medium hover:bold text-black"
+              )}
+            >
+              로그아웃
+            </button>
           ) : (
             <>
-              <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap">로그인</Link>
-              <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold whitespace-nowrap">회원가입</Link>
+              <Link 
+                href="/login" 
+                className={cn(
+                  "px-3 py-1 text-sm font-medium hover:bold text-black"
+                )}
+              >
+                로그인
+              </Link>
+              <Link 
+                href="/signup" 
+                className={cn(
+                  "px-3 py-1 text-sm font-medium hover:bold text-black"
+                )}
+              >
+                회원가입
+              </Link>
             </>
           )}
         </div>

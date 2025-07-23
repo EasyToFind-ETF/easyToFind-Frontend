@@ -333,6 +333,58 @@ const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
                                         arcLabel={(d) => {
                                             return d.data.value >= 5 ? `${d.data.value.toFixed(2)}%` : '';
                                         }}
+                                        tooltip={({ datum }) => {
+                                            if (datum.id === '기타') {
+                                                return (
+                                                    <div style={{
+                                                        background: 'white',
+                                                        padding: '5px 10px',
+                                                        border: '1px solid #ccc',
+                                                        borderRadius: '4px',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                                    }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <div 
+                                                                style={{ 
+                                                                    width: '12px', 
+                                                                    height: '12px', 
+                                                                    backgroundColor: datum.color,
+                                                                    borderRadius: '2px'
+                                                                }}
+                                                            />
+                                                            <span style={{ whiteSpace: 'nowrap' }}><strong>기타</strong>: {datum.value.toFixed(2)}%</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            // stockCode를 사용해서 종목명 찾기
+                                            const stockCode = (datum.data as any).stockCode || (typeof datum.id === 'string' ? datum.id.split('_')[0] : datum.id);
+                                            const holding = holdingsData.find(h => h.stock_code === stockCode);
+                                            const stockName = holding?.stock_name || datum.id;
+                                            
+                                            return (
+                                                <div style={{
+                                                    background: 'white',
+                                                    padding: '9px 12px',
+                                                    border: '1px solid #ccc',
+                                                    borderRadius: '4px',
+                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                                }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <div 
+                                                            style={{ 
+                                                                width: '12px', 
+                                                                height: '12px', 
+                                                                backgroundColor: datum.color,
+                                                                borderRadius: '2px'
+                                                            }}
+                                                        />
+                                                        <span style={{ whiteSpace: 'nowrap' }}><strong>{stockName}</strong>: {datum.value.toFixed(2)}%</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }}
                                     />
                                 </div>
                                 

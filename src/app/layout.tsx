@@ -16,12 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${oneShinhan.variable} antialiased bg-[#F1F3F8]`}>
+      <body className={`${oneShinhan.variable} antialiased bg-gray-50`}>
+      {/* <body className="antialiased bg-gray-50"> */}
         <AuthProvider>
           <Header />
-          <div className="max-w-screen-xl mx-auto">
-            <main className={"mt-20"}>{children}</main>
-          </div>
+          {children}
         </AuthProvider>
       </body>
     </html>

@@ -6,12 +6,12 @@ import { ETFView } from "@/types/ETFView";
 import { HoldingView } from "@/types/HoldingView";
 import { toggleFavorite as toggleFavoriteAPI, fetchFavoriteEtfCodes } from "@/services/etfFavoriteService";
 
-import FilterTabs from "@/components/ETFFind/FilterTabs";
-import FilterButtons from "@/components/ETFFind/FilterButtons";
-import ResultHeader from "@/components/ETFFind/ResultHeader";
-import ETFTable from "@/components/ETFFind/ETFTable";
-import HoldingTable from "@/components/ETFFind/HoldingTable";
-import CompareModal from "@/components/ETFCompare/ETFComapreModal";
+import FilterTabs from "@/components/blocks/ETFFind/FilterTabs";
+import FilterButtons from "@/components/blocks/ETFFind/FilterButtons";
+import ResultHeader from "@/components/blocks/ETFFind/ResultHeader";
+import ETFTable from "@/components/blocks/ETFFind/ETFTable";
+import HoldingTable from "@/components/blocks/ETFFind/HoldingTable";
+import CompareModal from "@/components/blocks/ETFCompare/ETFComapreModal";
 
 export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
@@ -136,9 +136,7 @@ export default function FindPage() {
         codes.map((code) => {
           const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
           console.log(`🚀 API 호출: ${url}`);
-          return fetch(url, {
-            credentials: "include", // ← 이게 핵심!
-          }).then((res) => res.json());
+          return fetch(url).then((res) => res.json());
         })
       );
   

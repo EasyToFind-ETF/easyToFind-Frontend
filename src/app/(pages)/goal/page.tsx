@@ -1,8 +1,8 @@
 "use client";
 
 import { useGoalPlanner } from "@/hooks/useGoalPlanner";
-import { GoalPlannerForm } from "@/components/goal/GoalPlannerForm";
-import { GoalPlannerResults } from "@/components/goal/GoalPlannerResults";
+import { GoalPlannerForm } from "@/components/blocks/goal/GoalPlannerForm";
+import { GoalPlannerResults } from "@/components/blocks/goal/GoalPlannerResults";
 import { Loader2, Target, TrendingUp } from "lucide-react";
 
 export default function GoalPlannerpage() {
@@ -10,7 +10,7 @@ export default function GoalPlannerpage() {
 
   return (
     <main
-      className="min-h-screen bg-[#F1F3F8] py-10 px-4"
+      className="min-h-screen bg-gray-50 py-10 px-4"
       style={{ marginTop: 130 }}
     >
       <div className="max-w-7xl mx-auto">
