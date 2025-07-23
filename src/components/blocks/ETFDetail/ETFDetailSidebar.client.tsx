@@ -100,7 +100,7 @@ const ETFDetailSidebar: React.FC<ETFDetailSidebarProps> = ({ etf_code }) => {
   return (
     <aside
       className="sticky top-0 h-screen w-full md:w-[280px] flex-shrink-0 py-10 bg-white rounded-r-3xl"
-      style={{ marginTop: 50, backgroundColor: '#F1F3F8'}}
+      style={{ marginTop: 50, backgroundColor: 'bg-gray-50'}}
     >
       <div className="mb-10 flex flex-col items-start">
         <div className="text-2xl font-bold text-gray-800 text-left leading-tight">
