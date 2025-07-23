@@ -6,7 +6,7 @@ import { mbtiQuestions } from "@/constants/question";
 
 export default function TestComponentClient() {
   const [step, setStep] = useState(0); // 현재 몇 번째 문제인지
-  const [riskScore, setRiskScore] = useState([0, 0, 0, 0]); // [수익률, 유동성, 추적오차, 규모]
+  const [riskScore, setRiskScore] = useState([0, 0, 0, 0]); // [안정성, 유동성, 성장성, 분산도]
   const [riskType, setRiskType] = useState(""); // 투자 유형
   const [themeAnswers, setThemeAnswers] = useState<string[]>([]);
 
