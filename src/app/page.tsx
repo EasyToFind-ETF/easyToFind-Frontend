@@ -3,16 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ETFCard from '@/components/ui/ETFCard';
+
+interface ETFData {
+  etf_code: string;
+  etf_name: string;
+  close_price: string;
+  trade_date: string;
+}
 
 export default function Home() {
   const [viewportHeight, setViewportHeight] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(0);
   const [search, setSearch] = useState('');
   const [showPlaceholder, setShowPlaceholder] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState('1주');
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
   const [selectedItem, setSelectedItem] = useState(0);
+  const [etfData, setEtfData] = useState<ETFData[]>([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const apiUrls = [
+    'http://localhost:3001/api/main/aum',
+    'http://localhost:3001/api/main/fluc',
+    'http://localhost:3001/api/main/volume'
+  ];
 
   useEffect(() => {
     const updateViewport = () => {
@@ -29,6 +44,31 @@ export default function Home() {
     // 클린업
     return () => window.removeEventListener('resize', updateViewport);
   }, []);
+
+  // ETF 데이터 가져오기
+  useEffect(() => {
+    const fetchETFData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(apiUrls[selectedItem]);
+        const result = await response.json();
+        
+        if (result.status === 200) {
+          setEtfData(result.data);
+        } else {
+          console.error('ETF 데이터 가져오기 실패:', result.message);
+          setEtfData([]);
+        }
+      } catch (error) {
+        console.error('API 호출 오류:', error);
+        setEtfData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchETFData();
+  }, [selectedItem]);
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -76,7 +116,7 @@ export default function Home() {
         <div 
           className="w-full bg-cover bg-center bg-no-repeat -mt-20 flex flex-col justify-center items-center relative" 
           style={{ 
-            backgroundImage: 'url(/background_main.png)',
+            // backgroundImage: 'url(/background_main.png)',
             height: '100vh'
           }}
         >
@@ -156,121 +196,104 @@ export default function Home() {
         </div>
 
         {/* ETF Trends Section */}
-        <div className="w-full bg-gray-50">
-          <div className="max-w-screen-xl mx-auto my-20">
-            <div className="bg-white rounded-3xl px-20 py-20 shadow" style={{ borderRadius: '4rem' }}>
-              <div className="flex gap-16">
-                {/* ETF 트렌드 한눈에 보기 사이드바 */}
-                <div className="w-96 bg-white rounded-3xl" style={{ borderRadius: '2.5rem' }}>
-                  <div className="mb-6">
-                    <h3 className="text-4xl font-bold text-gray-800 mb-1">ETF 트렌드</h3>
-                    <h4 className="text-4xl font-bold text-gray-800 mb-1">한눈에 보기</h4>
-                    <p className="text-gray-600 text-sm mt-6">지금 가장 핫한 ETF를 만나보세요.</p>
-                  </div>
-                  
-                  {/* 기간 선택 */}
-                  <div className="mt-10 mb-20 relative period-dropdown">
-                    <button 
-                      className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 justify-between"
-                      onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>{selectedPeriod}</span>
-                      </div>
-                      <svg className={`w-4 h-4 transition-transform ${showPeriodDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    
-                    {showPeriodDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-                        {['1주', '1개월', '3개월', '6개월', '1년', '3년', '5년'].map((period) => (
-                          <button
-                            key={period}
-                            className={`w-full px-2 py-2 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
-                              selectedPeriod === period ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
-                            }`}
-                            onClick={() => {
-                              setSelectedPeriod(period);
-                              setShowPeriodDropdown(false);
-                              console.log(`${period} 기간으로 정렬`);
-                            }}
-                          >
-                            {period}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* 탭 아이템들 */}
-                  <div className="space-y-2">
-                    {[
-                      { icon: 'chart', text: '순자산이 가장 많은 ETF는?' },
-                      { icon: 'arrow', text: '최근 가장 많은 수익률을 보인 ETF는?' },
-                      { icon: 'eye', text: '누적 거래량이 가장 많은 ETF는?' }
-                    ].map((item, index) => (
-                      <div 
-                        key={index} 
-                        className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors ${
-                          selectedItem === index 
-                            ? 'bg-[#0046ff] text-white shadow-md' 
-                            : 'hover:bg-gray-50'
-                        }`}
-                        onClick={() => setSelectedItem(index)}
-                      >
-                        <div className="w-8 h-8 flex items-center justify-center">
-                          {item.icon === 'chart' && (
-                            <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                          )}
-                          {item.icon === 'arrow' && (
-                            <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                          )}
-                          {item.icon === 'eye' && (
-                            <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          )}
-                        </div>
-                        <span className={`text-base font-medium ${selectedItem === index ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex-1">
-                  {/* 메인 콘텐츠 영역 */}
-                  <div className="text-gray-600">
-                    여기에 ETF 상세 정보가 표시됩니다.
-                  </div>
-                </div>
+          {/* ETF Trends Section */}
+<div className="max-w-screen-xl mx-auto my-20">
+  <div className="bg-white px-16 py-20 shadow" style={{ borderRadius: '4rem' }}>
+    <div className="flex gap-10 overflow-hidden">
+      
+      {/* 왼쪽 탭 영역 */}
+      <div className="w-96 flex-shrink-0">
+        <div className="mb-6">
+          <h3 className="text-4xl font-bold text-gray-800 mb-1">ETF 트렌드</h3>
+          <h4 className="text-4xl font-bold text-gray-800 mb-1">한눈에 보기</h4>
+          <p className="text-gray-600 text-sm mt-6">지금 가장 핫한 ETF를 만나보세요.</p>
+        </div>
+
+        {/* 탭 리스트 */}
+        <div className="space-y-2">
+          {[
+            { icon: 'chart', text: '순자산이 가장 많은 ETF는?' },
+            { icon: 'arrow', text: '최근 가장 많은 수익률을 보인 ETF는?' },
+            { icon: 'eye', text: '누적 거래량이 가장 많은 ETF는?' }
+          ].map((item, index) => (
+            <div 
+              key={index} 
+              className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors ${
+                selectedItem === index 
+                  ? 'bg-[#2667ff] text-white shadow-md' 
+                  : 'hover:bg-gray-50'
+              }`}
+              onClick={() => setSelectedItem(index)}
+            >
+              <div className="w-8 h-8 flex items-center justify-center">
+                {item.icon === 'chart' && (
+                  <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                )}
+                {item.icon === 'arrow' && (
+                  <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                )}
+                {item.icon === 'eye' && (
+                  <svg className={`w-5 h-5 ${selectedItem === index ? 'text-white' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                )}
               </div>
-              
-              {/* 전체 운용상품 보러 가기 버튼 */}
-              <div className="mt-16 text-center">
-                <Link 
-                  href="/find"
-                  className="inline-block w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-base py-4 px-8 rounded-2xl transition-colors duration-200"
-                >
-                  전체 운용상품 보러 가기
-                </Link>
-              </div>
+              <span className={`text-base font-medium ${selectedItem === index ? 'text-white' : 'text-gray-700'}`}>{item.text}</span>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 오른쪽 스크롤 카드 영역 */}
+     {/* 오른쪽 스크롤 카드 영역 */}
+<div className="flex-1">
+  <div className="overflow-x-auto pb-2">
+    <div className="min-w-[700px] whitespace-nowrap">
+      {loading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0046ff]"></div>
+        </div>
+      ) : (
+        <div className="flex gap-4">
+          {etfData.map((etf, index) => (
+            <ETFCard
+              key={`${etf.etf_code}-${index}`}
+              etf_code={etf.etf_code}
+              etf_name={etf.etf_name}
+              close_price={etf.close_price}
+              trade_date={etf.trade_date}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+    </div>
+
+    {/* 전체 운용상품 보기 버튼 */}
+    <div className="mt-16 text-center">
+      <Link 
+        href="/find"
+        className="inline-block w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-base py-4 px-8 rounded-2xl transition-colors duration-200"
+      >
+        전체 운용상품 보러 가기
+      </Link>
+    </div>
+  </div>
+</div>
+
 
           {/* 두 개의 카드 섹션 */}
           <div className="max-w-screen-xl mx-auto mt-20 mb-24">
             <div className="flex gap-6">
               {/* what's your ETF? 카드 */}
-              <div className="flex-1 bg-[#0046ff] rounded-3xl p-12 text-white relative overflow-hidden min-h-60" style={{ borderRadius: '2.5rem' }}>
+              <div className="flex-1 bg-[#1565C0] rounded-3xl p-12 text-white relative overflow-hidden min-h-60" style={{ borderRadius: '2.5rem' }}>
                 <div className="relative z-10">
                   <h3 className="text-3xl font-bold mb-4">What's your ETF?</h3>
                   <p className="text-sm mb-1">당신에게 가장 잘 맞는 ETF는?</p>
@@ -297,7 +320,7 @@ export default function Home() {
               </div>
 
               {/* 전략 시뮬레이션 ETF추천 카드 */}
-              <div className="flex-1 bg-[#0046ff] rounded-3xl p-12 text-white relative overflow-hidden" style={{ borderRadius: '2.5rem' }}>
+              <div className="flex-1 bg-[#0D47A1] rounded-3xl p-12 text-white relative overflow-hidden" style={{ borderRadius: '2.5rem' }}>
                 <div className="relative z-10">
                   <h3 className="text-3xl font-bold mb-4">전략 시뮬레이션</h3>
                   <p className="text-sm mb-1">내 목표를 이룰 수 있는</p>
@@ -325,7 +348,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+   
       </main>
     </>
   );

@@ -32,27 +32,38 @@ export default function TestComponentClient() {
   }
 
   const current = mbtiQuestions[step];
-  function getRiskType(scores: number[]): string {
-    const maxIdx = scores.indexOf(Math.max(...scores));
-    switch (maxIdx) {
+  function getInvestmentType(scores: number[]): string {
+    const [st, li, gr, di] = scores;
+    const max = Math.max(...scores);
+    const gap = max - Math.min(...scores);
+  
+    // 두 항목이 높은 경우: 안정성과 분산
+    if (st >= 20 && di >= 20) return "보수안정형";
+    if (li >= 20 && gr >= 20) return "수익지향형";
+  
+    // 전체적으로 점수 차이 작으면 균형형
+    if (gap <= 5) return " 균형형";
+  
+    switch (scores.indexOf(max)) {
       case 0:
-        return "안정성 우선형";      
+        return "안정추구형";
       case 1:
-        return "단기매매 중시형";    // 유동성 중심
+        return "유동선호형";
       case 2:
-        return "고수익 추구형";    // 추적오차 중심
+        return "성장지향형";
       case 3:
-        return "규모중심 추구형";      // 규모/안정성 중심
+        return "분산중시형";
       default:
-        return "균형 투자형";
+        return "변동감수형";
     }
   }
+  
   
 
 
   //점수바뀔 때마다 투자유형 변경
   useEffect(() => {
-    setRiskType(getRiskType(riskScore)); // 점수에 따라 투자유형 분류
+    setRiskType(getInvestmentType(riskScore)); // 점수에 따라 투자유형 분류
   }, [riskScore]);
 
   //10문제 끝났을 때
@@ -74,10 +85,10 @@ export default function TestComponentClient() {
           borderRadius: 40,
           position: "relative",
         }}
-        className="flex flex-col items-start p-4 sm:p-6"
+        className="flex flex-col items-start justify-start p-4 sm:p-6"
       >
         {/* 질문 */}
-        <div className="flex flex-col sm:flex-row w-full mt-4 sm:mt-8 gap-4">
+        <div className="flex flex-col sm:flex-row w-full gap-4" style={{ marginTop: '15%' }}>
           <h3
             className="text-white text-xl sm:text-2xl md:text-3xl font-bold flex-1"
             style={{ textShadow: "5px 0px 4px rgba(0, 0, 0, 0.25)" }}
