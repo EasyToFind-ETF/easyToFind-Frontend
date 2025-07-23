@@ -1,56 +1,128 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { User } from "lucide-react";
-import UserIcon from "@/assets/icons/User Thumb.png";
-import logoImg from "@/assets/icons/Easy To Find 로고.png";
+import logoImg from "@/assets/icons/mainlogo.png";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/ui";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserCircle2 } from "lucide-react";
+
+
+// ✅ 스크롤 시 헤더 숨김 커스텀 훅
+export function useScrollHideHeader() {
+  const [hidden, setHidden] = useState(false);
+  const lastScroll = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScroll.current && current > 60) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      lastScroll.current = current;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return hidden;
+}
 
 export const Header = () => {
+  const hidden = useScrollHideHeader();
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+  }, []);
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        window.dispatchEvent(new Event("authChanged"));
+        router.push("/");
+      } else {
+        alert("로그아웃에 실패했습니다."); // 최소한의 피드백
+      }
+    } catch (e) {
+      alert("로그아웃 요청 중 문제가 발생했습니다.");
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full h-20 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-full max-w-screen-2xl items-center">
+    <header
+      className={cn(
+        "h-20",
+        `fixed top-0 z-50 w-full border-b bg-[#F1F3F8] transition-transform duration-300`,
+        hidden ? "-translate-y-full" : "translate-y-0"
+      )}
+    >
+      <div className="max-w-screen-xl mx-auto px-4 flex h-full items-center">
         {/* 로고 */}
         <Link href="/" className="mr-6 flex items-center space-x-6">
-          <Image
-            src={logoImg}
-            alt="Easy To Find 로고"
-            width={180}
-            height={100}
-          />
+          <Image src={logoImg} alt="Easy To Find 로고" width={180} height={100} priority/>
         </Link>
 
         {/* 네비게이션 메뉴 */}
-        <nav className="flex flex-1 justify-center items-center gap-20 text-lg">
+        <nav className="flex flex-1 justify-center items-center gap-24 text-lg">
           <Link
-            href="/explore"
+            href="/"
+            className="text-foreground/60 transition-colors hover:text-foreground/80"
+          >
+            Home
+          </Link>
+          <Link
+            href="/find"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
           >
             ETF 탐색
           </Link>
           <Link
-            href="/analysis"
+            href="/goal"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
           >
             전략 분석
           </Link>
           <Link
-            href="/recommend"
+            href="/me/mbti"
             className="text-foreground/60 transition-colors hover:text-foreground/80"
           >
             맞춤 추천
           </Link>
         </nav>
 
-        {/* 프로필 아이콘 */}
-        <div className="flex items-center justify-end">
-          <button className="p-2 rounded-full hover:bg-accent">
-            <Image
-              src={UserIcon}
-              alt="User"
-              width={32}
-              height={32}
-              className="h-10 w-10"
-            />
-          </button>
+        {/* 로그인/로그아웃 UI */}
+        <div className="flex items-center justify-end gap-2">
+        {isLoggedIn ? (
+    <>
+      <button
+        onClick={handleLogout}
+        className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold"
+      >
+        로그아웃
+      </button>
+      <button
+        onClick={() => router.push("/mypage")}
+        className="hover:opacity-80"
+      >
+        <UserCircle2 className="w-8 h-8 text-gray-400" />
+      </button>
+      </>
+      ) : (
+      <>
+        <Link href="/login" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">로그인</Link>
+        <Link href="/signup" className="px-3 py-1 text-sm font-semibold text-[#0046ff] hover:bold">회원가입</Link>
+      </>
+      )}
         </div>
       </div>
     </header>
