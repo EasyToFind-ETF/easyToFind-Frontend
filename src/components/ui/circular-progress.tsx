@@ -19,9 +19,12 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   label,
   className = "",
 }) => {
+  // value를 안전하게 숫자로 변환
+  const numericValue = typeof value === "number" ? value : Number(value) || 0;
+
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const progress = Math.min(Math.max(value, 0), max);
+  const progress = Math.min(Math.max(numericValue, 0), max);
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (progress / max) * circumference;
 
@@ -31,7 +34,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     return "#EF4444"; // red-500
   };
 
-  const finalColor = color === "#4DB6FF" ? getColor(value) : color;
+  const finalColor = color === "#4DB6FF" ? getColor(numericValue) : color;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
@@ -64,7 +67,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div className="text-lg font-bold text-gray-800">
-              {value.toFixed(1)}
+              {numericValue.toFixed(1)}
             </div>
             <div className="text-xs text-gray-500">%</div>
           </div>
