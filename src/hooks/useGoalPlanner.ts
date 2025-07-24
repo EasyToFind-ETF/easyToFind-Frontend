@@ -23,7 +23,7 @@ export const useGoalPlanner = () => {
     initialAmount: 0,
     monthlyContribution: 300_000,
     riskProfile: 50, // 기본값, 나중에 사용자 위험 성향으로 업데이트
-    useMonteCarlo: true, // 기본값을 Monte Carlo로 설정
+    useMonteCarlo: true, // 항상 Monte Carlo 사용
   });
 
   // 사용자 위험 성향이 로드되면 자동으로 설정
@@ -83,11 +83,7 @@ export const useGoalPlanner = () => {
 
   // 5. API 엔드포인트 결정
   const getApiEndpoint = () => {
-    if (input.useMonteCarlo) {
-      return `${API_BASE_URL}/api/goal-planner/monte-carlo`;
-    } else {
-      return `${API_BASE_URL}/api/goal-planner/five-year`;
-    }
+    return `${API_BASE_URL}/api/goal-planner/monte-carlo`;
   };
 
   // 6. API 호출 핸들러

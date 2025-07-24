@@ -5,7 +5,7 @@ export interface GoalPlannerRequest {
   monthlyContribution: number;
   riskProfile?: number;
   themePreference?: string[]; // 선택적 테마 선호도
-  useMonteCarlo?: boolean; // 몬테카를로 시뮬레이션 사용 여부
+  useMonteCarlo: boolean; // 항상 Monte Carlo 사용
 }
 
 // 신뢰구간 정보 (기존)
