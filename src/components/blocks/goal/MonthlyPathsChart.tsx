@@ -41,6 +41,31 @@ interface MonthlyPathsChartProps {
   targetYears?: number;
 }
 
+// 현재 날짜를 기준으로 시작점 설정
+const getCurrentDate = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
+};
+
+// 현재 날짜부터 시작하는 날짜 배열 생성
+const generateDateArray = (months: number) => {
+  const dates = [];
+  const startDate = new Date();
+
+  for (let i = 0; i < months; i++) {
+    const date = new Date(startDate);
+    date.setMonth(date.getMonth() + i);
+    dates.push(
+      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`
+    );
+  }
+
+  return dates;
+};
+
 export const MonthlyPathsChart = ({
   monthlyPaths,
   className = "",
@@ -49,6 +74,25 @@ export const MonthlyPathsChart = ({
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Line" | "Area">[]>([]);
+
+  // 디버깅을 위한 로그 (개발 환경에서만)
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔍 MonthlyPathsChart monthlyPaths 디버깅:", {
+      monthlyPaths,
+      type: typeof monthlyPaths,
+      isArray: Array.isArray(monthlyPaths),
+      length: Array.isArray(monthlyPaths) ? monthlyPaths.length : 0,
+      hasData: !!monthlyPaths,
+      structure:
+        !Array.isArray(monthlyPaths) && monthlyPaths
+          ? Object.keys(monthlyPaths)
+          : [],
+      fanBands:
+        !Array.isArray(monthlyPaths) && monthlyPaths?.fan_bands
+          ? Object.keys(monthlyPaths.fan_bands)
+          : [],
+    });
+  }
 
   useEffect(() => {
     if (
@@ -97,8 +141,10 @@ export const MonthlyPathsChart = ({
       timeScale: {
         borderColor: "#e5e7eb",
         visible: true,
-        timeVisible: false,
+        timeVisible: true, // 시간 표시 활성화
         secondsVisible: false,
+        rightOffset: 0, // 오른쪽 여백 제거
+        ticksVisible: true, // 시간 틱 표시 활성화
       },
       crosshair: {
         mode: 1,
@@ -123,9 +169,38 @@ export const MonthlyPathsChart = ({
     const isNewDataStructure =
       !Array.isArray(monthlyPaths) && monthlyPaths.fan_bands;
 
+    // 날짜 배열 생성
+    const dateArray = generateDateArray(
+      isNewDataStructure
+        ? (monthlyPaths as MonthlyPathsData).fan_bands?.p50.length || 60
+        : (monthlyPaths as number[][])[0]?.length || targetYears * 12
+    );
+
+    // 데이터 길이 계산
+    const dataLength = isNewDataStructure
+      ? (monthlyPaths as MonthlyPathsData).fan_bands?.p50.length || 37
+      : (monthlyPaths as number[][])[0]?.length || 37;
+
+    // 시간 스케일을 강제로 설정하여 전체 데이터가 표시되도록 함
+    setTimeout(() => {
+      try {
+        chart.timeScale().setVisibleLogicalRange({
+          from: 0,
+          to: dataLength - 1,
+        });
+      } catch (error) {
+        console.log("Time scale setting failed:", error);
+      }
+    }, 100);
+
     if (isNewDataStructure) {
       // 새로운 데이터 구조 처리
       const data = monthlyPaths as MonthlyPathsData;
+
+      // 현재 날짜부터 시작하는 날짜 배열 생성
+      const dateArray = generateDateArray(
+        data.fan_bands?.p95.length || targetYears * 12 + 1
+      );
 
       // Fan Chart 구현
       if (data.fan_bands) {
@@ -139,7 +214,7 @@ export const MonthlyPathsChart = ({
 
         const area95Data: AreaData[] = data.fan_bands.p95.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -157,7 +232,7 @@ export const MonthlyPathsChart = ({
 
         const area75Data: AreaData[] = data.fan_bands.p75.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -176,7 +251,7 @@ export const MonthlyPathsChart = ({
 
         const medianData: LineData[] = data.fan_bands.p50.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -198,7 +273,7 @@ export const MonthlyPathsChart = ({
 
         const principalData: LineData[] = data.principal_line.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -220,7 +295,7 @@ export const MonthlyPathsChart = ({
 
         const bestData: LineData[] = data.representative.p95.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -239,7 +314,7 @@ export const MonthlyPathsChart = ({
 
         const worstData: LineData[] = data.representative.p05.map(
           (value, index) => ({
-            time: `${2024 + Math.floor(index / 12)}-${(index % 12) + 1}-01`,
+            time: dateArray[index],
             value: value,
           })
         );
@@ -262,9 +337,7 @@ export const MonthlyPathsChart = ({
           });
 
           const lineData: LineData[] = path.map((value, monthIndex) => ({
-            time: `${2024 + Math.floor(monthIndex / 12)}-${
-              (monthIndex % 12) + 1
-            }-01`,
+            time: dateArray[monthIndex],
             value: value,
           }));
 
@@ -305,13 +378,14 @@ export const MonthlyPathsChart = ({
             const yearAverage =
               yearValues.reduce((sum, val) => sum + val, 0) / yearValues.length;
 
-            const actualYear = 2024 + year - 1;
-            const dateString = `${actualYear}-01-01`;
-
-            data.push({
-              time: dateString,
-              value: yearAverage,
-            });
+            // 오늘 날짜부터 시작하는 날짜 사용
+            const dateIndex = yearStartMonth;
+            if (dateIndex < dateArray.length) {
+              data.push({
+                time: dateArray[dateIndex],
+                value: yearAverage,
+              });
+            }
           }
         }
 
@@ -322,7 +396,7 @@ export const MonthlyPathsChart = ({
 
     // 가로 축 레이블 커스터마이징
     chart.timeScale().applyOptions({
-      timeVisible: false,
+      timeVisible: true, // 시간 표시 활성화
       secondsVisible: false,
     });
 
@@ -396,15 +470,6 @@ export const MonthlyPathsChart = ({
           className="w-full"
           style={{ paddingBottom: "30px" }}
         />
-
-        {/* 커스텀 가로 축 레이블 */}
-        <div className="flex justify-between items-center mt-2 px-2">
-          {Array.from({ length: targetYears }, (_, index) => (
-            <div key={index} className="text-xs text-gray-600 font-medium">
-              {index + 1}년
-            </div>
-          ))}
-        </div>
 
         {/* 범례 */}
         <div className="flex flex-wrap gap-3 mt-4">
