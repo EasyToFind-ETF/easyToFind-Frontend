@@ -24,9 +24,9 @@ export default function Home() {
   const router = useRouter();
 
   const apiUrls = [
-    'http://localhost:3001/api/main/aum',
-    'http://localhost:3001/api/main/fluc',
-    'http://localhost:3001/api/main/volume'
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/main/aum`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/main/fluc`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/main/volume`
   ];
 
   useEffect(() => {
