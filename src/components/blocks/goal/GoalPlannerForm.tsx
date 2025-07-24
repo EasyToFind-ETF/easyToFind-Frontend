@@ -61,9 +61,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
         {/* 입력 폼 */}
         <form onSubmit={planner.handleSubmit} className="space-y-8">
           {/* 통합된 하늘색 박스 */}
-          <div
-            className="rounded-3xl p-8 py-16"
-          >
+          <div className="rounded-3xl p-8 py-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* 목표 금액 */}
               <div>
@@ -194,7 +192,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
           <div className="flex justify-center pt-6">
             <Button
               type="submit"
-              disabled={isLoading || !isYearsValid || isUserLoading}
+              disabled={isLoading || !isYearsValid}
               className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-full shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (

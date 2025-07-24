@@ -81,7 +81,7 @@ export const useGoalPlanner = () => {
 
   // 5. API 엔드포인트 결정
   const getApiEndpoint = () => {
-    return `${API_BASE_URL}/api/goal-planner/monte-carlo`;
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/goal-planner/monte-carlo`;
   };
 
   // 6. API 호출 핸들러
