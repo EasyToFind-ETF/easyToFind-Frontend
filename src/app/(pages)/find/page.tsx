@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { fetchEtfData, fetchHoldingsData } from "@/services/etfFindService";
 import { ETFView } from "@/types/ETFView";
 import { HoldingView } from "@/types/HoldingView";
-import { toggleFavorite as toggleFavoriteAPI, fetchFavoriteEtfCodes } from "@/services/etfFavoriteService";
+import {
+  toggleFavorite as toggleFavoriteAPI,
+  fetchFavoriteEtfCodes,
+} from "@/services/etfFavoriteService";
 
 import FilterTabs from "@/components/blocks/ETFFind/FilterTabs";
 import FilterButtons from "@/components/blocks/ETFFind/FilterButtons";
@@ -30,8 +33,36 @@ export default function FindPage() {
   const [modalData, setModalData] = useState<any[]>([]);
 
   const tabList = ["유형별", "테마별", "관심별"];
-  const assetFilters = ["전체", "주식", "채권", "멀티에셋", "부동산", "원자재", "통화", "파킹형"];
-  const themeFilters = ["전체", "반도체", "금융", "게임", "기술", "배당", "산업재", "소비재", "에너지", "인공지능", "전기차", "친환경", "헬스케어", "미국", "인도", "일본", "중국", "기타"];
+  const assetFilters = [
+    "전체",
+    "주식",
+    "채권",
+    "멀티에셋",
+    "부동산",
+    "원자재",
+    "통화",
+    "파킹형",
+  ];
+  const themeFilters = [
+    "전체",
+    "반도체",
+    "금융",
+    "게임",
+    "기술",
+    "배당",
+    "산업재",
+    "소비재",
+    "에너지",
+    "인공지능",
+    "전기차",
+    "친환경",
+    "헬스케어",
+    "미국",
+    "인도",
+    "일본",
+    "중국",
+    "기타",
+  ];
   const interestFilters = ["전체", "관심"];
 
   const getFilters = () => {
@@ -53,11 +84,16 @@ export default function FindPage() {
     else setSelectedInterest(value);
   };
 
-  const handleToggleFavorite = async (etfCode: string, isAlreadyFavorite: boolean) => {
+  const handleToggleFavorite = async (
+    etfCode: string,
+    isAlreadyFavorite: boolean
+  ) => {
     try {
       await toggleFavoriteAPI(etfCode, isAlreadyFavorite);
       setFavoriteEtfCodes((prev) =>
-        isAlreadyFavorite ? prev.filter((code) => code !== etfCode) : [...prev, etfCode]
+        isAlreadyFavorite
+          ? prev.filter((code) => code !== etfCode)
+          : [...prev, etfCode]
       );
     } catch (err) {
       console.error("❌ 관심 ETF 토글 실패:", err);
@@ -130,18 +166,20 @@ export default function FindPage() {
   const handleCompareClick = async () => {
     const codes = selected.map((idx) => etfData[idx].etfCode);
     console.log("📦 비교할 ETF 코드 목록:", codes);
-  
+
     try {
       const responses = await Promise.all(
         codes.map((code) => {
           const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
           console.log(`🚀 API 호출: ${url}`);
-          return fetch(url).then((res) => res.json());
+          return fetch(url, {
+            credentials: "include", // ← 이게 핵심!
+          }).then((res) => res.json());
         })
       );
-  
+
       console.log("✅ 비교 API 응답 결과 (raw):", responses);
-  
+
       const mappedData = responses.map((res) => {
         const d = res.data;
         return {
@@ -167,16 +205,16 @@ export default function FindPage() {
           managementCompany: d.provider,
         };
       });
-  
+
       console.log("🧩 매핑된 데이터:", mappedData);
-  
+
       setModalData(mappedData);
       setModalVisible(true);
     } catch (err) {
       console.error("❌ ETF 비교 API 호출 실패", err);
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
@@ -203,14 +241,30 @@ export default function FindPage() {
           </div>
         </div>
         <div className="w-full bg-white rounded-2xl shadow p-6 mt-6">
-          <FilterTabs tabs={tabList} selectedTab={selectedTab} onTabChange={setSelectedTab} />
-          <FilterButtons filters={getFilters()} selected={selectedFilter} onChange={handleFilterChange} />
-          <ResultHeader viewMode={viewMode} setViewMode={setViewMode} count={viewMode === "ETF로 보기" ? etfData.length : holdingsData.length} />
+          <FilterTabs
+            tabs={tabList}
+            selectedTab={selectedTab}
+            onTabChange={setSelectedTab}
+          />
+          <FilterButtons
+            filters={getFilters()}
+            selected={selectedFilter}
+            onChange={handleFilterChange}
+          />
+          <ResultHeader
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            count={
+              viewMode === "ETF로 보기" ? etfData.length : holdingsData.length
+            }
+          />
 
           {isLoading ? (
             <div className="text-center py-10">
               <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto" />
-              <p className="text-sm mt-2 text-gray-500">ETF 데이터를 불러오는 중...</p>
+              <p className="text-sm mt-2 text-gray-500">
+                ETF 데이터를 불러오는 중...
+              </p>
             </div>
           ) : viewMode === "ETF로 보기" ? (
             <ETFTable
