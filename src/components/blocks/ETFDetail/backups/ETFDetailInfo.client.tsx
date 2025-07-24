@@ -1,33 +1,78 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 // import { fetchETFDetail } from '@/services/etfDetailService';
 import { ETFDetail, ETFPricesDaily } from "@/types/etf";
-import { fetchETFDetail } from "@/services/etfDetailService";
-import { useQuery } from "@tanstack/react-query";
 
 interface ETFDetailInfoProps {
   etf_code: string;
 }
 
 const ETFDetailInfo: React.FC<ETFDetailInfoProps> = ({ etf_code }) => {
-  const {
-    data: etfData,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["etf", etf_code],
-    queryFn: () => fetchETFDetail(etf_code),
-    refetchOnWindowFocus: true,
-  });
+  const [etfData, setEtfData] = useState<ETFDetail | null>(null);
+  const [dailyPriceData, setDailyPriceData] = useState<ETFPricesDaily | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const dailyPriceData = useMemo(() => {
-    return etfData?.daily_prices || [];
-  }, [etfData]);
+  // ETF 데이터 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const etfResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs/${etf_code}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!etfResponse.ok) {
+          throw new Error(`HTTP error! status: ${etfResponse.status}`);
+        }
+
+        const etfResult = await etfResponse.json();
+
+        if (etfResult.status === 200 && etfResult.data) {
+          setEtfData(etfResult.data);
+
+          // daily_price 데이터 처리 (당일 데이터 우선적으로 가져오고 없으면 전일 데이터 가져오기)
+          if (etfResult.data.daily_price) {
+            setDailyPriceData(etfResult.data.daily_price);
+          } else if (etfResult.data.prices_daily) {
+            setDailyPriceData(etfResult.data.prices_daily);
+          } else if (
+            etfResult.data.daily_prices &&
+            etfResult.data.daily_prices.length > 0
+          ) {
+            // 배열인 경우 최신 데이터 사용 (당일 또는 전일)
+            const latestPrice = etfResult.data.daily_prices[0];
+            setDailyPriceData(latestPrice);
+          } else if (etfResult.data.new_prices_daily) {
+            // new_prices_daily 테이블 데이터 사용
+            setDailyPriceData(etfResult.data.new_prices_daily);
+          }
+        } else {
+          setError("ETF 데이터를 불러올 수 없습니다.");
+          return;
+        }
+      } catch (err) {
+        setError("데이터 로딩 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [etf_code]);
 
   const { etf_name, inception_date, provider, expense_ratio } = etfData || {};
   const { aum, mkt_cap, list_shrs, acc_trd_val, idx_ind_nm } =
-    dailyPriceData[0] || {};
+    dailyPriceData || {};
 
   return (
     <div id="info" className="mx-auto w-full flex-1 min-w-0 pl-10 pt-14">
@@ -80,7 +125,7 @@ const ETFDetailInfo: React.FC<ETFDetailInfoProps> = ({ etf_code }) => {
             </div>
             <div className="flex justify-between items-center bg-[#F2F8FC] rounded-xl px-6 py-3 min-h-[60px]">
               <span className="text-gray-500 text-sm whitespace-nowrap">
-                누적거래대금
+                당일 거래대금
               </span>
               <span className="font-semibold text-right ml-4">
                 {acc_trd_val
