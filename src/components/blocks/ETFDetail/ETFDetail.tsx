@@ -11,19 +11,19 @@ interface ETFDetailProps {
 }
 
 export default function ETFDetail({ etf_code }: ETFDetailProps) {
-    return (
-        <div>
-            <ETFDetailHeader etf_code={etf_code} />
-            <div className="flex">
-                <ETFDetailSidebar etf_code={etf_code} />
-                <div className="flex-1">
-                    <ETFDetailInfo etf_code={etf_code} />
-                    <ETFDetailYield etf_code={etf_code} />
-                    <ETFDetailRisk etf_code={etf_code} />
-                    <ETFDetailStandardPrice etf_code={etf_code} />
-                    <ETFDetailHoldings etf_code={etf_code} />
-                </div>
-            </div>
+  return (
+    <div>
+      <ETFDetailHeader etf_code={etf_code} />
+      <div className="flex">
+        <ETFDetailSidebar etf_code={etf_code} />
+        <div className="flex-1">
+          <ETFDetailInfo etf_code={etf_code} />
+          <ETFDetailYield etf_code={etf_code} />
+          <ETFDetailRisk etf_code={etf_code} />
+          <ETFDetailStandardPrice etf_code={etf_code} />
+          <ETFDetailHoldings etf_code={etf_code} />
         </div>
-    );
+      </div>
+    </div>
+  );
 }

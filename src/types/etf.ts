@@ -19,6 +19,14 @@ export interface ETFDetail {
   is_retire_pension: boolean;
   is_personal_pension: boolean;
   daily_price?: ETFPricesDaily;
+
+  daily_prices?: ETFPricesDaily[];
+  // prices_daily?: ETFPricesDaily[];
+  etf_holdings?: ETFHoldingsWithStock[];
+  etf_recommendation_score?: ETFRecommendationScore;
+  etf_return_cache?: ETFReturnCache;
+  etf_recommendation_score_data?: ETFRecommendationScore[];
+  etf_return_cache_data?: ETFReturnCache[];
 }
 
 export interface ETFPricesDaily {
@@ -69,17 +77,17 @@ export interface ETFHoldingsWithStock {
   // etfs 테이블
   etf_code: string;
   etf_name: string;
-  
+
   // etf_holdings 테이블
   holdings_id: number;
   weight_pct: number;
   ver: number;
   update_at: string;
-  
+
   // stock 테이블
   stock_code: string; // stock.holding_code
   stock_name: string; // stock.holding_name
-  
+
   // 계산된 필드들 (백엔드에서 계산)
   shares?: number; // 계산된 수량
   market_value?: number; // 계산된 평가금액
@@ -117,13 +125,13 @@ export interface ETFDetailYieldData {
 
 // 기간별 수익률 데이터 구조 (프론트엔드용)
 export interface PeriodReturns {
-  '1주': number | string | null;
-  '1개월': number | string | null;
-  '3개월': number | string | null;
-  '6개월': number | string | null;
-  '1년': number | string | null;
-  '3년': number | string | null;
-  '상장이후': number | string | null;
+  "1주": number | string | null;
+  "1개월": number | string | null;
+  "3개월": number | string | null;
+  "6개월": number | string | null;
+  "1년": number | string | null;
+  "3년": number | string | null;
+  상장이후: number | string | null;
 }
 
 // ETF 추천 점수 데이터 타입 (etf_recommendation_score 테이블 구조)
@@ -132,12 +140,20 @@ export interface ETFRecommendationScore {
   etf_code: string;
   group_id: string;
   detail: string;
-  score: number | string;
   mdd: number | string;
   volatility: number | string;
   return_1y: number | string;
   latest_aum: number | string;
   expense_ratio: number | string;
+  etf_score: number | string;
+  stability_risk_score: number | string;
+  stability_score: number | string;
+  liquidity_score: number | string;
+  growth_score: number | string;
+  diversification_score: number | string;
+  aum_score: number | string;
+  mdd_score: number | string;
+  dif_score: number | string;
 }
 
 // API 응답 타입
@@ -166,4 +182,4 @@ export interface ETFRecommendationScoreResponse {
   success: boolean;
   data: ETFRecommendationScore;
   message?: string;
-} 
+}

@@ -3,6 +3,7 @@ import { oneShinhan } from "@/styles/fonts";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { AuthProvider } from "@/contexts/AuthContext";
+import QueryProviders from "@/lib/query/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,13 +17,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${oneShinhan.variable} antialiased bg-[#F1F3F8]`}>
-        <AuthProvider>
-          <Header />
-          <div className="max-w-screen-xl mx-auto">
-            <main className={"mt-20"}>{children}</main>
-          </div>
-        </AuthProvider>
+      <body className={`${oneShinhan.variable} antialiased bg-gray-50`}>
+        {/* <body className="antialiased bg-gray-50"> */}
+        <QueryProviders>
+          <AuthProvider>
+            <Header />
+            {children}
+          </AuthProvider>
+        </QueryProviders>
       </body>
     </html>
   );

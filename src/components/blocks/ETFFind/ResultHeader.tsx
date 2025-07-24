@@ -7,9 +7,9 @@ type Props = {
 function getYesterdayLabel() {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  return `${yesterday.getFullYear()}.${String(yesterday.getMonth() + 1).padStart(2, "0")}.${String(
-    yesterday.getDate()
-  ).padStart(2, "0")}`;
+  return `${yesterday.getFullYear()}.${String(
+    yesterday.getMonth() + 1
+  ).padStart(2, "0")}.${String(yesterday.getDate()).padStart(2, "0")}`;
 }
 
 export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
@@ -17,7 +17,8 @@ export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
     <div className="flex items-center justify-between mb-2">
       <div className="flex items-center gap-2">
         <span className="text-blue-600 font-medium">
-          전체에 대한 <span className="font-bold">{count}</span>건의 검색결과가 있습니다.
+          전체에 대한 <span className="font-bold">{count}</span>건의 검색결과가
+          있습니다.
         </span>
         <div className="flex gap-2 ml-2 text-xs">
           {["ETF로 보기", "구성종목으로 보기"].map((mode) => (
@@ -27,7 +28,11 @@ export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
               onClick={() => setViewMode(mode)}
               style={{ opacity: viewMode === mode ? 1 : 0.6 }}
             >
-              <span className={viewMode === mode ? "text-blue-600" : "text-blue-300"}>
+              <span
+                className={
+                  viewMode === mode ? "text-blue-600" : "text-blue-300"
+                }
+              >
                 {viewMode === mode ? "●" : "○"}
               </span>
               {mode === "ETF로 보기" ? "ETF별 보기" : "종목별 보기"}
@@ -41,4 +46,3 @@ export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
     </div>
   );
 }
-  
