@@ -19,8 +19,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   //결과 불러오기
   useEffect(() => {
     const fetchData = async () => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      let url = `${API_BASE_URL}/api/recommendation`;
+      let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation`;
       let body: any = {};
   
       if (Array.isArray(riskScore) && riskScore.length === 4) {
@@ -32,7 +31,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
       }
 
       if (selectedTab === "theme") {
-        url = `${API_BASE_URL}/api/recommendation/theme`;
+        url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/recommendation/theme`;
         body.theme = theme;
       }
 
@@ -52,9 +51,8 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   //결과 저장
   useEffect(() => {
     const fetchData = async () => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = riskScore
-      const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

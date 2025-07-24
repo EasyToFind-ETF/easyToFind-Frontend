@@ -20,7 +20,6 @@ export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
   const [selectedType, setSelectedType] = useState("전체");
   const [selectedTheme, setSelectedTheme] = useState("전체");
-  const [selectedInterest, setSelectedInterest] = useState("전체");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [etfData, setEtfData] = useState<ETFView[]>([]);
@@ -78,7 +77,6 @@ export default function FindPage() {
     setSelectedTab(tab);
     setSelectedType("전체");
     setSelectedTheme("전체");
-    setSelectedInterest("전체");
     setSelectedTab(tab);
   };
 
@@ -93,12 +91,11 @@ export default function FindPage() {
       ? selectedType
       : selectedTab === "테마별"
       ? selectedTheme
-      : selectedInterest;
+      : "";
 
   const handleFilterChange = (value: string) => {
     if (selectedTab === "유형별") setSelectedType(value);
     else if (selectedTab === "테마별") setSelectedTheme(value);
-    else setSelectedInterest(value);
   };
 
   const handleToggleFavorite = async (
@@ -128,9 +125,12 @@ export default function FindPage() {
         sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
       };
 
-      if (selectedType !== "전체") params.assetClass = selectedType;
-      if (selectedTheme !== "전체") params.theme = selectedTheme;
-      if (selectedInterest === "관심") params.isFavorite = true;
+      if (selectedTab === "관심별") {
+        params.isFavorite = true;
+      } else {
+        if (selectedType !== "전체") params.assetClass = selectedType;
+        if (selectedTheme !== "전체") params.theme = selectedTheme;
+      }
 
       try {
         if (viewMode === "ETF로 보기") {
@@ -179,7 +179,7 @@ export default function FindPage() {
     };
 
     fetchData();
-  }, [searchQuery, selectedType, selectedTheme, selectedInterest, viewMode]);
+  }, [searchQuery, selectedType, selectedTheme, viewMode, selectedTab]);
 
   // 비교하기 버튼 클릭 핸들러
   const handleCompareClick = async () => {
@@ -265,11 +265,13 @@ export default function FindPage() {
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
           />
-          <FilterButtons
-            filters={getFilters()}
-            selected={selectedFilter}
-            onChange={handleFilterChange}
-          />
+          {selectedTab !== "관심별" && (
+            <FilterButtons
+              filters={getFilters()}
+              selected={selectedFilter}
+              onChange={handleFilterChange}
+            />
+          )}
           <ResultHeader
             viewMode={viewMode}
             setViewMode={setViewMode}
