@@ -21,7 +21,6 @@ export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
   const [selectedType, setSelectedType] = useState("전체");
   const [selectedTheme, setSelectedTheme] = useState("전체");
-  const [selectedInterest, setSelectedInterest] = useState("전체");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [etfData, setEtfData] = useState<ETFView[]>([]);
@@ -48,21 +47,21 @@ export default function FindPage() {
   const themeFilters = [
     "전체",
     "반도체",
-    "금융",
-    "게임",
-    "기술",
-    "배당",
     "산업재",
     "소비재",
-    "에너지",
-    "인공지능",
+    "기술",
     "전기차",
+    "인공지능",
+    "게임",
+    "에너지",
     "친환경",
     "헬스케어",
+    "금융",
     "미국",
     "인도",
     "일본",
     "중국",
+    "배당",
     "기타",
   ];
   const interestFilters = ["전체", "관심"];
@@ -80,7 +79,6 @@ export default function FindPage() {
     setSelectedTab(tab);
     setSelectedType("전체");
     setSelectedTheme("전체");
-    setSelectedInterest("전체");
     setSelectedTab(tab);
   };
 
@@ -95,12 +93,11 @@ export default function FindPage() {
       ? selectedType
       : selectedTab === "테마별"
       ? selectedTheme
-      : selectedInterest;
+      : "";
 
   const handleFilterChange = (value: string) => {
     if (selectedTab === "유형별") setSelectedType(value);
     else if (selectedTab === "테마별") setSelectedTheme(value);
-    else setSelectedInterest(value);
   };
 
   const handleToggleFavorite = async (
@@ -152,9 +149,12 @@ export default function FindPage() {
         sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
       };
 
-      if (selectedType !== "전체") params.assetClass = selectedType;
-      if (selectedTheme !== "전체") params.theme = selectedTheme;
-      if (selectedInterest === "관심") params.isFavorite = true;
+      if (selectedTab === "관심별") {
+        params.isFavorite = true;
+      } else {
+        if (selectedType !== "전체") params.assetClass = selectedType;
+        if (selectedTheme !== "전체") params.theme = selectedTheme;
+      }
 
       try {
         if (viewMode === "ETF로 보기") {
@@ -203,7 +203,7 @@ export default function FindPage() {
     };
 
     fetchData();
-  }, [searchQuery, selectedType, selectedTheme, selectedInterest, viewMode]);
+  }, [searchQuery, selectedType, selectedTheme, viewMode, selectedTab]);
 
   // 비교하기 버튼 클릭 핸들러
   const handleCompareClick = async () => {
@@ -269,7 +269,7 @@ export default function FindPage() {
               <div className="relative">
                 <input
                   type="text"
-                  className="w-full rounded-full border border-gray-200 bg-[#0046ff]/60 px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
+                  className="w-full rounded-full border border-gray-200 bg-[#0046ff] px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
                   style={{ caretColor: "white" }}
                   placeholder={
                     showPlaceholder
@@ -313,7 +313,7 @@ export default function FindPage() {
           </div>
         </div>
         <div
-          className="w-full bg-white rounded-3xl shadow mt-6 p-16"
+          className="bg-white rounded-3xl w-full px-16 py-16 shadow overflow-visible mt-6 mb-10"
           style={{ borderRadius: "4rem" }}
         >
           <FilterTabs
@@ -321,11 +321,13 @@ export default function FindPage() {
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
           />
-          <FilterButtons
-            filters={getFilters()}
-            selected={selectedFilter}
-            onChange={handleFilterChange}
-          />
+          {selectedTab !== "관심별" && (
+            <FilterButtons
+              filters={getFilters()}
+              selected={selectedFilter}
+              onChange={handleFilterChange}
+            />
+          )}
           <ResultHeader
             viewMode={viewMode}
             setViewMode={setViewMode}
@@ -336,7 +338,7 @@ export default function FindPage() {
 
           {isLoading ? (
             <div className="text-center py-10">
-              <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin h-10 w-10 border-4 border-[#0046ff] border-t-transparent rounded-full mx-auto" />
               <p className="text-sm mt-2 text-gray-500">
                 ETF 데이터를 불러오는 중...
               </p>

@@ -28,7 +28,7 @@ const ResultHeader: React.FC<ResultHeaderProps> = ({
         </span>
       </div>
       <div className="flex items-end justify-between">
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           {["ETF로 보기", "구성종목으로 보기"].map((mode) => (
             <button
               key={mode}
@@ -36,14 +36,13 @@ const ResultHeader: React.FC<ResultHeaderProps> = ({
               onClick={() => setViewMode(mode)}
               style={{ opacity: viewMode === mode ? 1 : 0.6 }}
             >
-              <span
-                className={
-                  viewMode === mode ? "text-blue-600" : "text-blue-300"
-                }
-              >
-                {viewMode === mode ? "●" : "○"}
-                {/* {viewMode === mode ? "■" : "□"} */}
-              </span>
+              <input
+                type="radio"
+                checked={viewMode === mode}
+                onChange={() => setViewMode(mode)}
+                className="accent-[#0046ff] w-4 h-4"
+                name="viewMode"
+              />
               {mode === "ETF로 보기" ? "ETF별 보기" : "종목별 보기"}
             </button>
           ))}

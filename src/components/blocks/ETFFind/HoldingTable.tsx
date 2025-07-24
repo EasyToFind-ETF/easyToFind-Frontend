@@ -69,7 +69,7 @@ export default function HoldingTable({
                     type="checkbox"
                     checked={selectedEtfCodes.includes(holding.etfCode)}
                     onChange={() => toggleSelect(holding.etfCode)}
-                    className="accent-blue-500 w-5 h-5"
+                    className="accent-[#0046ff] w-5 h-5"
                     disabled={
                       !selectedEtfCodes.includes(holding.etfCode) &&
                       selectedEtfCodes.length >= MAX_SELECT
@@ -113,11 +113,11 @@ export default function HoldingTable({
           }}
           className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">
+          <span className="text-[#0046ff] font-semibold">
             {selectedEtfCodes.length}/{MAX_SELECT}개 선택됨
           </span>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
+            className="bg-blue-500 hover:bg-[#0046ff] text-white font-bold py-2 px-6 rounded-full shadow"
             onClick={() => {
               const hasToken = document.cookie.includes("authToken");
               if (!hasToken) {

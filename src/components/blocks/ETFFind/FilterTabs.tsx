@@ -6,13 +6,13 @@ type Props = {
 
 export default function FilterTabs({ tabs, selectedTab, onTabChange }: Props) {
   return (
-    <div className="flex border-b mb-14">
+    <div className="flex border-b mb-20">
       {tabs.map((tab) => (
         <button
           key={tab}
-          className={`flex-1 py-3 text-base font-semibold border-b-2 transition-colors duration-150 ${
+          className={`flex-1 py-3 text-lg font-medium border-b-2 transition-colors duration-150 ${
             selectedTab === tab
-              ? "border-blue-600 text-blue-700"
+              ? "border-[#0046ff] text-[#0046ff]"
               : "border-transparent text-gray-500"
           }`}
           onClick={() => onTabChange(tab)}
