@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchETFDetail } from "@/services/etfDetailService";

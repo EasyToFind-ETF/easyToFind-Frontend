@@ -52,11 +52,10 @@ export default function ETFCard({ name, score, etf_code, details }: ETFCardProps
   >
     <h2 className="text-lg md:text-xl lg:text-2xl font-bold mb-4">{name}</h2>
   
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-start gap-6 md:gap-10 lg:gap-16">
+    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-start gap-8 md:gap-12 lg:gap-20">
       
       {/* 원형 차트 */}
-      <div className="text-center flex flex-col items-center px-2 md:px-4 lg:px-6">
-        <div className="text-base md:text-lg font-semibold mb-2 mt-2">종합점수</div>
+      <div className="text-center flex flex-col items-center px-2 py-6 md:px-4 lg:px-6 flex-shrink-0">
         <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px]">
           <ResponsivePie
             data={pieData}
@@ -100,9 +99,9 @@ export default function ETFCard({ name, score, etf_code, details }: ETFCardProps
       </div>
   
       {/* 점수 구성 */}
-      <div className="w-full">
-        <div className="text-base md:text-lg px-2 md:px-4 lg:px-6 mb-2">점수구성</div>
-        <div className="flex flex-wrap gap-4 md:gap-10 lg:gap-28 px-2 md:px-4 lg:px-16">
+      <div className="w-full flex-1">
+        <div className="text-base md:text-lg px-2 md:px-4 lg:px-6 mb-4 lg:mb-6 py-4"></div>
+        <div className="flex flex-wrap gap-6 md:gap-12 lg:gap-36 px-2 md:px-4 lg:px-16">
           {details.map((d) => (
             <div key={d.label} className="flex flex-col items-start lg:items-end">
               <span className="text-sm md:text-base lg:text-lg mb-1">{d.label}</span>

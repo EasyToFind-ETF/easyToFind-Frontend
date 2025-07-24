@@ -24,18 +24,11 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
       let body: any = {};
   
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        // riskScore 정규화 함수
-        const normalize = (arr: number[]) => {
-          const sum = arr.reduce((a, b) => a + b, 0);
-          return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
-        };
         
-        const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
-        
-        body.stabilityScore = stabilityWeight;
-        body.liquidityScore = liquidityWeight;
-        body.growthScore = growthWeight;
-        body.divScore = divWeight;
+        body.stabilityScore = Number(riskScore[0]);
+        body.liquidityScore = Number(riskScore[1]);
+        body.growthScore = Number(riskScore[2]);
+        body.divScore = Number(riskScore[3]);
       }
 
       if (selectedTab === "theme") {
@@ -60,12 +53,7 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
   useEffect(() => {
     const fetchData = async () => {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      // riskScore 정규화 함수
-      const normalize = (arr: number[]) => {
-        const sum = arr.reduce((a, b) => a + b, 0);
-        return sum === 0 ? [0.25, 0.25, 0.25, 0.25] : arr.map(v => v / sum);
-      };
-      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = normalize(riskScore);
+      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] = riskScore
       const response = await fetch(`${API_BASE_URL}/api/me/mbti`, {
         method: "PUT",
         headers: {
@@ -74,14 +62,14 @@ export default function ResultComponentClient({ riskType, theme, riskScore }: Pr
         credentials: "include", 
         body: JSON.stringify({
           mbtiType: riskType,
-          stabilityWeight,
-          liquidityWeight,
-          growthWeight,
-          divWeight,
+          stabilityWeight:  Number(riskScore[0]),
+          liquidityWeight: Number(riskScore[1]),
+          growthWeight: Number(riskScore[2]),
+          divWeight: Number(riskScore[3]),
         }),
       });
       const data = await response.json();
-      console.log("normal",stabilityWeight, liquidityWeight, growthWeight, divWeight);
+      console.log("save",stabilityWeight, liquidityWeight, growthWeight, divWeight);
     };
     fetchData();
   }, []);
