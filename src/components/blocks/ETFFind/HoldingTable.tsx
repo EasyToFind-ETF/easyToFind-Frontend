@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { HoldingView } from "../../../types/HoldingView";
+import Link from "next/link";
 
 const MAX_SELECT = 5;
 
 interface HoldingTableProps {
   holdingsData: HoldingView[];
-  selected: number[];
-  setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+  selectedEtfCodes: string[];
+  setSelectedEtfCodes: React.Dispatch<React.SetStateAction<string[]>>;
   favoriteEtfCodes: string[];
   onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean) => void;
   onCompare: () => void;
@@ -14,24 +15,24 @@ interface HoldingTableProps {
 
 export default function HoldingTable({
   holdingsData,
-  selected,
-  setSelected,
+  selectedEtfCodes,
+  setSelectedEtfCodes,
   favoriteEtfCodes,
   onToggleFavorite,
   onCompare,
 }: HoldingTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
 
-  const toggleSelect = (idx: number) => {
-    if (selected.includes(idx)) {
-      setSelected(selected.filter((i) => i !== idx));
+  const toggleSelect = (etfCode: string) => {
+    if (selectedEtfCodes.includes(etfCode)) {
+      setSelectedEtfCodes(selectedEtfCodes.filter((code) => code !== etfCode));
     } else {
-      if (selected.length >= MAX_SELECT) {
+      if (selectedEtfCodes.length >= MAX_SELECT) {
         setShowMaxToast(true);
         setTimeout(() => setShowMaxToast(false), 1500);
         return;
       }
-      setSelected([...selected, idx]);
+      setSelectedEtfCodes([...selectedEtfCodes, etfCode]);
     }
   };
 
@@ -49,7 +50,9 @@ export default function HoldingTable({
         <thead className="bg-gray-50">
           <tr>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">ETF명</th>
+            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">
+              ETF명
+            </th>
             <th className="py-3 px-2 font-semibold text-gray-900">종목명</th>
             <th className="py-3 px-2 font-semibold text-gray-900">비중(%)</th>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
@@ -64,20 +67,29 @@ export default function HoldingTable({
                 <td className="py-3 px-2">
                   <input
                     type="checkbox"
-                    checked={selected.includes(i)}
-                    onChange={() => toggleSelect(i)}
+                    checked={selectedEtfCodes.includes(holding.etfCode)}
+                    onChange={() => toggleSelect(holding.etfCode)}
                     className="accent-blue-500 w-5 h-5"
-                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                    disabled={
+                      !selectedEtfCodes.includes(holding.etfCode) &&
+                      selectedEtfCodes.length >= MAX_SELECT
+                    }
                   />
                 </td>
-                <td className="py-3 px-2 text-left font-medium">{holding.etfName}</td>
+                <td className="py-3 px-2 text-left text-gray-900 hover:underline font-medium">
+                  <Link href={`/etfs/${holding.etfCode}`}>
+                    {holding.etfName}
+                  </Link>
+                </td>
                 <td className="py-3 px-2">{holding.holdingName}</td>
                 <td className="py-3 px-2">{holding.weight}</td>
                 {/* 하트 아이콘 */}
                 <td className="py-3 px-2">
                   <span
                     style={{ cursor: "pointer" }}
-                    onClick={() => onToggleFavorite(holding.etfCode, isFavorite)}
+                    onClick={() =>
+                      onToggleFavorite(holding.etfCode, isFavorite)
+                    }
                     className={isFavorite ? "text-red-500" : "text-gray-300"}
                     title={isFavorite ? "관심 해제" : "관심 등록"}
                   >
@@ -90,7 +102,7 @@ export default function HoldingTable({
         </tbody>
       </table>
       {/* 하단 토스트바 */}
-      {selected.length > 0 && (
+      {selectedEtfCodes.length > 0 && (
         <div
           style={{
             position: "fixed",
@@ -101,10 +113,19 @@ export default function HoldingTable({
           }}
           className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">{selected.length}/{MAX_SELECT}개 선택됨</span>
+          <span className="text-blue-700 font-semibold">
+            {selectedEtfCodes.length}/{MAX_SELECT}개 선택됨
+          </span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
-            onClick={onCompare}
+            onClick={() => {
+              const hasToken = document.cookie.includes("authToken");
+              if (!hasToken) {
+                alert("로그인 후 이용해주세요!");
+                return;
+              }
+              onCompare();
+            }}
           >
             비교하기
           </button>
@@ -127,4 +148,4 @@ export default function HoldingTable({
       )}
     </div>
   );
-} 
+}

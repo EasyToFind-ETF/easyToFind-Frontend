@@ -7,7 +7,11 @@ interface CompareModalProps {
   etfs: any[];
 }
 
-export default function CompareModal({ visible, onClose, etfs }: CompareModalProps) {
+export default function CompareModal({
+  visible,
+  onClose,
+  etfs,
+}: CompareModalProps) {
   if (!visible) return null;
 
   return (

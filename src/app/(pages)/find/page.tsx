@@ -27,7 +27,7 @@ export default function FindPage() {
   const [holdingsData, setHoldingsData] = useState<HoldingView[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState("ETF로 보기");
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selectedEtfCodes, setSelectedEtfCodes] = useState<string[]>([]);
   const [favoriteEtfCodes, setFavoriteEtfCodes] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<any[]>([]);
@@ -65,6 +65,23 @@ export default function FindPage() {
   ];
   const interestFilters = ["전체", "관심"];
 
+  const handleTabChange = (tab: string) => {
+    if (tab === "관심별") {
+      const hasAuthCookie = document.cookie.includes("authToken");
+
+      if (!hasAuthCookie) {
+        alert("로그인 후 이용해주세요!");
+        return;
+      }
+    }
+
+    setSelectedTab(tab);
+    setSelectedType("전체");
+    setSelectedTheme("전체");
+    setSelectedInterest("전체");
+    setSelectedTab(tab);
+  };
+
   const getFilters = () => {
     if (selectedTab === "유형별") return assetFilters;
     if (selectedTab === "테마별") return themeFilters;
@@ -97,7 +114,7 @@ export default function FindPage() {
       );
     } catch (err) {
       console.error("❌ 관심 ETF 토글 실패:", err);
-      alert("관심 ETF 변경 중 오류가 발생했습니다.");
+      alert("로그인 후 이용해주세요!");
     }
   };
 
@@ -136,9 +153,11 @@ export default function FindPage() {
           try {
             const favoriteCodes = await fetchFavoriteEtfCodes();
             setFavoriteEtfCodes(favoriteCodes);
-          } catch (err) {
-            console.warn("💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)");
-            setFavoriteEtfCodes([]);
+          } catch (err: any) {
+            console.warn(
+              "💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)",
+              err
+            );
           }
         } else {
           const data: any[] = await fetchHoldingsData(params);
@@ -164,8 +183,8 @@ export default function FindPage() {
 
   // 비교하기 버튼 클릭 핸들러
   const handleCompareClick = async () => {
-    const codes = selected.map((idx) => etfData[idx].etfCode);
-    console.log("📦 비교할 ETF 코드 목록:", codes);
+    const codes = selectedEtfCodes;
+    // console.log("📦 비교할 ETF 코드 목록:", codes);
 
     try {
       const responses = await Promise.all(
@@ -173,7 +192,7 @@ export default function FindPage() {
           const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etf/compare/${code}`;
           console.log(`🚀 API 호출: ${url}`);
           return fetch(url, {
-            credentials: "include", // ← 이게 핵심!
+            credentials: "include",
           }).then((res) => res.json());
         })
       );
@@ -219,7 +238,7 @@ export default function FindPage() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">ETF 찾기</h1>
+          <h1 className="text-3xl mt-16 font-bold text-gray-900">ETF 찾기</h1>
           <div className="max-w-2xl mx-auto relative">
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
@@ -236,7 +255,7 @@ export default function FindPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ETF 이름/종목코드 또는 구성종목을 검색해보세요"
-              className="pl-12 py-4 text-lg rounded-full border-2 border-blue-200 focus:border-blue-400 w-full"
+              className="pl-16 py-4 text-lg rounded-full border-2 border-blue-200 focus:border-blue-400 w-full"
             />
           </div>
         </div>
@@ -244,7 +263,7 @@ export default function FindPage() {
           <FilterTabs
             tabs={tabList}
             selectedTab={selectedTab}
-            onTabChange={setSelectedTab}
+            onTabChange={handleTabChange}
           />
           <FilterButtons
             filters={getFilters()}
@@ -269,8 +288,8 @@ export default function FindPage() {
           ) : viewMode === "ETF로 보기" ? (
             <ETFTable
               etfData={etfData}
-              selected={selected}
-              setSelected={setSelected}
+              selectedEtfCodes={selectedEtfCodes}
+              setSelectedEtfCodes={setSelectedEtfCodes}
               favoriteEtfCodes={favoriteEtfCodes}
               onToggleFavorite={handleToggleFavorite}
               onCompare={handleCompareClick}
@@ -278,8 +297,8 @@ export default function FindPage() {
           ) : (
             <HoldingTable
               holdingsData={holdingsData}
-              selected={selected}
-              setSelected={setSelected}
+              selectedEtfCodes={selectedEtfCodes}
+              setSelectedEtfCodes={setSelectedEtfCodes}
               favoriteEtfCodes={favoriteEtfCodes}
               onToggleFavorite={handleToggleFavorite}
               onCompare={handleCompareClick}
