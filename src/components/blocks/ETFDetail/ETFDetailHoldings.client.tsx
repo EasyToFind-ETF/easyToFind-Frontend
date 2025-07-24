@@ -11,9 +11,9 @@ import { fetchETFDetail } from "@/services/etfDetailService";
 import { useQuery } from "@tanstack/react-query";
 
 // 한국어로 포맷팅
-registerLocale('ko', ko);
+registerLocale("ko", ko);
 
-interface ETFHoldingsData extends ETFHoldingsWithStock { }
+interface ETFHoldingsData extends ETFHoldingsWithStock {}
 
 // 캘린더 커스텀
 const customDatePickerStyles = `
@@ -114,66 +114,57 @@ interface ETFDetailHoldingsProps {
 }
 
 const ETFDetailHoldings: React.FC<ETFDetailHoldingsProps> = ({ etf_code }) => {
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [holdingsData, setHoldingsData] = useState<ETFHoldingsData[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    
-    // 날짜를 YYYY-MM-DD 형식으로 변환
-    const formatDate = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
+  const [showAllHoldings, setShowAllHoldings] = useState(false);
 
-    // ETF 구성종목 데이터 가져오기
-    const fetchHoldingsData = async (date: Date) => {
-        setLoading(true);
-        setError(null);
-        
-        try {
-            const formattedDate = formatDate(date);
-            
-            const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/etfs/${etf_code}`;
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+  const {
+    data: etfData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["etf", etf_code],
+    queryFn: () => fetchETFDetail(etf_code),
+    refetchOnWindowFocus: true,
+  });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Response error text:', errorText);
-                throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-            }
+  const holdingsData = useMemo(() => {
+    console.log("ETFDetailHoldings - etfData:", etfData);
+    console.log(
+      "ETFDetailHoldings - holdings_data:",
+      (etfData as any)?.holdings_data
+    );
+    console.log("ETFDetailHoldings - etf_holdings:", etfData?.etf_holdings);
 
-            const responseData = await response.json();
-            
-            if (responseData.status === 200 && responseData.data) {
-                const etfData = responseData.data;
-                
-                if (etfData.holdings_data && Array.isArray(etfData.holdings_data)) {
-                    setHoldingsData(etfData.holdings_data);
-                } else {
-                    setHoldingsData([]);
-                }
-            } else {
-                setHoldingsData([]);
-            }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : '데이터를 가져오는 중 오류가 발생했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    // 백업 파일에서는 holdings_data를 사용했으므로, 두 필드 모두 확인
+    if (
+      (etfData as any)?.holdings_data &&
+      Array.isArray((etfData as any).holdings_data)
+    ) {
+      console.log(
+        "ETFDetailHoldings - holdings_data length:",
+        (etfData as any).holdings_data.length
+      );
+      return (etfData as any).holdings_data;
+    }
 
-    // 날짜가 변경될 때마다 데이터 가져오기
-    useEffect(() => {
-        fetchHoldingsData(selectedDate);
-    }, [selectedDate, etf_code]);
+    if (etfData?.etf_holdings && Array.isArray(etfData.etf_holdings)) {
+      console.log(
+        "ETFDetailHoldings - etf_holdings length:",
+        etfData.etf_holdings.length
+      );
+      return etfData.etf_holdings;
+    }
+
+    console.log("ETFDetailHoldings - No holdings data found");
+    return [];
+  }, [etfData]);
+
+  // 날짜를 YYYY-MM-DD 형식으로 변환
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   // 파이 차트
   const getPieChartData = () => {
