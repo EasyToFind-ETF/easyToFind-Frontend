@@ -22,6 +22,8 @@ export default function ETFTable({
   onCompare,
 }: ETFTableProps) {
   const [showMaxToast, setShowMaxToast] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
 
   const renderRate = (value: string) => {
     const number = parseFloat(value);
@@ -46,6 +48,18 @@ export default function ETFTable({
     }
   };
 
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(etfData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = etfData.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 페이지 변경 시 선택된 항목 초기화 (선택사항)
+    // setSelectedEtfCodes([]);
+  };
+
   if (!etfData || etfData.length === 0) {
     return (
       <div className="py-20 text-center text-gray-500">
@@ -55,37 +69,37 @@ export default function ETFTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl relative">
+    <div className="overflow-x-auto relative">
       <table className="min-w-full text-center">
         <thead className="bg-gray-50">
           <tr>
-            <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">
+            <th className="py-3 px-2 font-medium text-gray-600 w-20"></th>
+            <th className="py-3 px-2 font-normal text-gray-600 w-1/4">
               상품명
             </th>
-            <th className="py-3 px-2 font-semibold text-gray-900">
+            <th className="py-3 px-2 font-normal text-gray-600 w-1/12">
               기준가(원)
             </th>
             {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map(
               (period) => (
                 <th
                   key={period}
-                  className="py-3 px-2 font-semibold text-gray-900"
+                  className="py-3 px-2 font-normal text-gray-600 whitespace-nowrap w-1/12"
                 >
                   {period}
                 </th>
               )
             )}
-            <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
+            <th className="py-3 px-2 font-normal text-gray-600 w-20"></th>
           </tr>
         </thead>
         <tbody>
-          {etfData.map((etf, i) => {
+          {currentData.map((etf, i) => {
             const isFavorite = favoriteEtfCodes.includes(etf.etfCode);
             return (
-              <tr key={i} className="hover:bg-gray-50 border-t">
+              <tr key={etf.etfCode} className="hover:bg-gray-50 border-t h-16">
                 {/* 체크박스 */}
-                <td className="py-3 px-2">
+                <td className="pt-4 pb-2 pl-4 pr-2">
                   <input
                     type="checkbox"
                     checked={selectedEtfCodes.includes(etf.etfCode)}
@@ -111,7 +125,7 @@ export default function ETFTable({
                 <td className="py-3 px-2">{renderRate(etf.year3)}</td>
                 <td className="py-3 px-2">{renderRate(etf.inception)}</td>
                 {/* 하트 아이콘 */}
-                <td className="py-3 px-2">
+                <td className="py-3 pl-2 pr-4">
                   <span
                     style={{ cursor: "pointer" }}
                     onClick={() => onToggleFavorite(etf.etfCode, isFavorite)}
@@ -126,6 +140,71 @@ export default function ETFTable({
           })}
         </tbody>
       </table>
+
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-20 mb-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &lt; 이전
+          </button>
+
+          {(() => {
+            const pages = [];
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            // 현재 페이지 주변 5개 페이지 계산
+            let displayStart = startPage;
+            let displayEnd = endPage;
+
+            // 5개가 되도록 조정
+            if (endPage - startPage < 4) {
+              if (startPage === 1) {
+                displayEnd = Math.min(totalPages, startPage + 4);
+              } else if (endPage === totalPages) {
+                displayStart = Math.max(1, endPage - 4);
+              }
+            }
+
+            for (let i = displayStart; i <= displayEnd; i++) {
+              pages.push(i);
+            }
+
+            return pages.map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  currentPage === page
+                    ? "bg-[#0046ff] text-white border border-[#0046ff]"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            ));
+          })()}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            다음 &gt;
+          </button>
+        </div>
+      )}
+
+      {/* 페이지 정보 */}
+      <div className="text-center text-sm text-gray-500 mb-4">
+        {startIndex + 1}-{Math.min(endIndex, etfData.length)} / {etfData.length}
+        개
+      </div>
+
       {/* 하단 토스트바 */}
       {selectedEtfCodes.length > 0 && (
         <div
@@ -136,13 +215,13 @@ export default function ETFTable({
             width: "100%",
             zIndex: 50,
           }}
-          className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
+          className="flex items-center justify-between bg-white border-t border-[#4DB6FF] shadow-lg px-20 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">
-            {selectedEtfCodes.length}/{MAX_SELECT}개 선택됨
+          <span className="text-[#0046ff] font-semibold">
+            {selectedEtfCodes.length} / {MAX_SELECT}개 선택됨
           </span>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
+            className="bg-[#0046ff] hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
             onClick={() => {
               const hasToken = document.cookie.includes("authToken");
               if (!hasToken) {

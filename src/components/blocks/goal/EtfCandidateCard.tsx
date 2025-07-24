@@ -1,4 +1,7 @@
-import { EtfCandidate } from "@/types/goal";
+import {
+  EtfCandidate,
+  PersonalScoreDetails as PersonalScoreDetailsType,
+} from "@/types/goal";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import { PersonalScoreDetails } from "./PersonalScoreDetails";
 import { MonteCarloDetails } from "./MonteCarloDetails";
@@ -49,7 +52,13 @@ export const EtfCandidateCard = ({
       : Number(etf.goal_score) || 0;
   const assetClass = etf.asset_class || "";
   const theme = etf.theme || "";
-  const personalScoreDetails = etf.personal_score_details;
+  const personalScoreDetails: PersonalScoreDetailsType =
+    etf.personal_score_details || {
+      stability: 50,
+      liquidity: 50,
+      growth: 50,
+      diversification: 50,
+    };
 
   // Monte Carlo 관련 필드들
   const expectedValue =
@@ -110,6 +119,14 @@ export const EtfCandidateCard = ({
         processed: goalScore,
       },
       hasMonteCarloData,
+      // monthlyPaths 디버깅 추가
+      monthlyPaths: {
+        value: etf.monthly_paths,
+        type: typeof etf.monthly_paths,
+        processed: monthlyPaths,
+        hasData: !!etf.monthly_paths,
+        structure: etf.monthly_paths ? Object.keys(etf.monthly_paths) : [],
+      },
     });
   }
 
@@ -422,28 +439,24 @@ export const EtfCandidateCard = ({
         )}
 
       {/* 개인화 점수 상세 정보 */}
-      {personalScoreDetails && (
-        <div className="border-t border-gray-200 pt-6">
-          <button
-            onClick={() =>
-              setShowPersonalScoreDetails(!showPersonalScoreDetails)
-            }
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors mb-4"
-          >
-            <Info className="w-4 h-4" />
-            <span className="font-medium">개인화 점수 상세 정보</span>
-            {showPersonalScoreDetails ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </button>
-
-          {showPersonalScoreDetails && (
-            <PersonalScoreDetails details={personalScoreDetails} />
+      <div className="border-t border-gray-200 pt-6">
+        <button
+          onClick={() => setShowPersonalScoreDetails(!showPersonalScoreDetails)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors mb-4"
+        >
+          <Info className="w-4 h-4" />
+          <span className="font-medium">개인화 점수 상세 정보</span>
+          {showPersonalScoreDetails ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
           )}
-        </div>
-      )}
+        </button>
+
+        {showPersonalScoreDetails && (
+          <PersonalScoreDetails details={personalScoreDetails} />
+        )}
+      </div>
 
       {/* 추가 정보 (기존 필드가 있는 경우) */}
       {((etf as any).medianEndingValue ||

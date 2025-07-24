@@ -8,6 +8,7 @@ import {
   toggleFavorite as toggleFavoriteAPI,
   fetchFavoriteEtfCodes,
 } from "@/services/etfFavoriteService";
+import { useRouter } from "next/navigation";
 
 import FilterTabs from "@/components/blocks/ETFFind/FilterTabs";
 import FilterButtons from "@/components/blocks/ETFFind/FilterButtons";
@@ -20,7 +21,6 @@ export default function FindPage() {
   const [selectedTab, setSelectedTab] = useState("유형별");
   const [selectedType, setSelectedType] = useState("전체");
   const [selectedTheme, setSelectedTheme] = useState("전체");
-  const [selectedInterest, setSelectedInterest] = useState("전체");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [etfData, setEtfData] = useState<ETFView[]>([]);
@@ -31,7 +31,8 @@ export default function FindPage() {
   const [favoriteEtfCodes, setFavoriteEtfCodes] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<any[]>([]);
-
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
+  const router = useRouter();
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = [
     "전체",
@@ -46,21 +47,21 @@ export default function FindPage() {
   const themeFilters = [
     "전체",
     "반도체",
-    "금융",
-    "게임",
-    "기술",
-    "배당",
     "산업재",
     "소비재",
-    "에너지",
-    "인공지능",
+    "기술",
     "전기차",
+    "인공지능",
+    "게임",
+    "에너지",
     "친환경",
     "헬스케어",
+    "금융",
     "미국",
     "인도",
     "일본",
     "중국",
+    "배당",
     "기타",
   ];
   const interestFilters = ["전체", "관심"];
@@ -78,7 +79,6 @@ export default function FindPage() {
     setSelectedTab(tab);
     setSelectedType("전체");
     setSelectedTheme("전체");
-    setSelectedInterest("전체");
     setSelectedTab(tab);
   };
 
@@ -93,12 +93,11 @@ export default function FindPage() {
       ? selectedType
       : selectedTab === "테마별"
       ? selectedTheme
-      : selectedInterest;
+      : "";
 
   const handleFilterChange = (value: string) => {
     if (selectedTab === "유형별") setSelectedType(value);
     else if (selectedTab === "테마별") setSelectedTheme(value);
-    else setSelectedInterest(value);
   };
 
   const handleToggleFavorite = async (
@@ -118,6 +117,28 @@ export default function FindPage() {
     }
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/find?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleFocus = () => {
+    setShowPlaceholder(false);
+  };
+
+  const handleBlur = () => {
+    if (!searchQuery.trim()) {
+      setShowPlaceholder(true);
+    }
+  };
+
   // 🔥 API 요청 트리거
   useEffect(() => {
     const fetchData = async () => {
@@ -128,9 +149,12 @@ export default function FindPage() {
         sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
       };
 
-      if (selectedType !== "전체") params.assetClass = selectedType;
-      if (selectedTheme !== "전체") params.theme = selectedTheme;
-      if (selectedInterest === "관심") params.isFavorite = true;
+      if (selectedTab === "관심별") {
+        params.isFavorite = true;
+      } else {
+        if (selectedType !== "전체") params.assetClass = selectedType;
+        if (selectedTheme !== "전체") params.theme = selectedTheme;
+      }
 
       try {
         if (viewMode === "ETF로 보기") {
@@ -179,7 +203,7 @@ export default function FindPage() {
     };
 
     fetchData();
-  }, [searchQuery, selectedType, selectedTheme, selectedInterest, viewMode]);
+  }, [searchQuery, selectedType, selectedTheme, viewMode, selectedTab]);
 
   // 비교하기 버튼 클릭 핸들러
   const handleCompareClick = async () => {
@@ -238,38 +262,72 @@ export default function FindPage() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center space-y-6">
-          <h1 className="text-3xl mt-16 font-bold text-gray-900">ETF 찾기</h1>
-          <div className="max-w-2xl mx-auto relative">
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ETF 이름/종목코드 또는 구성종목을 검색해보세요"
-              className="pl-16 py-4 text-lg rounded-full border-2 border-blue-200 focus:border-blue-400 w-full"
-            />
+          <h1 className="text-4xl mt-20 font-bold text-gray-900">ETF 찾기</h1>
+          <div className="w-full bg-gray-50 relative pt-20">
+            {/* Search Bar */}
+            <div className="w-full max-w-7xl mx-auto relative z-10">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full rounded-full border border-gray-200 bg-[#0046ff] px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
+                  style={{ caretColor: "white" }}
+                  placeholder={
+                    showPlaceholder
+                      ? "상품명 혹은 증권코드로 원하는 ETF를 검색해보세요"
+                      : ""
+                  }
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+                <button
+                  className="absolute right-14 top-1/2 -translate-y-1/2 text-white hover:text-[#4DB6FF]"
+                  onClick={handleSearch}
+                  aria-label="검색"
+                >
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="11"
+                      cy="11"
+                      r="8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-4.35-4.35"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="w-full bg-white rounded-2xl shadow p-6 mt-6">
+        <div
+          className="bg-white rounded-3xl w-full px-16 py-16 shadow overflow-visible mt-6 mb-10"
+          style={{ borderRadius: "4rem" }}
+        >
           <FilterTabs
             tabs={tabList}
             selectedTab={selectedTab}
             onTabChange={handleTabChange}
           />
-          <FilterButtons
-            filters={getFilters()}
-            selected={selectedFilter}
-            onChange={handleFilterChange}
-          />
+          {selectedTab !== "관심별" && (
+            <FilterButtons
+              filters={getFilters()}
+              selected={selectedFilter}
+              onChange={handleFilterChange}
+            />
+          )}
           <ResultHeader
             viewMode={viewMode}
             setViewMode={setViewMode}
@@ -280,7 +338,7 @@ export default function FindPage() {
 
           {isLoading ? (
             <div className="text-center py-10">
-              <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin h-10 w-10 border-4 border-[#0046ff] border-t-transparent rounded-full mx-auto" />
               <p className="text-sm mt-2 text-gray-500">
                 ETF 데이터를 불러오는 중...
               </p>
