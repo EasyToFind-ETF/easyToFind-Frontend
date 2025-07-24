@@ -34,7 +34,7 @@ export const useUserRiskProfile = () => {
         try {
           // 로그인된 사용자의 위험 성향 점수를 가져오는 API 호출
           const response = await fetch(
-            "http://localhost:3001/api/me/risk-profile",
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/risk-profile`,
             {
               method: "GET",
               headers: {
@@ -46,25 +46,30 @@ export const useUserRiskProfile = () => {
 
           if (response.ok) {
             const data = await response.json();
+            // 위험성향이 null이면 기본값 50 사용, null이 아니면 사용자의 위험성향 사용
+            const finalRiskScore =
+              data.riskScore !== null && data.riskScore !== undefined
+                ? data.riskScore
+                : 50;
+
             setUserProfile({
               isLoggedIn: true,
-              riskScore: data.riskScore || 50,
+              riskScore: finalRiskScore,
               isLoading: false,
             });
           } else {
-            // API 호출 실패 시 목업 데이터 사용 (실제 개발 시에는 실제 API 사용)
-            // 임시로 로그인된 사용자는 65점의 공격형 성향을 가진다고 가정
+            // API 호출 실패 시 기본값 50 사용
             setUserProfile({
               isLoggedIn: true,
-              riskScore: 65, // 목업 데이터: 공격형 성향
+              riskScore: 50, // 기본값: 표준 위험 성향
               isLoading: false,
             });
           }
         } catch (error) {
-          // 에러 발생 시 목업 데이터 사용
+          // 에러 발생 시 기본값 50 사용
           setUserProfile({
             isLoggedIn: true,
-            riskScore: 65, // 목업 데이터: 공격형 성향
+            riskScore: 50, // 기본값: 표준 위험 성향
             isLoading: false,
           });
         }

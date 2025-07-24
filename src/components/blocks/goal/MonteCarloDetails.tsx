@@ -23,7 +23,24 @@ interface MonteCarloDetailsProps {
   riskAdjustedReturn?: number;
   marketRegime?: "bull" | "bear" | "volatile" | "neutral";
   simulationCount?: number;
-  monthlyPaths?: number[][];
+  monthlyPaths?:
+    | number[][]
+    | {
+        representative?: {
+          p95: number[];
+          p50: number[];
+          p05: number[];
+        };
+        random_samples?: number[][];
+        fan_bands?: {
+          p05: number[];
+          p25: number[];
+          p50: number[];
+          p75: number[];
+          p95: number[];
+        };
+        principal_line?: number[];
+      };
   targetYears?: number; // 투자 기간 추가
   className?: string;
 }
@@ -54,6 +71,21 @@ export const MonteCarloDetails = ({
   targetYears = 1, // 기본값 설정
   className = "",
 }: MonteCarloDetailsProps) => {
+  // 디버깅을 위한 로그 (개발 환경에서만)
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔍 MonteCarloDetails monthlyPaths 디버깅:", {
+      monthlyPaths,
+      type: typeof monthlyPaths,
+      isArray: Array.isArray(monthlyPaths),
+      length: Array.isArray(monthlyPaths) ? monthlyPaths.length : 0,
+      hasData: !!monthlyPaths,
+      structure:
+        !Array.isArray(monthlyPaths) && monthlyPaths
+          ? Object.keys(monthlyPaths)
+          : [],
+    });
+  }
+
   return (
     <div className={`space-y-6 ${className}`}>
       {/* 주요 지표 */}
@@ -273,12 +305,14 @@ export const MonteCarloDetails = ({
       )}
 
       {/* ✅ 백엔드 개선으로 새로 추가된 월별 가격 경로 차트 */}
-      {monthlyPaths && monthlyPaths.length > 0 && (
-        <MonthlyPathsChart
-          monthlyPaths={monthlyPaths}
-          targetYears={targetYears}
-        />
-      )}
+      {monthlyPaths &&
+        ((Array.isArray(monthlyPaths) && monthlyPaths.length > 0) ||
+          (!Array.isArray(monthlyPaths) && monthlyPaths.fan_bands)) && (
+          <MonthlyPathsChart
+            monthlyPaths={monthlyPaths}
+            targetYears={targetYears}
+          />
+        )}
 
       {/* 분석 설명 */}
       <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
