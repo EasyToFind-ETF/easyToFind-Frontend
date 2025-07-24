@@ -8,6 +8,7 @@ import {
   toggleFavorite as toggleFavoriteAPI,
   fetchFavoriteEtfCodes,
 } from "@/services/etfFavoriteService";
+import { useRouter } from "next/navigation";
 
 import FilterTabs from "@/components/blocks/ETFFind/FilterTabs";
 import FilterButtons from "@/components/blocks/ETFFind/FilterButtons";
@@ -31,7 +32,8 @@ export default function FindPage() {
   const [favoriteEtfCodes, setFavoriteEtfCodes] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<any[]>([]);
-
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
+  const router = useRouter();
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = [
     "전체",
@@ -115,6 +117,28 @@ export default function FindPage() {
     } catch (err) {
       console.error("❌ 관심 ETF 토글 실패:", err);
       alert("로그인 후 이용해주세요!");
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/find?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleFocus = () => {
+    setShowPlaceholder(false);
+  };
+
+  const handleBlur = () => {
+    if (!searchQuery.trim()) {
+      setShowPlaceholder(true);
     }
   };
 
@@ -238,28 +262,60 @@ export default function FindPage() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center space-y-6">
-          <h1 className="text-3xl mt-16 font-bold text-gray-900">ETF 찾기</h1>
-          <div className="max-w-2xl mx-auto relative">
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ETF 이름/종목코드 또는 구성종목을 검색해보세요"
-              className="pl-16 py-4 text-lg rounded-full border-2 border-blue-200 focus:border-blue-400 w-full"
-            />
+          <h1 className="text-4xl mt-20 font-bold text-gray-900">ETF 찾기</h1>
+          <div className="w-full bg-gray-50 relative pt-20">
+            {/* Search Bar */}
+            <div className="w-full max-w-7xl mx-auto relative z-10">
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full rounded-full border border-gray-200 bg-[#0046ff]/60 px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
+                  style={{ caretColor: "white" }}
+                  placeholder={
+                    showPlaceholder
+                      ? "상품명 혹은 증권코드로 원하는 ETF를 검색해보세요"
+                      : ""
+                  }
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+                <button
+                  className="absolute right-14 top-1/2 -translate-y-1/2 text-white hover:text-[#4DB6FF]"
+                  onClick={handleSearch}
+                  aria-label="검색"
+                >
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      cx="11"
+                      cy="11"
+                      r="8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-4.35-4.35"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="w-full bg-white rounded-2xl shadow p-6 mt-6">
+        <div
+          className="w-full bg-white rounded-3xl shadow mt-6 p-16"
+          style={{ borderRadius: "4rem" }}
+        >
           <FilterTabs
             tabs={tabList}
             selectedTab={selectedTab}
