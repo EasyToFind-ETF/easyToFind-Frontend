@@ -46,8 +46,7 @@ export default function ETFCard({ name, score, etf_code, details }: ETFCardProps
 
   return (
     <div 
-    className="bg-white shadow p-4 md:p-6 lg:px-12 flex flex-col w-full lg:min-w-[800px] cursor-pointer hover:shadow-lg transition-shadow"
-    style={{ borderRadius: 40 }}
+    className="bg-white shadow p-4 md:p-6 lg:px-12 flex flex-col w-full rounded-3xl lg:min-w-[800px] cursor-pointer hover:shadow-lg transition-shadow"
     onClick={handleClick}
   >
     <h2 className="text-lg md:text-xl lg:text-2xl font-bold mb-4">{name}</h2>

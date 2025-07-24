@@ -92,10 +92,9 @@ function getInvestmentType(scores: number[]): string {
     height: "70vh",
     background: `#7fc2fe
     `,
-    borderRadius: 40,
     position: "relative",
   }}
-  className="flex flex-col items-start justify-start sm:px-12"
+  className="flex flex-col items-start justify-start sm:px-12 rounded-3xl"
 >
 
         {/* 질문 */}
@@ -124,7 +123,7 @@ function getInvestmentType(scores: number[]): string {
                   <button
                     key={idx}
                     onClick={() => handleSelect(opt)}
-                    className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-lg shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
+                    className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                   >
                     {opt.text}
                   </button>
@@ -136,7 +135,7 @@ function getInvestmentType(scores: number[]): string {
                   <button
                     key={idx + 2}
                     onClick={() => handleSelect(opt)}
-                    className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-lg shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
+                    className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                   >
                     {opt.text}
                   </button>
@@ -146,7 +145,7 @@ function getInvestmentType(scores: number[]): string {
               <div className="flex justify-center">
                 <button
                   onClick={() => handleSelect(current.options[4])}
-                  className="w-full sm:w-1/2 h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-lg shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
+                  className="w-full sm:w-1/2 h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                 >
                   {current.options[4].text}
                 </button>
@@ -158,7 +157,7 @@ function getInvestmentType(scores: number[]): string {
                 <button
                   key={idx}
                   onClick={() => handleSelect(opt)}
-                  className="w-full h-14 sm:h-16 md:h-20 bg-white/90 text-sm sm:text-lg md:text-xl text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-lg shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
+                  className="w-full h-14 sm:h-16 md:h-20 bg-white/90 text-sm sm:text-lg md:text-xl text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                 >
                   {opt.text}
                 </button>

@@ -11,7 +11,7 @@ type Props = {
           <button
             key={tab}
             className={`flex-1 py-3 text-lg font-semibold border-b-2 transition-colors duration-150 ${
-              selectedTab === tab ? "border-blue-600 text-blue-700" : "border-transparent text-gray-500"
+              selectedTab === tab ? "border-[#0046ff] text-[#0046ff]" : "border-transparent text-gray-500"
             }`}
             onClick={() => onTabChange(tab)}
           >

@@ -14,9 +14,9 @@ function getYesterdayLabel() {
 
 export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
   return (
-    <div className="flex items-center justify-between mb-2">
+    <div className="flex items-center justify-between mb-2 mt-8">
       <div className="flex items-center gap-2">
-        <span className="text-blue-600 font-medium">
+        <span className="text-[#0046ff] font-medium">
           전체에 대한 <span className="font-bold">{count}</span>건의 검색결과가
           있습니다.
         </span>
@@ -30,7 +30,7 @@ export default function ResultHeader({ viewMode, setViewMode, count }: Props) {
             >
               <span
                 className={
-                  viewMode === mode ? "text-blue-600" : "text-blue-300"
+                  viewMode === mode ? "text-[#0046ff]" : "text-blue-300"
                 }
               >
                 {viewMode === mode ? "●" : "○"}

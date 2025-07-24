@@ -35,7 +35,7 @@ const StartComponentClient: React.FC = () => {
       </div>
       <button
 
-        className="w-40 h-16 mt-4 px-6 py-2 bg-[#0046ff] text-white text-2xl rounded-lg hover:bg-blue-600 transition-colors"
+        className="w-40 h-16 mt-4 px-6 py-2 bg-[#0046ff] text-white text-2xl rounded-3xl hover:bg-blue-600 transition-colors"
 
         onClick={startbtn}
       >

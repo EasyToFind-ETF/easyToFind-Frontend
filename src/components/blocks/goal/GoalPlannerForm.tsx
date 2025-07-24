@@ -56,15 +56,13 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
           <div className="text-3xl font-semibold mb-4 text-gray-800">
             투자 목표 입력
           </div>
-          <hr className="border-b-2 border-gray-200 mb-10" />
         </div>
 
         {/* 입력 폼 */}
         <form onSubmit={planner.handleSubmit} className="space-y-8">
           {/* 통합된 하늘색 박스 */}
           <div
-            className="bg-[#F2F8FC] rounded-3xl p-8"
-            style={{ borderRadius: "2rem" }}
+            className="rounded-3xl p-8 py-16"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* 목표 금액 */}
@@ -85,7 +83,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.targetAmount || ""}
                     onChange={handleInputChange}
                     min={10000}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-2xl"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl"
                     placeholder="목표 금액을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -116,7 +114,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     onChange={handleInputChange}
                     min={1}
                     max={5}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-2xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="1-5년"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -148,7 +146,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.initialAmount || ""}
                     onChange={handleInputChange}
                     min={0}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-2xl"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl"
                     placeholder="초기 투자금을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -178,7 +176,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.monthlyContribution || ""}
                     onChange={handleInputChange}
                     min={0}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-2xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="월 적립액을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -197,8 +195,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
             <Button
               type="submit"
               disabled={isLoading || !isYearsValid || isUserLoading}
-              className="bg-gradient-to-r from-[#4DB6FF] to-[#3DA5EE] hover:from-[#3DA5EE] hover:to-[#2D95DE] text-white font-bold text-xl px-16 py-6 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              style={{ borderRadius: "2rem" }}
+              className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-full shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center gap-3">
@@ -206,8 +203,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                   {input.useMonteCarlo ? "시뮬레이션 실행 중..." : "분석 중..."}
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
-                  <Target className="w-6 h-6" />
+                <div className="flex items-center gap-3 px-4">
                   목표 달성 ETF 찾기
                 </div>
               )}
