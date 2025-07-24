@@ -45,10 +45,7 @@ const ETFDetailHeader: React.FC<ETFDetailHeaderProps> = ({ etf_code }) => {
   const isPositive = (Number(change_rate) || 0) >= 0;
 
   return (
-    <div
-      className="bg-[#4DB6FF] rounded-3xl p-6 sm:p-10 flex flex-col shadow-lg relative mx-auto w-full h-auto md:h-[500px]"
-      style={{ marginTop: 130, borderRadius: "4rem" }}
-    >
+    <div className="bg-[#4fa7fe] rounded-3xl p-6 sm:p-10 flex flex-col shadow-lg relative mx-auto w-full h-auto md:h-[500px]" style={{ marginTop: 130, borderRadius: '4rem' }}>
       <div className="flex flex-col md:flex-row items-center justify-between w-full gap-8 h-full">
         <div
           className="w-full md:w-[500px] max-w-full text-white"
