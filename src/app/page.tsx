@@ -220,7 +220,7 @@ export default function Home() {
               key={index} 
               className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors ${
                 selectedItem === index 
-                  ? 'bg-[#2667ff] text-white shadow-md' 
+                  ? 'bg-[#0046ff] text-white shadow-md' 
                   : 'hover:bg-gray-50'
               }`}
               onClick={() => setSelectedItem(index)}
@@ -292,7 +292,14 @@ export default function Home() {
             <div className="flex gap-6">
               {/* what's your ETF? 카드 */}
               <Link href="/me/mbti" className="flex-1 block">
-                <div className="bg-[#1565C0] rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full" style={{ borderRadius: '2.5rem' }}>
+              <div className="rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"style={{
+                    width: "100%",
+                    height: "30vh",
+                    borderRadius: 40,
+                    position: "relative",
+                    backgroundColor: "#71c5fe"
+                    
+                  }}>
                   <div className="relative z-10">
                     <h3 className="text-3xl font-bold mb-4">What's your ETF?</h3>
                     <p className="text-sm mb-1">당신에게 가장 잘 맞는 ETF는?</p>
@@ -321,7 +328,14 @@ export default function Home() {
 
               {/* 전략 시뮬레이션 ETF추천 카드 */}
               <Link href="/goal" className="flex-1 block">
-                <div className="bg-[#0D47A1] rounded-3xl p-12 text-white relative overflow-hidden cursor-pointer transition-transform hover:scale-105 h-full" style={{ borderRadius: '2.5rem' }}>
+                <div className="rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"style={{
+                    width: "100%",
+                    height: "30vh",
+                    borderRadius: 40,
+                    position: "relative",
+                    backgroundColor: "#4a9ffd"
+                    
+                  }}>
                   <div className="relative z-10">
                     <h3 className="text-3xl font-bold mb-4">전략 시뮬레이션</h3>
                     <p className="text-sm mb-1">내 목표를 이룰 수 있는</p>

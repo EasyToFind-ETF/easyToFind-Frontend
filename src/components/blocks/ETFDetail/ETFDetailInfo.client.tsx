@@ -44,7 +44,9 @@ const ETFDetailInfo: React.FC<ETFDetailInfoProps> = ({ etf_code }) => {
           style={{ borderRadius: "2rem" }}
         >
           {/* 하늘색 상단 박스 */}
-          <div className="bg-[#4DB6FF] w-full flex items-center justify-between px-10 py-10 border-b border-gray-200">
+          <div
+            className="bg-[#4fa7fe] w-full flex items-center justify-between px-10 py-10 border-b border-gray-200"
+          >
             <div>
               <div className="text-white text-2xl font-semibold mb-1">
                 {etf_name}
