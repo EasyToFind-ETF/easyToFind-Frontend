@@ -49,7 +49,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
     <div className="w-full">
       {/* 메인 흰색 카드 - ETFDetail 스타일 */}
       <div
-        className="bg-white rounded-3xl w-full px-16 py-16 shadow-lg"
+        className="bg-white rounded-3xl w-full px-16 py-16 mb-16 shadow-lg"
         style={{ borderRadius: "4rem" }}
       >
         <div>
@@ -81,7 +81,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.targetAmount || ""}
                     onChange={handleInputChange}
                     min={10000}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ height: "3rem" }}
                     placeholder="목표 금액을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -112,7 +113,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     onChange={handleInputChange}
                     min={1}
                     max={5}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ height: "3rem" }}
                     placeholder="1-5년"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -144,7 +146,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.initialAmount || ""}
                     onChange={handleInputChange}
                     min={0}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ height: "3rem" }}
                     placeholder="초기 투자금을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -174,7 +177,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     value={input.monthlyContribution || ""}
                     onChange={handleInputChange}
                     min={0}
-                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-16 rounded-3xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ height: "3rem" }}
                     placeholder="월 적립액을 입력하세요"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
@@ -192,8 +196,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
           <div className="flex justify-center pt-6">
             <Button
               type="submit"
-              disabled={isLoading || !isYearsValid}
-              className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-full shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              disabled={isLoading || !isYearsValid || isUserLoading}
+              className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center gap-3">

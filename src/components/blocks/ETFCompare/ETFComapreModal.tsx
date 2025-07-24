@@ -34,14 +34,16 @@ export default function CompareModal({
         style={{
           background: "#fff",
           boxShadow: "0 4px 32px rgba(0,0,0,0.15)",
-          width: "min(1250px, 96vw)",
-          height: "min(90vh, auto)",
+          width: "min(1250px, 100vw)",
+          height: "90vh",
+          maxWidth: "100vw",
           maxHeight: "90vh",
           position: "relative",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          overflowY: "auto",
+          overflow: "hidden",
+          borderRadius: "4rem",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -49,18 +51,19 @@ export default function CompareModal({
           onClick={onClose}
           style={{
             position: "absolute",
-            top: 16,
-            right: 16,
+            top: 32,
+            right: 32,
             background: "transparent",
             border: "none",
             fontSize: 24,
             cursor: "pointer",
+            zIndex: 10,
           }}
           aria-label="닫기"
         >
           ×
         </button>
-        <div className="w-full h-full">
+        <div className="w-full h-full overflow-y-auto">
           <ETFCompareToast etfs={etfs} />
         </div>
       </div>

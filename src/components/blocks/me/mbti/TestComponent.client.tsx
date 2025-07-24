@@ -14,7 +14,9 @@ export default function TestComponentClient() {
   const handleSelect = (option: any) => {
     if (current.type === "risk") {
       if (option.weights) {
-        setRiskScore((prev) => prev.map((v, i) => v + (option.weights[i] || 0)));
+        setRiskScore((prev) =>
+          prev.map((v, i) => v + (option.weights[i] || 0))
+        );
       }
     } else if (current.type === "theme") {
       setThemeAnswers((prev) => [...prev, option.value]);
@@ -33,43 +35,45 @@ export default function TestComponentClient() {
 
   const current = mbtiQuestions[step];
 
-function getInvestmentType(scores: number[]): string {
-  const [st, li, gr, di] = scores;
-  const max = Math.max(...scores);
-  const min = Math.min(...scores);
-  const gap = max - min;
+  function getInvestmentType(scores: number[]): string {
+    const [st, li, gr, di] = scores;
+    const max = Math.max(...scores);
+    const min = Math.min(...scores);
+    const gap = max - min;
 
-  // 1. 복합 특성 조합
-  if (st >= 15 && di >= 15) return "보수안정형";   // 기존
-  if (li >= 15 && gr >= 15) return "수익지향형";   // 기존
-  if (st >= 15 && li >= 15) return "안정유동형";   // 안정성과 현금성 중시
-  if (st >= 15 && gr >= 15) return "안정성장형";   // 안정성은 추구하면서 수익도 노림
-  if (li >= 15 && di >= 15) return "분산유동형";   // 거래 활발 + 분산 중시
-  if (gr >= 15 && di >= 15) return "균형형"; // 수익률 지향하면서 리스크 헷지
+    // 1. 복합 특성 조합
+    if (st >= 15 && di >= 15) return "보수안정형"; // 기존
+    if (li >= 15 && gr >= 15) return "수익지향형"; // 기존
+    if (st >= 15 && li >= 15) return "안정유동형"; // 안정성과 현금성 중시
+    if (st >= 15 && gr >= 15) return "안정성장형"; // 안정성은 추구하면서 수익도 노림
+    if (li >= 15 && di >= 15) return "분산유동형"; // 거래 활발 + 분산 중시
+    if (gr >= 15 && di >= 15) return "균형형"; // 수익률 지향하면서 리스크 헷지
 
-  if (st >= 15 && gap <= 7) return "안정추구";   // 안정성은 높고 나머지는 고르게 분포
+    if (st >= 15 && gap <= 7) return "안정추구"; // 안정성은 높고 나머지는 고르게 분포
 
-  if (li >= 15 && st <= 8) return "단기투자형";     // 유동성은 높고 안정은 낮음
+    if (li >= 15 && st <= 8) return "단기투자형"; // 유동성은 높고 안정은 낮음
 
- 
-  if (gr >= 15 && st <= 8) return "공격투자형";     // 수익률은 높은데 안정성 매우 낮음
+    if (gr >= 15 && st <= 8) return "공격투자형"; // 수익률은 높은데 안정성 매우 낮음
 
-  if (di >= 15 && gap <= 6) return "분산중시형";    // 분산에 강하면서도 전체 밸런스 유지
+    if (di >= 15 && gap <= 6) return "분산중시형"; // 분산에 강하면서도 전체 밸런스 유지
 
-  // 2. 전반적인 밸런스
-  if (gap <= 5) return "균형형"; // 기존 조건
+    // 2. 전반적인 밸런스
+    if (gap <= 5) return "균형형"; // 기존 조건
 
-  // 3. 주된 요소 기반 fallback
-  switch (scores.indexOf(max)) {
-    case 0: return "안정추구형";
-    case 1: return "유동선호형";
-    case 2: return "성장지향형";
-    case 3: return "분산중시형";
-    default: return "변동감수형";
+    // 3. 주된 요소 기반 fallback
+    switch (scores.indexOf(max)) {
+      case 0:
+        return "안정추구형";
+      case 1:
+        return "유동선호형";
+      case 2:
+        return "성장지향형";
+      case 3:
+        return "분산중시형";
+      default:
+        return "변동감수형";
+    }
   }
-}
-  
-
 
   //점수바뀔 때마다 투자유형 변경
   useEffect(() => {
@@ -81,30 +85,41 @@ function getInvestmentType(scores: number[]): string {
     const most = getMostFrequentTheme(themeAnswers);
     console.log("최종 점수:", riskScore);
     console.log("테마 답변:", most);
-    return <ResultComponent riskType={riskType} theme={most} riskScore={riskScore}/>;
+    return (
+      <ResultComponent riskType={riskType} theme={most} riskScore={riskScore} />
+    );
   }
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-    <div
-  style={{
-    width: "100%",
-    height: "70vh",
-    background: `#7fc2fe
-    `,
-    position: "relative",
-  }}
-  className="flex flex-col items-start justify-start sm:px-12 rounded-3xl"
->
-
+      <div
+        style={{
+          width: "100%",
+          height: "70vh",
+          background: `#7fc2fe`,
+          position: "relative",
+          borderRadius: "4rem",
+        }}
+        className="flex flex-col items-start justify-start sm:py-12 sm:px-16 rounded-3xl"
+      >
         {/* 질문 */}
-        <div className="flex flex-col sm:flex-row w-full gap-4" style={{ marginTop: '15%' }}>
+        <div
+          className="flex flex-col sm:flex-row w-full gap-4"
+          style={{ marginTop: "10%" }}
+        >
           <h3
-            className="text-white text-xl sm:text-2xl md:text-3xl font-bold flex-1"
+            className="text-white text-xl sm:text-xl md:text-xl font-bold flex-1"
             style={{ textShadow: "2px 2px 8px rgba(0, 0, 0, 0.3)" }}
           >
             Q.{step + 1}/6
-            <p className="text-2xl sm:text-3xl md:text-4xl font-semibold mt-4 sm:mt-6">{current.question}</p>
+            <p className="text-2xl sm:text-3xl md:text-4xl font-semibold mt-4 sm:mt-6">
+              {current.question.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  {index < current.question.split("\n").length - 1 && <br />}
+                </React.Fragment>
+              ))}
+            </p>
           </h3>
           <img
             src={current.icon}
@@ -125,7 +140,12 @@ function getInvestmentType(scores: number[]): string {
                     onClick={() => handleSelect(opt)}
                     className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                   >
-                    {opt.text}
+                    {opt.text.split("\n").map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < opt.text.split("\n").length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
                   </button>
                 ))}
               </div>
@@ -137,7 +157,12 @@ function getInvestmentType(scores: number[]): string {
                     onClick={() => handleSelect(opt)}
                     className="w-full h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                   >
-                    {opt.text}
+                    {opt.text.split("\n").map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < opt.text.split("\n").length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
                   </button>
                 ))}
               </div>
@@ -147,7 +172,15 @@ function getInvestmentType(scores: number[]): string {
                   onClick={() => handleSelect(current.options[4])}
                   className="w-full sm:w-1/2 h-12 sm:h-14 md:h-16 bg-white/90 text-xs sm:text-sm md:text-base text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                 >
-                  {current.options[4].text}
+                  {current.options[4].text.split("\n").map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      {index <
+                        current.options[4].text.split("\n").length - 1 && (
+                        <br />
+                      )}
+                    </React.Fragment>
+                  ))}
                 </button>
               </div>
             </div>
@@ -159,7 +192,12 @@ function getInvestmentType(scores: number[]): string {
                   onClick={() => handleSelect(opt)}
                   className="w-full h-14 sm:h-16 md:h-20 bg-white/90 text-sm sm:text-lg md:text-xl text-gray-700 py-2 sm:py-3 px-3 sm:px-4 rounded-3xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
                 >
-                  {opt.text}
+                  {opt.text.split("\n").map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      {index < opt.text.split("\n").length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
                 </button>
               ))}
             </div>
@@ -168,5 +206,4 @@ function getInvestmentType(scores: number[]): string {
       </div>
     </div>
   );
-
 }

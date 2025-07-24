@@ -76,7 +76,10 @@ const CircularProgress = ({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-sm font-bold" style={{ color }}>
+        <span
+          className="text-sm font-bold text-center w-full"
+          style={{ color }}
+        >
           {Math.round(value)}
         </span>
       </div>
@@ -86,12 +89,7 @@ const CircularProgress = ({
 
 const formatReturn = (value: number) => {
   const color = value >= 0 ? "text-red-500" : "text-blue-500";
-  return (
-    <span className={`font-medium ${color}`}>
-      {value > 0 ? "+" : ""}
-      {value.toFixed(2)}%
-    </span>
-  );
+  return <span className={`font-medium ${color}`}>{value.toFixed(2)}%</span>;
 };
 
 const getRiskLevel = (score: number) => {
@@ -181,17 +179,17 @@ export default function ETFComparisonView({
       key: "managementCompany",
       render: (etf: ETF) => (
         <div className="text-center">
-          <span className="font-medium text-sm">{etf.managementCompany}</span>
+          <span className="font-medium">{etf.managementCompany}</span>
         </div>
       ),
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-20">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold">ETF 비교 ({etfs.length}/5)</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold">ETF 비교 ({etfs.length} / 5)</h3>
           {onBackToList && (
             <Button
               variant="outline"
@@ -205,18 +203,18 @@ export default function ETFComparisonView({
         </div>
 
         <Card className="shadow-sm overflow-hidden">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+          <CardContent>
+            <div>
+              <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left p-4 font-medium text-gray-700 bg-gray-50 sticky left-0 z-10 min-w-[120px]">
+                    <th className="text-center p-4 font-medium text-gray-700 bg-gray-50 sticky left-0 z-10 w-32">
                       비교항목
                     </th>
                     {etfs.map((etf) => (
                       <th
                         key={etf.id}
-                        className="p-4 bg-blue-500 text-white relative min-w-[200px]"
+                        className="p-4 bg-blue-500 text-white relative w-48"
                       >
                         {onRemoveETF && (
                           <Button
@@ -228,7 +226,7 @@ export default function ETFComparisonView({
                             <X className="w-3 h-3" />
                           </Button>
                         )}
-                        <div className="pr-8">
+                        <div>
                           <div className="font-medium text-sm mb-1">
                             {etf.name}
                           </div>
@@ -246,7 +244,11 @@ export default function ETFComparisonView({
                         index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       }`}
                     >
-                      <td className="p-4 font-medium text-gray-700 bg-gray-50 sticky left-0 z-10 border-r border-gray-200">
+                      <td
+                        className={`p-4 font-medium text-gray-700 sticky left-0 z-10 border-r border-gray-200 text-center ${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        }`}
+                      >
                         {row.label}
                       </td>
                       {row.key === "overallScore" && isOverallScoreAllZero ? (
@@ -254,8 +256,8 @@ export default function ETFComparisonView({
                           colSpan={etfs.length}
                           className="p-4 text-center text-gray-600"
                         >
-                          ETF 추천 테스트 결과가 아직 없습니다. 추천 테스트를
-                          미리 진행해주세요!
+                          아직 ETF 추천 테스트 결과가 없습니다. 추천 테스트를
+                          먼저 진행해주세요!
                         </td>
                       ) : (
                         etfs.map((etf) => (
@@ -272,20 +274,20 @@ export default function ETFComparisonView({
           </CardContent>
         </Card>
 
-        <h3 className="text-lg font-bold mt-6">기간별 수익률 비교</h3>
+        <h3 className="text-lg font-bold mt-12 mb-4">기간별 수익률 비교</h3>
         <Card className="mt-2 shadow-sm overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left p-3 font-medium text-gray-700 bg-gray-50">
+                    <th className="text-center p-4 font-medium text-gray-700 bg-gray-50 w-48">
                       ETF명
                     </th>
                     {periods.map((period) => (
                       <th
                         key={period}
-                        className="p-3 text-center font-medium text-gray-700 bg-gray-50"
+                        className="p-4 text-center font-medium text-gray-700 bg-gray-50 w-24"
                       >
                         {period}
                       </th>
@@ -300,11 +302,11 @@ export default function ETFComparisonView({
                         index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       }`}
                     >
-                      <td className="p-3 font-medium text-gray-900">
+                      <td className="p-4 font-medium text-gray-900">
                         {etf.name}
                       </td>
                       {periods.map((period) => (
-                        <td key={period} className="p-3 text-center">
+                        <td key={period} className="p-4 text-center">
                           {etf.returns && period in etf.returns
                             ? formatReturn(
                                 etf.returns[period as keyof typeof etf.returns]

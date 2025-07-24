@@ -239,7 +239,7 @@ export default function MyPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="text-center py-8">
+        <div className="text-center py-20">
           {mbtiType ? (
             <p className="text-lg text-gray-700">
               <span className="text-2xl font-semibold text-blue-600">
@@ -278,9 +278,10 @@ export default function MyPage() {
                   }
                   size="sm"
                   onClick={() => setSelectedPeriod(period.key)}
+                  style={{ borderRadius: "1rem" }}
                   className={`text-xs ${
                     selectedPeriod === period.key
-                      ? "bg-black text-white hover:bg-black"
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
                       : "text-gray-600"
                   }`}
                 >
@@ -307,11 +308,17 @@ export default function MyPage() {
                 return (
                   <Card
                     key={etf.etf_code}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-md transition-shadow rounded-3xl"
+                    style={{
+                      height: "300px",
+                      border: "1px",
+                      borderColor: "#e0e0e0",
+                      borderRadius: "1rem",
+                    }}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mt-2">
-                        <div className="flex-1 pt-2">
+                    <CardContent className="p-10">
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex-1">
                           <h3 className="font-bold text-base text-gray-900 leading-tight">
                             {etf.etf_name}
                           </h3>
@@ -346,8 +353,8 @@ export default function MyPage() {
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-1 pt-4">
+                        <div className="flex items-end justify-between">
+                          <div className="flex items-center space-x-1">
                             {isNaN(returnValue) ? (
                               <span className="text-sm font-medium text-gray-400">
                                 -
