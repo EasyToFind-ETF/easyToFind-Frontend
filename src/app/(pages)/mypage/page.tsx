@@ -159,7 +159,13 @@ export default function MyPage() {
           isLiked: true,
         }));
 
-        setEtfCards(etfData);
+        const sortedEtfs = [...etfData].sort((a, b) => {
+          const aVal = parseFloat(a[selectedPeriod] || "0");
+          const bVal = parseFloat(b[selectedPeriod] || "0");
+          return bVal - aVal; // 내림차순 정렬
+        });
+
+        setEtfCards(sortedEtfs);
       } catch (err) {
         console.log("💥 ETF 불러오기 실패:", err);
       } finally {
@@ -169,6 +175,18 @@ export default function MyPage() {
     fetchUserInfo();
     fetchFavoriteEtfs();
   }, []);
+
+  useEffect(() => {
+    if (etfCards.length === 0) return;
+
+    const sorted = [...etfCards].sort((a, b) => {
+      const aVal = parseFloat(a[selectedPeriod] || "0");
+      const bVal = parseFloat(b[selectedPeriod] || "0");
+      return bVal - aVal;
+    });
+
+    setEtfCards(sorted);
+  }, [selectedPeriod]);
 
   const toggleLike = async (etf_code: string) => {
     const target = etfCards.find((etf) => etf.etf_code === etf_code);
