@@ -8,13 +8,20 @@ export interface GoalPlannerRequest {
   useMonteCarlo?: boolean; // 몬테카를로 시뮬레이션 사용 여부
 }
 
-// 신뢰구간 정보
+// 신뢰구간 정보 (기존)
 export interface ConfidenceIntervals {
   percentile5: number;
   percentile25: number;
   median: number;
   percentile75: number;
   percentile95: number;
+}
+
+// 새로운 신뢰구간 정보 (백엔드 수정사항 반영)
+export interface ConfidenceInterval {
+  low: number;
+  mid: number;
+  high: number;
 }
 
 // 분석 정보
@@ -26,6 +33,13 @@ export interface AnalysisInfo {
     totalScenarios: number;
     confidenceLevel: number;
     simulationTime: number;
+  };
+  // 새로운 필드 추가
+  simulationDetails?: {
+    totalScenarios: number;
+    confidenceLevel: string;
+    calculationTime: string;
+    requiredReturn: number;
   };
 }
 
@@ -57,10 +71,12 @@ export interface EtfCandidate {
   sharpe_ratio?: number; // 샤프비율 - 이제 실제 Sharpe Ratio 값
   var_95?: number; // Value at Risk (95%) - 이제 실제 VaR 값
   cvar_95?: number; // Conditional Value at Risk (95%) - 이제 실제 CVaR 값
-  confidence_intervals?: ConfidenceIntervals; // 신뢰구간
+  confidence_intervals?: ConfidenceIntervals; // 기존 신뢰구간 (호환성)
+  confidence_interval?: ConfidenceInterval; // 새로운 신뢰구간 (백엔드 수정사항)
 
   // ✅ 백엔드 개선으로 새로 추가된 필드들
-  risk_adjusted_return?: number; // 리스크 조정 수익률
+  risk_adjusted_return?: number; // 리스크 조정 수익률 (백분율)
+  riskAdjustedScore?: number; // 정규화된 리스크 점수 (0-100)
   market_regime?: "bull" | "bear" | "volatile" | "neutral"; // 시장 상황
   simulation_count?: number; // 시뮬레이션 경로 수 (2000)
   monthly_paths?: number[][]; // 월별 가격 경로 (상위 5개)
@@ -100,9 +116,11 @@ export interface GoalPlannerResponse {
       | "five_year"
       | "Enhanced Simple Monte Carlo"; // ✅ 백엔드 개선으로 변경됨
     totalScenarios?: number;
-    confidenceLevel?: number;
     // ✅ 백엔드 개선으로 새로 추가된 필드들
     simulationCount?: number; // 고정값 2000
+    calculationTime?: string; // 계산 시간
+    targetDays?: number; // 목표 일수
+    confidenceLevel?: string; // 신뢰수준 (예: "95%")
     enhancements?: {
       marketRegimeAnalysis: boolean;
       dynamicVolatility: boolean;

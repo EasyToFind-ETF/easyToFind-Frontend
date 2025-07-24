@@ -1,13 +1,29 @@
 import { GoalPlannerResponse } from "@/types/goal";
 import { EtfCandidateCard } from "./EtfCandidateCard";
+import { OverallSimulationResults } from "./OverallSimulationResults";
+import { ScoreExplanation } from "./ScoreExplanation";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Target, Shield, Zap, BarChart3 } from "lucide-react";
+import {
+  TrendingUp,
+  Target,
+  Shield,
+  Zap,
+  SortAsc,
+  SortDesc,
+} from "lucide-react";
+import { useState, useMemo } from "react";
+import { getConfidenceLevel } from "@/utils/confidenceUtils";
 
 export const GoalPlannerResults = ({
   results,
 }: {
   results: GoalPlannerResponse;
 }) => {
+  const [sortBy, setSortBy] = useState<
+    "goal_score" | "success_rate" | "confidence" | "risk_score"
+  >("goal_score");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   const getReliabilityInfo = () => {
     // meta가 undefined일 수 있으므로 안전하게 처리
     if (!results.meta) {
@@ -51,7 +67,68 @@ export const GoalPlannerResults = ({
   const candidateCount = etfCandidates.length;
 
   // 필요 CAGR 값 가져오기 (백엔드 응답 구조에 맞춤)
-  const neededCAGR = results.requiredCAGR || results.neededCAGR || 0;
+  const neededCAGR = useMemo(() => {
+    // 새로운 구조에서 먼저 확인
+    if (results.analysis?.simulationDetails?.requiredReturn) {
+      return results.analysis.simulationDetails.requiredReturn;
+    }
+    // 기존 구조 확인
+    if (results.requiredCAGR) {
+      return results.requiredCAGR;
+    }
+    if (results.neededCAGR) {
+      return results.neededCAGR;
+    }
+    return 0;
+  }, [results]);
+
+  // 정렬된 ETF 목록
+  const sortedEtfCandidates = useMemo(() => {
+    return [...etfCandidates].sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortBy) {
+        case "goal_score":
+          comparison = (a.goal_score || 0) - (b.goal_score || 0);
+          break;
+        case "success_rate":
+          comparison = (a.success_rate || 0) - (b.success_rate || 0);
+          break;
+        case "confidence":
+          // 신뢰구간이 좁을수록 높은 순위
+          const aInterval = a.confidence_interval || {
+            low: a.confidence_intervals?.percentile5 || 0,
+            mid: a.confidence_intervals?.median || 0,
+            high: a.confidence_intervals?.percentile95 || 0,
+          };
+          const bInterval = b.confidence_interval || {
+            low: b.confidence_intervals?.percentile5 || 0,
+            mid: b.confidence_intervals?.median || 0,
+            high: b.confidence_intervals?.percentile95 || 0,
+          };
+          const aRange = aInterval.high - aInterval.low;
+          const bRange = bInterval.high - bInterval.low;
+          comparison = aRange - bRange;
+          break;
+        case "risk_score":
+          comparison = (a.riskAdjustedScore || 0) - (b.riskAdjustedScore || 0);
+          break;
+        default:
+          comparison = 0;
+      }
+
+      return sortOrder === "desc" ? -comparison : comparison;
+    });
+  }, [etfCandidates, sortBy, sortOrder]);
+
+  const handleSort = (newSortBy: typeof sortBy) => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === "desc" ? "asc" : "desc");
+    } else {
+      setSortBy(newSortBy);
+      setSortOrder("desc");
+    }
+  };
 
   return (
     <div className="w-full">
@@ -106,7 +183,7 @@ export const GoalPlannerResults = ({
           </div>
           <div className="text-center">
             <div className="text-5xl font-bold text-[#4DB6FF] mb-3">
-              {isNaN(neededCAGR) ? "계산 중..." : (neededCAGR * 100).toFixed(2)}
+              {isNaN(neededCAGR) ? "계산 중..." : neededCAGR.toFixed(2)}
               <span className="text-2xl">%</span>
             </div>
             <p className="text-gray-600 text-lg">
@@ -130,70 +207,11 @@ export const GoalPlannerResults = ({
           </div>
         )}
 
-        {/* 분석 정보 (Monte Carlo) */}
-        {results.analysis && (
-          <div
-            className="bg-[#F2F8FC] rounded-3xl p-8 mb-8"
-            style={{ borderRadius: "2rem" }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-[#4DB6FF] rounded-full p-3">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-semibold text-gray-800">
-                분석 방법
-              </span>
-            </div>
+        {/* 전체 시뮬레이션 결과 */}
+        <OverallSimulationResults results={results} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">
-                  {results.analysis.method}
-                </h4>
-                <p className="text-gray-600 mb-4">
-                  {results.analysis.description}
-                </p>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">총 시나리오:</span>
-                    <span className="font-semibold">
-                      {results.analysis.riskMetrics.totalScenarios?.toLocaleString() ||
-                        "0"}
-                      개
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">신뢰수준:</span>
-                    <span className="font-semibold">
-                      {results.analysis.riskMetrics.confidenceLevel || "0"}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">계산 시간:</span>
-                    <span className="font-semibold">
-                      {results.analysis.riskMetrics.simulationTime || "0"}초
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h5 className="text-md font-semibold text-gray-800 mb-3">
-                  분석의 장점
-                </h5>
-                <ul className="space-y-2">
-                  {results.analysis.advantages.map((advantage, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-[#4DB6FF] rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-sm text-gray-600">{advantage}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* 점수 체계 안내 */}
+        <ScoreExplanation />
 
         {/* ETF 추천 리스트 */}
         {candidateCount > 0 ? (
@@ -202,13 +220,81 @@ export const GoalPlannerResults = ({
               <h3 className="text-2xl font-semibold text-gray-800 mb-3">
                 추천 ETF 리스트
               </h3>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-lg mb-4">
                 목표 달성 확률과 개인 맞춤 점수를 고려한 최적의 ETF들입니다
               </p>
+
+              {/* 정렬 버튼들 */}
+              <div className="flex justify-center gap-2">
+                <button
+                  onClick={() => handleSort("goal_score")}
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    sortBy === "goal_score"
+                      ? "bg-[#4DB6FF] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  목표 점수
+                  {sortBy === "goal_score" &&
+                    (sortOrder === "desc" ? (
+                      <SortDesc className="w-4 h-4" />
+                    ) : (
+                      <SortAsc className="w-4 h-4" />
+                    ))}
+                </button>
+                <button
+                  onClick={() => handleSort("success_rate")}
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    sortBy === "success_rate"
+                      ? "bg-[#4DB6FF] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  성공률
+                  {sortBy === "success_rate" &&
+                    (sortOrder === "desc" ? (
+                      <SortDesc className="w-4 h-4" />
+                    ) : (
+                      <SortAsc className="w-4 h-4" />
+                    ))}
+                </button>
+                <button
+                  onClick={() => handleSort("confidence")}
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    sortBy === "confidence"
+                      ? "bg-[#4DB6FF] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  신뢰도
+                  {sortBy === "confidence" &&
+                    (sortOrder === "desc" ? (
+                      <SortDesc className="w-4 h-4" />
+                    ) : (
+                      <SortAsc className="w-4 h-4" />
+                    ))}
+                </button>
+                <button
+                  onClick={() => handleSort("risk_score")}
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    sortBy === "risk_score"
+                      ? "bg-[#4DB6FF] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  리스크 점수
+                  {sortBy === "risk_score" &&
+                    (sortOrder === "desc" ? (
+                      <SortDesc className="w-4 h-4" />
+                    ) : (
+                      <SortAsc className="w-4 h-4" />
+                    ))}
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-6">
-              {etfCandidates.map((etf, index) => (
+              {sortedEtfCandidates.map((etf, index) => (
                 <div key={etf.etf_code || etf.code} className="relative">
                   {/* 순위 배지 */}
                   <div className="absolute -top-3 -left-3 z-10">

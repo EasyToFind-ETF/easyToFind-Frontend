@@ -126,6 +126,9 @@ export const useGoalPlanner = () => {
       // 디버깅을 위한 로그 (개발 환경에서만)
       if (process.env.NODE_ENV === "development") {
         console.log("🔍 백엔드 응답 데이터:", data);
+        console.log("🔍 analysis 데이터:", data.analysis);
+        console.log("🔍 simulationDetails:", data.analysis?.simulationDetails);
+        console.log("🔍 meta 데이터:", data.meta);
         if (data.recommendations) {
           console.log("🔍 recommendations 데이터:", data.recommendations);
           data.recommendations.forEach((etf, index) => {
@@ -176,6 +179,10 @@ export const useGoalPlanner = () => {
           risk_adjusted_return:
             typeof etf.risk_adjusted_return === "number"
               ? etf.risk_adjusted_return
+              : 0,
+          riskAdjustedScore:
+            typeof etf.riskAdjustedScore === "number"
+              ? etf.riskAdjustedScore
               : 0,
           market_regime: etf.market_regime || "neutral",
           simulation_count:
