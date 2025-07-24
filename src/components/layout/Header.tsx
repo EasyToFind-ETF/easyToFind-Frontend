@@ -120,7 +120,7 @@ export const Header = () => {
                 onClick={() => router.push("/mypage")}
                 className="hover:opacity-80"
               >
-                <UserCircle2 className="w-8 h-8 text-gray-400" />
+                <UserCircle2 className="w-8 h-8 text-gray-800" />
               </button>
             </>
           ) : (

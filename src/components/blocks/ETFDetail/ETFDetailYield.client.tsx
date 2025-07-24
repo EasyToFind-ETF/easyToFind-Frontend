@@ -416,26 +416,54 @@ const ETFDetailYield: React.FC<ETFDetailYieldProps> = ({ etf_code }) => {
 
         {/* 범례 */}
         <div className="flex gap-20 bg-[#F6F7F9] rounded-2xl px-4 py-4 text-base items-center justify-center">
-          {Object.entries(chartSeriesConfig).map(([key, config]) => (
-            <div key={key} className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`w-4 h-4 rounded inline-block`}
-                  style={{ backgroundColor: config.color }}
-                ></span>
-                <span className="text-gray-500 text-sm font-medium">
-                  {config.title}
-                </span>
-              </div>
-              <span className="text-base">
-                {`${hoveredValues[
-                  key as keyof typeof hoveredValues
-                ].return.toFixed(2)}%(${hoveredValues[
-                  key as keyof typeof hoveredValues
-                ].price.toLocaleString()}원)`}
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <span
+                className="w-4 h-4 rounded inline-block"
+                style={{ backgroundColor: "#EF4444" }}
+              ></span>
+              <span className="text-gray-500 text-sm font-medium">NAV</span>
+            </div>
+            <span className="text-base">
+              {`${hoveredValues.nav.return.toFixed(
+                2
+              )}%(${hoveredValues.nav.price.toLocaleString()}원)`}
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <span
+                className="w-4 h-4 rounded inline-block"
+                style={{ backgroundColor: "#3B82F6" }}
+              ></span>
+              <span className="text-gray-500 text-sm font-medium">
+                시장가격
               </span>
             </div>
-          ))}
+            <span className="text-base">
+              {`${hoveredValues.market.return.toFixed(
+                2
+              )}%(${hoveredValues.market.price.toLocaleString()}원)`}
+            </span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <span
+                className="w-4 h-4 rounded inline-block"
+                style={{ backgroundColor: "#10B981" }}
+              ></span>
+              <span className="text-gray-500 text-sm font-medium">
+                기초지수
+              </span>
+            </div>
+            <span className="text-base">
+              {`${hoveredValues.index.return.toFixed(
+                2
+              )}%(${hoveredValues.index.price.toLocaleString()}원)`}
+            </span>
+          </div>
         </div>
 
         {/* 기간별 수익률 테이블 */}
