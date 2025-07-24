@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { ETFView } from "../../../types/ETFView";
+import Link from "next/link";
 
 const MAX_SELECT = 5;
 
 interface ETFTableProps {
   etfData: ETFView[];
-  selected: number[];
-  setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+  selectedEtfCodes: string[];
+  setSelectedEtfCodes: React.Dispatch<React.SetStateAction<string[]>>;
   favoriteEtfCodes: string[];
   onToggleFavorite: (etfCode: string, isAlreadyFavorite: boolean) => void;
   onCompare: () => void;
@@ -14,8 +15,8 @@ interface ETFTableProps {
 
 export default function ETFTable({
   etfData,
-  selected,
-  setSelected,
+  selectedEtfCodes,
+  setSelectedEtfCodes,
   favoriteEtfCodes,
   onToggleFavorite,
   onCompare,
@@ -25,19 +26,23 @@ export default function ETFTable({
   const renderRate = (value: string) => {
     const number = parseFloat(value);
     if (isNaN(number)) return value;
-    return <span className={number >= 0 ? "text-red-600" : "text-blue-600"}>{value}</span>;
+    return (
+      <span className={number >= 0 ? "text-red-600" : "text-blue-600"}>
+        {value}
+      </span>
+    );
   };
 
-  const toggleSelect = (idx: number) => {
-    if (selected.includes(idx)) {
-      setSelected(selected.filter((i) => i !== idx));
+  const toggleSelect = (etfCode: string) => {
+    if (selectedEtfCodes.includes(etfCode)) {
+      setSelectedEtfCodes(selectedEtfCodes.filter((code) => code !== etfCode));
     } else {
-      if (selected.length >= MAX_SELECT) {
+      if (selectedEtfCodes.length >= MAX_SELECT) {
         setShowMaxToast(true);
         setTimeout(() => setShowMaxToast(false), 1500);
         return;
       }
-      setSelected([...selected, idx]);
+      setSelectedEtfCodes([...selectedEtfCodes, etfCode]);
     }
   };
 
@@ -55,13 +60,22 @@ export default function ETFTable({
         <thead className="bg-gray-50">
           <tr>
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
-            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">상품명</th>
-            <th className="py-3 px-2 font-semibold text-gray-900">기준가(원)</th>
-            {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map((period) => (
-              <th key={period} className="py-3 px-2 font-semibold text-gray-900">
-                {period}
-              </th>
-            ))}
+            <th className="py-3 px-2 font-semibold text-gray-900 min-w-[200px]">
+              상품명
+            </th>
+            <th className="py-3 px-2 font-semibold text-gray-900">
+              기준가(원)
+            </th>
+            {["1주", "1개월", "3개월", "6개월", "1년", "3년", "상장이후"].map(
+              (period) => (
+                <th
+                  key={period}
+                  className="py-3 px-2 font-semibold text-gray-900"
+                >
+                  {period}
+                </th>
+              )
+            )}
             <th className="py-3 px-2 font-semibold text-gray-900 w-8"></th>
           </tr>
         </thead>
@@ -74,14 +88,21 @@ export default function ETFTable({
                 <td className="py-3 px-2">
                   <input
                     type="checkbox"
-                    checked={selected.includes(i)}
-                    onChange={() => toggleSelect(i)}
+                    checked={selectedEtfCodes.includes(etf.etfCode)}
+                    onChange={() => toggleSelect(etf.etfCode)}
                     className="accent-blue-500 w-5 h-5"
-                    disabled={!selected.includes(i) && selected.length >= MAX_SELECT}
+                    disabled={
+                      !selectedEtfCodes.includes(etf.etfCode) &&
+                      selectedEtfCodes.length >= MAX_SELECT
+                    }
                   />
                 </td>
-                <td className="py-3 px-2 text-left font-medium">{etf.name}</td>
-                <td className="py-3 px-2">{etf.nav}</td>
+                <td className="py-3 px-2 text-left font-medium text-gray-900 hover:underline cursor-pointer">
+                  <Link href={`/etfs/${etf.etfCode}`}>{etf.name}</Link>
+                </td>
+                <td className="py-3 px-2">
+                  {etf.nav ? Number(etf.nav).toLocaleString("ko-KR") : "-"}
+                </td>
                 <td className="py-3 px-2">{renderRate(etf.week1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month1)}</td>
                 <td className="py-3 px-2">{renderRate(etf.month3)}</td>
@@ -106,7 +127,7 @@ export default function ETFTable({
         </tbody>
       </table>
       {/* 하단 토스트바 */}
-      {selected.length > 0 && (
+      {selectedEtfCodes.length > 0 && (
         <div
           style={{
             position: "fixed",
@@ -117,10 +138,19 @@ export default function ETFTable({
           }}
           className="flex items-center justify-between bg-white border-t border-blue-200 shadow-lg px-6 py-4 animate-fade-in"
         >
-          <span className="text-blue-700 font-semibold">{selected.length}/{MAX_SELECT}개 선택됨</span>
+          <span className="text-blue-700 font-semibold">
+            {selectedEtfCodes.length}/{MAX_SELECT}개 선택됨
+          </span>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow"
-            onClick={onCompare} // alert 대신 onCompare 호출
+            onClick={() => {
+              const hasToken = document.cookie.includes("authToken");
+              if (!hasToken) {
+                alert("로그인 후 이용해주세요!");
+                return;
+              }
+              onCompare();
+            }}
           >
             비교하기
           </button>
@@ -144,4 +174,3 @@ export default function ETFTable({
     </div>
   );
 }
-  
