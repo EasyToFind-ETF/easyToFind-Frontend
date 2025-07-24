@@ -2,6 +2,9 @@ import { EtfCandidate } from "@/types/goal";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import { PersonalScoreDetails } from "./PersonalScoreDetails";
 import { MonteCarloDetails } from "./MonteCarloDetails";
+import { SuccessRateDisplay } from "./SuccessRateDisplay";
+import { RiskScoreDisplay } from "./RiskScoreDisplay";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import {
   Info,
@@ -11,6 +14,10 @@ import {
   TrendingUp,
   BarChart3,
 } from "lucide-react";
+import {
+  getConfidenceLevel,
+  getConfidenceBadgeColor,
+} from "@/utils/confidenceUtils";
 
 export const EtfCandidateCard = ({ etf }: { etf: EtfCandidate }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -62,6 +69,8 @@ export const EtfCandidateCard = ({ etf }: { etf: EtfCandidate }) => {
   // ✅ 백엔드 개선으로 새로 추가된 필드들
   const riskAdjustedReturn =
     typeof etf.risk_adjusted_return === "number" ? etf.risk_adjusted_return : 0;
+  const riskAdjustedScore =
+    typeof etf.riskAdjustedScore === "number" ? etf.riskAdjustedScore : 0;
   const marketRegime = etf.market_regime || "neutral";
   const simulationCount =
     typeof etf.simulation_count === "number" ? etf.simulation_count : 2000;
@@ -133,6 +142,29 @@ export const EtfCandidateCard = ({ etf }: { etf: EtfCandidate }) => {
                     {theme}
                   </span>
                 )}
+                {/* 신뢰도 배지 추가 */}
+                {(etf.confidence_interval || etf.confidence_intervals) && (
+                  <Badge
+                    className={`text-xs ${getConfidenceBadgeColor(
+                      etf.confidence_interval || {
+                        low: etf.confidence_intervals?.percentile5 || 0,
+                        mid: etf.confidence_intervals?.median || 0,
+                        high: etf.confidence_intervals?.percentile95 || 0,
+                      }
+                    )}`}
+                  >
+                    신뢰도:{" "}
+                    {
+                      getConfidenceLevel(
+                        etf.confidence_interval || {
+                          low: etf.confidence_intervals?.percentile5 || 0,
+                          mid: etf.confidence_intervals?.median || 0,
+                          high: etf.confidence_intervals?.percentile95 || 0,
+                        }
+                      ).level
+                    }
+                  </Badge>
+                )}
               </div>
             )}
           </div>
@@ -157,15 +189,35 @@ export const EtfCandidateCard = ({ etf }: { etf: EtfCandidate }) => {
       {/* 3개 원형 게이지 */}
       <div className="flex justify-center gap-12 mb-8">
         {/* 성공률 (Monte Carlo) 또는 목표 달성률 (Five Year) */}
-        <CircularProgress
-          value={hasMonteCarloData ? successRate : hitRate}
-          size={140}
-          strokeWidth={12}
-          color={
-            hasMonteCarloData ? getSuccessRateColor(successRate) : "#10B981"
-          }
-          label={hasMonteCarloData ? "성공률" : "목표 달성률"}
-        />
+        <div className="flex flex-col items-center gap-4">
+          <CircularProgress
+            value={hasMonteCarloData ? successRate : hitRate}
+            size={140}
+            strokeWidth={12}
+            color={
+              hasMonteCarloData ? getSuccessRateColor(successRate) : "#10B981"
+            }
+            label={hasMonteCarloData ? "성공률" : "목표 달성률"}
+          />
+          {/* 신뢰구간 정보 추가 */}
+          {hasMonteCarloData &&
+            (etf.confidence_interval || etf.confidence_intervals) && (
+              <div className="text-center">
+                <SuccessRateDisplay
+                  successRate={successRate}
+                  confidenceInterval={
+                    etf.confidence_interval || {
+                      low: etf.confidence_intervals?.percentile5 || 0,
+                      mid: etf.confidence_intervals?.median || 0,
+                      high: etf.confidence_intervals?.percentile95 || 0,
+                    }
+                  }
+                  showConfidence={true}
+                  size="sm"
+                />
+              </div>
+            )}
+        </div>
 
         {/* 개인화 점수 */}
         <CircularProgress
@@ -223,26 +275,46 @@ export const EtfCandidateCard = ({ etf }: { etf: EtfCandidate }) => {
 
       {/* ✅ 백엔드 개선으로 새로 추가된 필드들 표시 */}
       {hasMonteCarloData &&
-        (riskAdjustedReturn > 0 || marketRegime !== "neutral") && (
+        (riskAdjustedReturn > 0 ||
+          riskAdjustedScore > 0 ||
+          marketRegime !== "neutral") && (
           <div className="border-t border-gray-200 pt-6 mb-6">
             <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
               <Zap className="w-5 h-5 text-purple-600" />
               고급 분석 지표
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* 리스크 조정 수익률 */}
-              {riskAdjustedReturn > 0 && (
+              {/* 정규화된 리스크 점수 */}
+              {riskAdjustedScore > 0 && (
                 <div className="bg-purple-50 rounded-2xl p-4 border border-purple-200">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp className="w-4 h-4 text-purple-600" />
                     <span className="text-sm font-medium text-purple-800">
+                      정규화된 리스크 점수
+                    </span>
+                  </div>
+                  <RiskScoreDisplay
+                    sharpeRatio={sharpeRatio}
+                    riskAdjustedScore={riskAdjustedScore}
+                    showDetails={false}
+                    size="sm"
+                  />
+                </div>
+              )}
+
+              {/* 기존 리스크 조정 수익률 */}
+              {riskAdjustedReturn > 0 && (
+                <div className="bg-blue-50 rounded-2xl p-4 border border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">
                       리스크 조정 수익률
                     </span>
                   </div>
-                  <div className="text-2xl font-bold text-purple-900">
+                  <div className="text-2xl font-bold text-blue-900">
                     {riskAdjustedReturn.toFixed(2)}%
                   </div>
-                  <p className="text-xs text-purple-600 mt-1">
+                  <p className="text-xs text-blue-600 mt-1">
                     변동성을 고려한 수익률
                   </p>
                 </div>

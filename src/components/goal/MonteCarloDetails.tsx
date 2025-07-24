@@ -62,7 +62,7 @@ export const MonteCarloDetails = ({
             <span className="text-sm font-medium text-green-700">기대값</span>
           </div>
           <div className="text-xl font-bold text-green-600">
-            {formatCurrency(expectedValue)}원
+            {expectedValue}원
           </div>
         </div>
 
@@ -72,9 +72,7 @@ export const MonteCarloDetails = ({
             <BarChart3 className="w-4 h-4 text-orange-600" />
             <span className="text-sm font-medium text-orange-700">변동성</span>
           </div>
-          <div className="text-xl font-bold text-orange-600">
-            {formatPercentage(volatility)}
-          </div>
+          <div className="text-xl font-bold text-orange-600">{volatility}%</div>
         </div>
 
         {/* 최대낙폭 */}
@@ -83,9 +81,7 @@ export const MonteCarloDetails = ({
             <TrendingDown className="w-4 h-4 text-red-600" />
             <span className="text-sm font-medium text-red-700">최대낙폭</span>
           </div>
-          <div className="text-xl font-bold text-red-600">
-            {formatPercentage(maxDrawdown)}
-          </div>
+          <div className="text-xl font-bold text-red-600">{maxDrawdown}%</div>
         </div>
 
         {/* 샤프비율 */}
@@ -95,7 +91,7 @@ export const MonteCarloDetails = ({
             <span className="text-sm font-medium text-blue-700">샤프비율</span>
           </div>
           <div className="text-xl font-bold text-blue-600">
-            {sharpeRatio.toFixed(3)}
+            {sharpeRatio.toFixed(1)}%
           </div>
         </div>
       </div>
@@ -109,11 +105,11 @@ export const MonteCarloDetails = ({
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-4 h-4 text-purple-600" />
                 <span className="text-sm font-medium text-purple-700">
-                  리스크 조정 수익률
+                  기대 수익률
                 </span>
               </div>
               <div className="text-xl font-bold text-purple-600">
-                {riskAdjustedReturn.toFixed(2)}%
+                {riskAdjustedReturn.toFixed(1)}%
               </div>
               <p className="text-xs text-purple-600 mt-1">
                 변동성을 고려한 수익률 지표

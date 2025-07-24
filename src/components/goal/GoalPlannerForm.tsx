@@ -360,7 +360,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                 <div className="flex items-center gap-3">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                   {input.useMonteCarlo
-                    ? "🚀 Enhanced Monte Carlo 시뮬레이션 실행 중... (약 6-7초)"
+                    ? "시뮬레이션 실행 중... (약 6-7초)"
                     : "분석 중..."}
                 </div>
               ) : (
