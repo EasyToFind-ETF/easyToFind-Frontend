@@ -13,8 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 // 한국어로 포맷팅
 registerLocale("ko", ko);
 
-interface ETFHoldingsData extends ETFHoldingsWithStock {}
-
 // 캘린더 커스텀
 const customDatePickerStyles = `
   .react-datepicker-wrapper {
