@@ -255,11 +255,11 @@ export default function FindPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ETF 이름/종목코드 또는 구성종목을 검색해보세요"
-              className="pl-16 py-4 text-lg rounded-full border-2 border-blue-200 focus:border-blue-400 w-full"
+              className="pl-16 py-4 text-lg rounded-full border-2 mt-4 border-blue-200 focus:border-[#0046ff] w-full"
             />
           </div>
         </div>
-        <div className="w-full bg-white rounded-2xl shadow p-6 mt-6">
+        <div className="w-full bg-white rounded-3xl shadow p-6 mt-20 ">
           <FilterTabs
             tabs={tabList}
             selectedTab={selectedTab}
@@ -282,7 +282,7 @@ export default function FindPage() {
 
           {isLoading ? (
             <div className="text-center py-10">
-              <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin h-10 w-10 border-4 border-[#0046ff] border-t-transparent rounded-full mx-auto" />
               <p className="text-sm mt-2 text-gray-500">
                 ETF 데이터를 불러오는 중...
               </p>

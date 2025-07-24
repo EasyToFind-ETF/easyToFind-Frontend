@@ -23,7 +23,7 @@ export default function ETFCard({ etf_code, etf_name, close_price, trade_date }:
 
   return (
     <Link href={`/etfs/${etf_code}`}>
-      <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 min-w-[320px] h-[280px] flex-shrink-0 cursor-pointer hover:scale-[1.02]">
+      <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 min-w-[320px] h-[280px] flex-shrink-0 cursor-pointer hover:scale-[1.02]">
         <div className="flex flex-col h-full">
           <div className="flex-1">
             <div className="flex items-center justify-between mb-3">
