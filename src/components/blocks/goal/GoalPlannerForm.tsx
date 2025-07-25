@@ -196,7 +196,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
           <div className="flex justify-center pt-6">
             <Button
               type="submit"
-              disabled={isLoading || !isYearsValid || isUserLoading}
+              disabled={isLoading || !isYearsValid}
               className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
