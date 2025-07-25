@@ -87,9 +87,11 @@ export default function ResultComponentClient({
       return (
         <>
           <span className="text-[#0046FF] font-semibold ">{theme}테마</span>
-          {"에"}
+          <span className="text-2xl">{" 에"}</span>
           <br />
-          관심을 가진 당신을 위한 추천 ETF입니다!
+          <span className="text-2xl">
+            관심을 가지고 있는 당신을 위한 추천 ETF입니다
+          </span>
         </>
       );
     } else {
@@ -97,7 +99,9 @@ export default function ResultComponentClient({
         <>
           <span className="text-[#0046FF] font-semibold">{riskType}</span>{" "}
           <br />
-          성향을 가진 당신을 위한 추천 ETF입니다!
+          <span className="text-2xl">
+            성향을 가진 당신을 위한 추천 ETF입니다
+          </span>
         </>
       );
     }
@@ -127,22 +131,22 @@ export default function ResultComponentClient({
       {/* </div> */}
 
       {/* 탭 버튼 */}
-      <div className="flex w-full mb-6 mt-28">
+      <div className="flex border-b mb-20 mt-28">
         <button
-          className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+          className={`flex-1 py-3 text-lg font-medium border-b-2 transition-colors duration-150 ${
             selectedTab === "theme"
-              ? "border-black text-black"
-              : "border-transparent text-gray-400"
+              ? "border-[#0046ff] text-[#0046ff]"
+              : "border-transparent text-gray-500"
           }`}
           onClick={() => setSelectedTab("theme")}
         >
           테마별
         </button>
         <button
-          className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+          className={`flex-1 py-3 text-lg font-medium border-b-2 transition-colors duration-150 ${
             selectedTab === "type"
-              ? "border-black text-black"
-              : "border-transparent text-gray-400"
+              ? "border-[#0046ff] text-[#0046ff]"
+              : "border-transparent text-gray-500"
           }`}
           onClick={() => setSelectedTab("type")}
         >
@@ -151,7 +155,7 @@ export default function ResultComponentClient({
       </div>
 
       {/* 카드 목록 */}
-      <div className="flex flex-col gap-8 mt-10 w-full">
+      <div className="flex flex-col gap-8 my-10 w-full">
         {etfList.map((etf, idx) => (
           <ETFCard
             key={etf.etf_code}

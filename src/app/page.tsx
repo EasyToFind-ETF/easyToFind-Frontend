@@ -172,8 +172,8 @@ export default function Home() {
             <div className="relative">
               <input
                 type="text"
-                className="w-full rounded-full border border-gray-200 bg-[#0046ff] px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
-                style={{ caretColor: "white" }}
+                className="w-full rounded-3xl border border-gray-200 bg-[#0046ff] px-14 py-4 text-lg shadow focus:outline-none focus:ring-2 focus:ring-[#4DB6FF] placeholder:text-white text-white"
+                style={{ caretColor: "white", borderRadius: "3rem" }}
                 placeholder={
                   showPlaceholder
                     ? "상품명 혹은 증권코드로 원하는 ETF를 검색해보세요"
@@ -216,14 +216,14 @@ export default function Home() {
         </div>
 
         {/* ETF Trends Section */}
-        <div className="max-w-screen-xl mx-auto my-20">
+        <div className="max-w-screen-xl mx-auto mt-20">
           <div
             className="bg-white px-16 py-20 shadow"
             style={{ borderRadius: "4rem" }}
           >
             <div className="flex gap-10 overflow-hidden">
               {/* 왼쪽 탭 영역 */}
-              <div className="w-96 flex-shrink-0">
+              <div className="flex-shrink-0" style={{ width: "30%" }}>
                 <div className="mb-6">
                   <h3 className="text-4xl font-bold text-gray-800 mb-1">
                     ETF 트렌드
@@ -237,7 +237,7 @@ export default function Home() {
                 </div>
 
                 {/* 탭 리스트 */}
-                <div className="space-y-2">
+                <div className="space-y-2 mt-20">
                   {[
                     { icon: "chart", text: "순자산이 가장 많은 ETF는?" },
                     {
@@ -366,7 +366,7 @@ export default function Home() {
             <div className="mt-16 text-center">
               <Link
                 href="/find"
-                className="inline-block w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-base py-4 px-8 rounded-3xl transition-colors duration-200"
+                className="inline-block w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-base py-4 px-8 rounded-2xl transition-colors duration-200"
               >
                 전체 운용상품 보러 가기
               </Link>
@@ -375,17 +375,15 @@ export default function Home() {
         </div>
 
         {/* 두 개의 카드 섹션 */}
-        <div className="max-w-screen-xl mx-auto mt-20 mb-24">
+        <div className="max-w-screen-xl mx-auto mt-10 mb-24">
           <div className="flex gap-6">
             {/* what's your ETF? 카드 */}
             <Link href="/me/mbti" className="flex-1 block">
               <div
-                className="rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"
+                className="rounded-3xl overflow-hidden p-12 text-white relative min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"
                 style={{
                   width: "100%",
                   height: "30vh",
-                  borderRadius: 40,
-                  position: "relative",
                   backgroundColor: "#71c5fe",
                 }}
               >
@@ -395,11 +393,9 @@ export default function Home() {
                   <p className="text-sm">지금 당장 테스트 해보세요!</p>
                 </div>
 
-                {/* 그래픽 요소 */}
                 <div className="absolute bottom-6 right-6">
                   <div className="flex items-center space-x-3">
-                    {/* 차트 아이콘 */}
-                    <div className="backdrop-blur-sm rounded-xl p-3 flex justify-end">
+                    <div className="backdrop-blur-sm rounded-3xl p-3 flex justify-end">
                       <img
                         src="/mbtiTest6.png"
                         alt="mbti"
@@ -414,11 +410,10 @@ export default function Home() {
             {/* 전략 시뮬레이션 ETF추천 카드 */}
             <Link href="/goal" className="flex-1 block">
               <div
-                className="rounded-3xl p-12 text-white relative overflow-hidden min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"
+                className="rounded-3xl overflow-hidden p-12 text-white relative min-h-60 cursor-pointer transition-transform hover:scale-105 h-full"
                 style={{
                   width: "100%",
                   height: "30vh",
-                  position: "relative",
                   backgroundColor: "#4a9ffd",
                 }}
               >
@@ -428,10 +423,9 @@ export default function Home() {
                   <p className="text-sm">최적의 전략을 찾아보세요!</p>
                 </div>
 
-                {/* 그래픽 요소 - 전략 시뮬레이션 아이콘 */}
                 <div className="absolute bottom-6 right-6">
                   <div className="flex items-center space-x-3">
-                    <div className="backdrop-blur-sm rounded-xl p-3 flex justify-end">
+                    <div className="backdrop-blur-sm rounded-3xl p-3 flex justify-end">
                       <img
                         src="/mbtiTest3.png"
                         alt="mbti"

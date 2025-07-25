@@ -66,10 +66,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         {/* 중앙 텍스트 */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-800">
+            <div className="text-2xl font-bold text-gray-800">
               {numericValue.toFixed(1)}
             </div>
-            <div className="text-xs text-gray-500">%</div>
+            <div className="text-xs text-gray-500">점</div>
           </div>
         </div>
       </div>
