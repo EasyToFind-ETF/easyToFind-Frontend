@@ -25,10 +25,19 @@ export default function ResultComponentClient({
       let body: any = {};
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.stabilityScore = Number(riskScore[0]);
-        body.liquidityScore = Number(riskScore[1]);
-        body.growthScore = Number(riskScore[2]);
-        body.divScore = Number(riskScore[3]);
+        // 가장 높은 점수 찾기
+        const scores = riskScore.map(Number);
+        const maxScore = Math.max(...scores);
+        const maxIndex = scores.indexOf(maxScore);
+        
+        // 가장 높은 점수를 1.5배로 증폭
+        const amplifiedScores = [...scores];
+        amplifiedScores[maxIndex] = maxScore * 1.5;
+        
+        body.stabilityScore = amplifiedScores[0];
+        body.liquidityScore = amplifiedScores[1];
+        body.growthScore = amplifiedScores[2];
+        body.divScore = amplifiedScores[3];
       }
 
       if (selectedTab === "theme") {

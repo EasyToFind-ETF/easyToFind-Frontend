@@ -25,9 +25,9 @@ export function getConfidenceColor(interval: ConfidenceInterval) {
 
 export function getConfidenceBadgeColor(interval: ConfidenceInterval) {
   const range = interval.high - interval.low;
-  if (range <= 5) return "bg-green-100 text-green-800";
-  if (range <= 10) return "bg-blue-100 text-blue-800";
-  if (range <= 15) return "bg-yellow-100 text-yellow-800";
-  if (range <= 20) return "bg-orange-100 text-orange-800";
-  return "bg-red-100 text-red-800";
+  if (range <= 5) return "bg-[#F2F8FC] text-[#0046ff]";
+  if (range <= 10) return "bg-[#F2F8FC] text-[#4DB6FF]";
+  if (range <= 15) return "bg-[#F6F7F9] text-gray-700";
+  if (range <= 20) return "bg-[#F6F7F9] text-gray-600";
+  return "bg-[#F6F7F9] text-gray-500";
 }
