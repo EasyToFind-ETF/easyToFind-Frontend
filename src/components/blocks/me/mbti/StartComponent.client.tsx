@@ -21,10 +21,10 @@ const StartComponentClient: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center max-h-screen">
+    <div className="flex items-center justify-center min-h-screen -mt-20">
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="text-4xl font-bold -mt-20 mb-4">What's your ETF?</div>
+          <div className="text-4xl font-bold mb-4">What's your ETF?</div>
           <div className="text-sm mb-10 text-center text-gray-600">
             간단한 테스트로 자신에게 가장 맞는<br></br> ETF를 추천 받아보세요!
           </div>
