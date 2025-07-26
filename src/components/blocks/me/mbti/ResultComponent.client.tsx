@@ -4,20 +4,99 @@ import { useEffect, useState } from "react";
 import ETFCard from "./recommendETFcard";
 
 interface Props {
-  riskType: string;
   theme: string;
   riskScore: number[];
 }
 
+// getInvestmentType 함수를 ResultComponent로 이동
+function getInvestmentType(scores: number[]): string {
+  const [st, li, gr, di] = scores;
+  const max = Math.max(...scores);
+  const min = Math.min(...scores);
+  const gap = max - min;
+
+  // 1. 복합 특성 조합
+  if (st >= 15 && di >= 15) return "보수안정형";
+  if (li >= 15 && gr >= 15) return "수익지향형";
+  if (st >= 15 && li >= 15) return "안정유동형";
+  if (st >= 15 && gr >= 15) return "안정성장형";
+  if (li >= 15 && di >= 15) return "분산유동형";
+  if (gr >= 15 && di >= 15) return "균형형";
+
+  if (st >= 15 && gap <= 7) return "안정추구";
+
+  if (li >= 15 && st <= 8) return "단기투자형";
+
+  if (gr >= 15 && st <= 8) return "공격투자형";
+
+  if (di >= 15 && gap <= 6) return "분산중시형";
+
+  // 2. 전반적인 밸런스
+  if (gap <= 5) return "균형형";
+
+  // 3. 주된 요소 기반 fallback
+  switch (scores.indexOf(max)) {
+    case 0:
+      return "안정추구형";
+    case 1:
+      return "유동선호형";
+    case 2:
+      return "성장지향형";
+    case 3:
+      return "분산중시형";
+    default:
+      return "변동감수형";
+  }
+}
+
 export default function ResultComponentClient({
-  riskType,
   theme,
   riskScore,
 }: Props) {
   const [selectedTab, setSelectedTab] = useState<"theme" | "type">("theme");
   console.log("riskScore result", riskScore);
+  const riskType = getInvestmentType(riskScore);
+  console.log("riskType", riskType);
 
   const [etfList, setEtfList] = useState<any[]>([]);
+  //가중치 곱하는 함수
+  function applyWeightByType(type: string, scores: number[]): number[] {
+    const [st, li, gr, di] = scores;
+  
+    switch (type) {
+      case "보수안정형":
+        return [st * 2, li, gr, di * 2];
+      case "수익지향형":
+        return [st, li * 2, gr * 2, di];
+      case "안정유동형":
+        return [st * 2, li * 2, gr, di];
+      case "안정성장형":
+        return [st * 2, li, gr * 2, di];
+      case "분산유동형":
+        return [st, li * 2, gr, di * 2];
+      case "균형형":
+        return [st, li, gr, di]; // 균형형은 가중치 X
+      case "안정추구":
+      case "안정추구형":
+        return [st * 2, li, gr, di];
+      case "단기투자형":
+        return [st, li * 2, gr, di];
+      case "공격투자형":
+        return [st, li, gr * 2, di];
+      case "분산중시형":
+        return [st, li, gr, di * 2];
+      case "유동선호형":
+        return [st, li * 2, gr, di];
+      case "성장지향형":
+        return [st, li, gr * 2, di];
+      case "변동감수형":
+      default:
+        return [st, li, gr, di]; // 기본은 가중치 없음
+    }
+  }
+  const weightedScores = applyWeightByType(riskType, riskScore);
+
+  
   //결과 불러오기
   useEffect(() => {
     const fetchData = async () => {
@@ -25,10 +104,11 @@ export default function ResultComponentClient({
       let body: any = {};
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.stabilityScore = Number(riskScore[0]);
-        body.liquidityScore = Number(riskScore[1]);
-        body.growthScore = Number(riskScore[2]);
-        body.divScore = Number(riskScore[3]);
+        
+        body.stabilityScore = weightedScores[0];
+        body.liquidityScore = weightedScores[1];
+        body.growthScore = weightedScores[2];
+        body.divScore = weightedScores[3];
       }
 
       if (selectedTab === "theme") {
@@ -48,48 +128,54 @@ export default function ResultComponentClient({
     fetchData();
   }, [selectedTab, riskScore, theme]);
 
-  //결과 저장
-  useEffect(() => {
-    const fetchData = async () => {
-      const [stabilityWeight, liquidityWeight, growthWeight, divWeight] =
-        riskScore;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mbti`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            mbtiType: riskType,
-            stabilityWeight: Number(riskScore[0]),
-            liquidityWeight: Number(riskScore[1]),
-            growthWeight: Number(riskScore[2]),
-            divWeight: Number(riskScore[3]),
-          }),
-        }
-      );
-      const data = await response.json();
-      console.log(
-        "save",
-        stabilityWeight,
-        liquidityWeight,
-        growthWeight,
-        divWeight
-      );
-    };
-    fetchData();
-  }, []);
+ // 결과 저장
+useEffect(() => {
+  const fetchData = async () => {
+    let body: any = {};
+
+    if (Array.isArray(riskScore) && riskScore.length === 4) {
+      body.stabilityScore = weightedScores[0];
+      body.liquidityScore = weightedScores[1];
+      body.growthScore = weightedScores[2];
+      body.divScore = weightedScores[3];
+    }
+
+    body.mbtiType = riskType;
+    if (selectedTab === "theme") {
+      body.theme = theme;
+    }
+
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/me/mbti`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    console.log("저장 body:", body);
+  };
+
+  fetchData();
+}, []);
+
 
   const getTitle = () => {
     if (selectedTab === "theme") {
       return (
         <>
           <span className="text-[#0046FF] font-semibold ">{theme}테마</span>
-          {"에"}
+          <span className="text-2xl">{" 에"}</span>
           <br />
-          관심을 가진 당신을 위한 추천 ETF입니다!
+          <span className="text-2xl">
+            관심을 가지고 있는 당신을 위한 추천 ETF입니다
+          </span>
         </>
       );
     } else {
@@ -97,7 +183,9 @@ export default function ResultComponentClient({
         <>
           <span className="text-[#0046FF] font-semibold">{riskType}</span>{" "}
           <br />
-          성향을 가진 당신을 위한 추천 ETF입니다!
+          <span className="text-2xl">
+            성향을 가진 당신을 위한 추천 ETF입니다
+          </span>
         </>
       );
     }
@@ -113,11 +201,16 @@ export default function ResultComponentClient({
 
   // 점수에 따른 색상 반환 함수
   const getScoreColor = (score: number) => {
-    if (score >= 70) return "#22c55e"; // 초록색
-    if (score >= 40) return "#f97316"; // 주황색
-    if (score >= 15) return "#eab308"; // 노란색
-    return "#ef4444"; // 빨간색
+    if (score >= 80) return "#3b82f6"; // blue-500
+    if (score >= 60) return "#22c55e"; // green-500
+    if (score >= 40) return "#eab308"; // yellow-500
+    if (score >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
+
+  // 최종 점수로 투자 유형 계산
+  const finalScores = riskScore.map(Number);
+  const finalRiskType = getInvestmentType(finalScores);
 
   return (
     <div className="w-full">
@@ -127,22 +220,22 @@ export default function ResultComponentClient({
       {/* </div> */}
 
       {/* 탭 버튼 */}
-      <div className="flex w-full mb-6 mt-28">
+      <div className="flex border-b mb-20 mt-28">
         <button
-          className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+          className={`flex-1 py-3 text-lg font-medium border-b-2 transition-colors duration-150 ${
             selectedTab === "theme"
-              ? "border-black text-black"
-              : "border-transparent text-gray-400"
+              ? "border-[#0046ff] text-[#0046ff]"
+              : "border-transparent text-gray-500"
           }`}
           onClick={() => setSelectedTab("theme")}
         >
           테마별
         </button>
         <button
-          className={`flex-1 pb-2 text-lg font-semibold border-b-[3px] ${
+          className={`flex-1 py-3 text-lg font-medium border-b-2 transition-colors duration-150 ${
             selectedTab === "type"
-              ? "border-black text-black"
-              : "border-transparent text-gray-400"
+              ? "border-[#0046ff] text-[#0046ff]"
+              : "border-transparent text-gray-500"
           }`}
           onClick={() => setSelectedTab("type")}
         >
@@ -151,7 +244,7 @@ export default function ResultComponentClient({
       </div>
 
       {/* 카드 목록 */}
-      <div className="flex flex-col gap-8 mt-10 w-full">
+      <div className="flex flex-col gap-8 my-10 w-full">
         {etfList.map((etf, idx) => (
           <ETFCard
             key={etf.etf_code}

@@ -1,6 +1,10 @@
-import React from "react";
-import { ResponsivePie } from "@nivo/pie";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@/components/ui/circular-progress";
+import {
+  toggleFavorite,
+  fetchFavoriteEtfCodes,
+} from "@/services/etfFavoriteService";
 
 interface ETFCardProps {
   name: string;
@@ -9,118 +13,169 @@ interface ETFCardProps {
   details: {
     label: string;
     value: number;
-    color: string; // 점수별 색상
+    color: string;
   }[];
 }
 
-export default function ETFCard({ name, score, etf_code, details }: ETFCardProps) {
+export default function ETFCard({
+  name,
+  score,
+  etf_code,
+  details,
+}: ETFCardProps) {
   const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // 관심 ETF 목록 가져오기
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const favoriteCodes = await fetchFavoriteEtfCodes();
+        setIsFavorite(favoriteCodes.includes(etf_code));
+      } catch (err) {
+        console.warn("관심 ETF 상태 확인 실패:", err);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [etf_code]);
 
   const handleClick = () => {
     router.push(`/etfs/${etf_code}`);
   };
 
-  // 점수에 따른 색상 반환 함수
-  const getScoreColor = (score: number) => {
-    if (score >= 70) return "#22c55e"; // 초록색
-    if (score >= 40) return "#f97316"; // 주황색
-    if (score >= 15) return "#eab308"; // 노란색
-    return "#ef4444"; // 빨간색
+  const handleHeartClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 카드 클릭 이벤트 방지
+
+    try {
+      await toggleFavorite(etf_code, isFavorite);
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      console.error("관심 ETF 토글 실패:", err);
+      alert("로그인 후 이용해주세요!");
+    }
   };
 
-  const scoreColor = getScoreColor(score);
+  // 점수에 따른 등급 반환
+  const getScoreGrade = (score: number) => {
+    if (score >= 80) return { grade: "A", color: "#3b82f6" }; // blue-500
+    if (score >= 60) return { grade: "B", color: "#22c55e" }; // green-500
+    if (score >= 40) return { grade: "C", color: "#eab308" }; // yellow-500
+    if (score >= 20) return { grade: "D", color: "#f97316" }; // orange-500
+    return { grade: "E", color: "#ef4444" }; // red-500
+  };
 
-  // 원형 차트 데이터 생성
-  const pieData = [
-    {
-      id: 'score',
-      value: score,
-      color: scoreColor
-    },
-    {
-      id: 'remaining',
-      value: 100 - score,
-      color: '#E5E7EB' // 회색 배경
-    }
-  ];
+  const scoreGrade = getScoreGrade(score);
 
   return (
-    <div 
-    className="bg-white shadow p-4 md:p-6 lg:px-12 flex flex-col w-full rounded-3xl lg:min-w-[800px] cursor-pointer hover:shadow-lg transition-shadow"
-    onClick={handleClick}
-  >
-    <h2 className="text-lg md:text-xl lg:text-2xl font-bold mb-4">{name}</h2>
-  
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-start gap-8 md:gap-12 lg:gap-20">
-      
-      {/* 원형 차트 */}
-      <div className="text-center flex flex-col items-center px-2 py-6 md:px-4 lg:px-6 flex-shrink-0">
-        <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px]">
-          <ResponsivePie
-            data={pieData}
-            innerRadius={0.8}
-            padAngle={2}
-            cornerRadius={45}
-            enableArcLabels={false}
-            enableArcLinkLabels={false}
-            colors={({ data }) => data.color}
-            borderWidth={0}
-            isInteractive={false}
-            animate={false}
-            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-            layers={[
-              'arcs',
-              ({ centerX, centerY }) => (
-                <>
-                  <text
-                    x={centerX}
-                    y={centerY - 6}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    style={{ fontSize: 20, fill: scoreColor, fontWeight: 600 }}
-                  >
-                    {score}
-                  </text>
-                  <text
-                    x={centerX}
-                    y={centerY + 10}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    style={{ fontSize: 10, fill: scoreColor, fontWeight: 600 }}
-                  >
-                    점
-                  </text>
-                </>
-              ),
-            ]}
+    <div
+      className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 hover:shadow-md hover:border-gray-200 transition-all duration-300 cursor-pointer group relative"
+      onClick={handleClick}
+      style={{ borderRadius: "4rem" }}
+    >
+      {/* 헤더 */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-2 pl-6 pt-4">
+          <h3 className="text-2xl font-semibold text-gray-900 transition-colors">
+            {name}
+          </h3>
+          {/* 하트 버튼 */}
+          <button
+            onClick={handleHeartClick}
+            className="p-2 mr-2 rounded-full transition-colors"
+          >
+            <svg
+              className={`w-6 h-6 transition-colors ${
+                isFavorite
+                  ? "text-red-500 fill-current"
+                  : "text-gray-400 hover:text-red-400"
+              }`}
+              fill={isFavorite ? "currentColor" : "none"}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
+        </div>
+        <p className="text-lg font-medium text-gray-900 mb-6 pl-6">
+          {etf_code}
+        </p>
+      </div>
+
+      {/* 점수 섹션 */}
+      <div className="flex gap-8 mb-6">
+        {/* 왼쪽: 점수 뱃지 */}
+        <div className="pl-16 flex flex-col items-center justify-center min-w-[140px]">
+          <CircularProgress
+            value={score}
+            size={150}
+            strokeWidth={12}
+            color={scoreGrade.color}
+            label={undefined}
           />
+          {/* <span className="text-base font-bold text-gray-700 mt-2">
+            {scoreGrade.grade}
+          </span> */}
         </div>
-      </div>
-  
-      {/* 점수 구성 */}
-      <div className="w-full flex-1">
-        <div className="text-base md:text-lg px-2 md:px-4 lg:px-6 mb-4 lg:mb-6 py-4"></div>
-        <div className="flex flex-wrap gap-6 md:gap-12 lg:gap-36 px-2 md:px-4 lg:px-16">
-          {details.map((d) => (
-            <div key={d.label} className="flex flex-col items-start lg:items-end">
-              <span className="text-sm md:text-base lg:text-lg mb-1">{d.label}</span>
-              <div className="flex items-center gap-1 md:gap-2">
-                <span
-                  className="w-3 h-3 md:w-4 md:h-4 rounded-full"
-                  style={{ backgroundColor: d.color }}
-                />
-                <span className="text-sm md:text-base lg:text-lg font-bold" style={{ color: d.color }}>
-                  {d.value}
+
+        {/* 오른쪽: 점수 바들 */}
+        <div className="flex-1 flex items-center ml-16">
+          <div className="grid grid-cols-2 gap-4 w-full">
+            {details.map((detail) => (
+              <div key={detail.label} className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700 mb-2">
+                  {detail.label}
                 </span>
+                <div className="flex items-center gap-3">
+                  <div className="w-72 bg-gray-200 rounded-3xl h-3">
+                    <div
+                      className="h-3 rounded-3xl transition-all duration-500"
+                      style={{
+                        width: `${detail.value}%`,
+                        backgroundColor: getScoreGrade(detail.value).color,
+                      }}
+                    />
+                  </div>
+                  <span
+                    className="text-sm font-semibold min-w-[30px] text-right"
+                    style={{ color: getScoreGrade(detail.value).color }}
+                  >
+                    {detail.value}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-  
+
+      {/* 하단 액션 */}
+      <div className="pt-4 border-gray-100">
+        <div className="flex items-center justify-end w-full">
+          <div className="flex items-center mr-6 mb-2 text-gray-500 text-sm font-medium group-hover:translate-x-1 transition-transform">
+            <span>자세히 보기</span>
+            <svg
+              className="w-4 h-4 ml-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  
-  
   );
-} 
+}

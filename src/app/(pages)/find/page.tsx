@@ -334,6 +334,7 @@ export default function FindPage() {
             count={
               viewMode === "ETF로 보기" ? etfData.length : holdingsData.length
             }
+            selectedTab={selectedTab}
           />
 
           {isLoading ? (

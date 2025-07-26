@@ -54,26 +54,15 @@ export function OverallSimulationResults({
 
   return (
     <div
-      className="bg-[#F2F8FC] rounded-3xl p-8 mb-8"
-      style={{ borderRadius: "2rem" }}
+      className="rounded-3xl p-8 mb-8"
     >
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-[#4DB6FF] rounded-full p-3">
-          <BarChart3 className="w-6 h-6 text-white" />
-        </div>
         <span className="text-xl font-semibold text-gray-800">
           시뮬레이션 정보
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* 시뮬레이션 경로 수 */}
-        <div className="text-center">
-          <div className="text-3xl font-bold text-[#4DB6FF] mb-2">
-            {simulationCount.toLocaleString()}개
-          </div>
-          <div className="text-sm text-gray-600">시뮬레이션 경로</div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
 
         {/* 계산 시간 */}
         <div className="text-center">

@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useGoalPlanner } from "@/hooks/useGoalPlanner";
-import { Target } from "lucide-react";
+import { Target, HelpCircle } from "lucide-react";
 
 type GoalPlannerFormProps = {
   planner: ReturnType<typeof useGoalPlanner>;
@@ -28,15 +28,25 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
         name === "targetAmount" ||
         name === "initialAmount" ||
         name === "monthlyContribution"
-          ? Number(value.replace(/[^0-9]/g, ""))
+          ? Number(value) || 0
           : name === "targetYears"
-          ? Number(value)
+          ? Number(value) || 0
           : value,
     }));
   };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("ko-KR").format(value);
+  };
+
+  // 투자 원금 계산 함수
+  const calculateTotalInvestment = () => {
+    const initialAmount = Number(input.initialAmount) || 0;
+    const monthlyContribution = Number(input.monthlyContribution) || 0;
+    const targetYears = Number(input.targetYears) || 0;
+    
+    const totalMonthlyContributions = monthlyContribution * 12 * targetYears;
+    return initialAmount + totalMonthlyContributions;
   };
 
   // 더 안전한 유효성 검사
@@ -130,13 +140,26 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
 
               {/* 초기 투자금 */}
               <div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center gap-2">
                   <Label
                     htmlFor="initialAmount"
                     className="text-xl font-semibold text-gray-800"
                   >
                     초기 투자금
                   </Label>
+                  <div className="group relative">
+                    <HelpCircle className="w-5 h-5 text-gray-400 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                      투자 원금: {formatCurrency(calculateTotalInvestment())}원
+                      <br />
+                      <span className="text-xs text-gray-300">
+                        초기투자금({formatCurrency(Number(input.initialAmount) || 0)}원) + 
+                        월적립액({formatCurrency(Number(input.monthlyContribution) || 0)}원) × 12 × 
+                        투자기간({Number(input.targetYears) || 0}년)
+                      </span>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                    </div>
+                  </div>
                 </div>
                 <div className="relative">
                   <Input
@@ -198,6 +221,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
               type="submit"
               disabled={isLoading || !isYearsValid}
               className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              style={{ borderRadius: "2rem" }}
             >
               {isLoading ? (
                 <div className="flex items-center gap-3">

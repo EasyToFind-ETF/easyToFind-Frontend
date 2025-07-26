@@ -12,20 +12,30 @@ interface ResultHeaderProps {
   viewMode: string;
   setViewMode: (mode: string) => void;
   count: number;
+  selectedTab: string;
 }
 
 const ResultHeader: React.FC<ResultHeaderProps> = ({
   viewMode,
   setViewMode,
   count,
+  selectedTab,
 }) => {
   return (
     <div className="flex flex-col gap-4 mb-4">
       <div className="flex items-center justify-between">
-        <span className="text-black font-medium">
-          전체에 대한 <span className="font-bold text-[#0046ff]">{count}</span>
-          건의 검색결과가 있습니다.
-        </span>
+        {selectedTab === "관심별" ? (
+          <span className="text-black font-medium">
+            관심 ETF가 <span className="font-bold text-[#0046ff]">{count}</span>
+            개 있습니다.
+          </span>
+        ) : (
+          <span className="text-black font-medium">
+            전체에 대한{" "}
+            <span className="font-bold text-[#0046ff]">{count}</span>건의
+            검색결과가 있습니다.
+          </span>
+        )}
       </div>
       <div className="flex items-end justify-between">
         <div className="flex gap-4">
