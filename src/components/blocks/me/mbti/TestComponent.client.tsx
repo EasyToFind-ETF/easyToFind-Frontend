@@ -35,58 +35,13 @@ export default function TestComponentClient() {
 
   const current = mbtiQuestions[step];
 
-  function getInvestmentType(scores: number[]): string {
-    const [st, li, gr, di] = scores;
-    const max = Math.max(...scores);
-    const min = Math.min(...scores);
-    const gap = max - min;
-
-    // 1. 복합 특성 조합
-    if (st >= 15 && di >= 15) return "보수안정형"; // 기존
-    if (li >= 15 && gr >= 15) return "수익지향형"; // 기존
-    if (st >= 15 && li >= 15) return "안정유동형"; // 안정성과 현금성 중시
-    if (st >= 15 && gr >= 15) return "안정성장형"; // 안정성은 추구하면서 수익도 노림
-    if (li >= 15 && di >= 15) return "분산유동형"; // 거래 활발 + 분산 중시
-    if (gr >= 15 && di >= 15) return "균형형"; // 수익률 지향하면서 리스크 헷지
-
-    if (st >= 15 && gap <= 7) return "안정추구"; // 안정성은 높고 나머지는 고르게 분포
-
-    if (li >= 15 && st <= 8) return "단기투자형"; // 유동성은 높고 안정은 낮음
-
-    if (gr >= 15 && st <= 8) return "공격투자형"; // 수익률은 높은데 안정성 매우 낮음
-
-    if (di >= 15 && gap <= 6) return "분산중시형"; // 분산에 강하면서도 전체 밸런스 유지
-
-    // 2. 전반적인 밸런스
-    if (gap <= 5) return "균형형"; // 기존 조건
-
-    // 3. 주된 요소 기반 fallback
-    switch (scores.indexOf(max)) {
-      case 0:
-        return "안정추구형";
-      case 1:
-        return "유동선호형";
-      case 2:
-        return "성장지향형";
-      case 3:
-        return "분산중시형";
-      default:
-        return "변동감수형";
-    }
-  }
-
-  //점수바뀔 때마다 투자유형 변경
-  useEffect(() => {
-    setRiskType(getInvestmentType(riskScore)); // 점수에 따라 투자유형 분류
-  }, [riskScore]);
-
   //10문제 끝났을 때
   if (step >= mbtiQuestions.length) {
     const most = getMostFrequentTheme(themeAnswers);
     console.log("최종 점수:", riskScore);
     console.log("테마 답변:", most);
     return (
-      <ResultComponent riskType={riskType} theme={most} riskScore={riskScore} />
+      <ResultComponent theme={most} riskScore={riskScore} />
     );
   }
 
