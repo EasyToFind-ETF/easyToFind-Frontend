@@ -25,10 +25,19 @@ export default function ResultComponentClient({
       let body: any = {};
 
       if (Array.isArray(riskScore) && riskScore.length === 4) {
-        body.stabilityScore = Number(riskScore[0]);
-        body.liquidityScore = Number(riskScore[1]);
-        body.growthScore = Number(riskScore[2]);
-        body.divScore = Number(riskScore[3]);
+        // 가장 높은 점수 찾기
+        const scores = riskScore.map(Number);
+        const maxScore = Math.max(...scores);
+        const maxIndex = scores.indexOf(maxScore);
+        
+        // 가장 높은 점수를 1.5배로 증폭
+        const amplifiedScores = [...scores];
+        amplifiedScores[maxIndex] = maxScore * 1.5;
+        
+        body.stabilityScore = amplifiedScores[0];
+        body.liquidityScore = amplifiedScores[1];
+        body.growthScore = amplifiedScores[2];
+        body.divScore = amplifiedScores[3];
       }
 
       if (selectedTab === "theme") {
@@ -117,10 +126,11 @@ export default function ResultComponentClient({
 
   // 점수에 따른 색상 반환 함수
   const getScoreColor = (score: number) => {
-    if (score >= 70) return "#22c55e"; // 초록색
-    if (score >= 40) return "#f97316"; // 주황색
-    if (score >= 15) return "#eab308"; // 노란색
-    return "#ef4444"; // 빨간색
+    if (score >= 80) return "#3b82f6"; // blue-500
+    if (score >= 60) return "#22c55e"; // green-500
+    if (score >= 40) return "#eab308"; // yellow-500
+    if (score >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   return (

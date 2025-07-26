@@ -93,9 +93,11 @@ const formatReturn = (value: number) => {
 };
 
 const getRiskLevel = (score: number) => {
-  if (score >= 65) return { level: 1, color: "#22c55e" };
-  if (score >= 35) return { level: 2, color: "#f59e0b" };
-  return { level: 3, color: "#ef4444" };
+  if (score >= 80) return { level: 1, color: "#3b82f6" }; // blue-500
+  if (score >= 60) return { level: 2, color: "#22c55e" }; // green-500
+  if (score >= 40) return { level: 3, color: "#eab308" }; // yellow-500
+  if (score >= 20) return { level: 4, color: "#f97316" }; // orange-500
+  return { level: 5, color: "#ef4444" }; // red-500
 };
 
 export default function ETFComparisonView({

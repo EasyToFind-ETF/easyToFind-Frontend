@@ -46,9 +46,11 @@ export function SuccessRateDisplay({
 
   // 성공률 색상 결정
   const getSuccessRateColor = (rate: number) => {
-    if (rate >= 70) return "text-green-600";
-    if (rate >= 40) return "text-yellow-600";
-    return "text-red-600";
+    if (rate >= 80) return "text-blue-600"; // blue-500
+    if (rate >= 60) return "text-green-600"; // green-500
+    if (rate >= 40) return "text-yellow-600"; // yellow-500
+    if (rate >= 20) return "text-orange-600"; // orange-500
+    return "text-red-600"; // red-500
   };
 
   return (
@@ -74,14 +76,7 @@ export function SuccessRateDisplay({
             {confidenceInterval.low.toFixed(1)}% -{" "}
             {confidenceInterval.high.toFixed(1)}%
           </span>
-          <Badge
-            variant="outline"
-            className={`${
-              classes.confidence
-            } px-1 py-0 ${getConfidenceBadgeColor(confidenceInterval)}`}
-          >
-            95% 신뢰수준
-          </Badge>
+        
           <InfoTooltip content="95% 신뢰구간은 시뮬레이션 결과의 불확실성을 나타냅니다. 구간이 좁을수록 더 정확한 예측입니다." />
         </div>
       )}

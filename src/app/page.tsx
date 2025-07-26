@@ -10,6 +10,9 @@ interface ETFData {
   etf_name: string;
   close_price: string;
   trade_date: string;
+  week1: string;
+  is_personal_pension: boolean;
+  is_retire_pension: boolean;
 }
 
 export default function Home() {
@@ -353,6 +356,10 @@ export default function Home() {
                             etf_name={etf.etf_name}
                             close_price={etf.close_price}
                             trade_date={etf.trade_date}
+                            week1={etf.week1}
+                            is_personal_pension={etf.is_personal_pension}
+                            is_retire_pension={etf.is_retire_pension}
+                            index={index + 1}
                           />
                         </div>
                       ))
