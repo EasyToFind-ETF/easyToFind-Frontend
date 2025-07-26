@@ -16,11 +16,11 @@ export function formatConfidenceInterval(interval: ConfidenceInterval) {
 
 export function getConfidenceColor(interval: ConfidenceInterval) {
   const range = interval.high - interval.low;
-  if (range <= 5) return "text-green-600"; // 매우 안정적
-  if (range <= 10) return "text-blue-600"; // 높음
-  if (range <= 15) return "text-yellow-600"; // 보통
-  if (range <= 20) return "text-orange-600"; // 낮음
-  return "text-red-600"; // 매우 낮음
+  if (range <= 5) return "text-blue-600"; // blue-500
+  if (range <= 10) return "text-green-600"; // green-500
+  if (range <= 15) return "text-yellow-600"; // yellow-500
+  if (range <= 20) return "text-orange-600"; // orange-500
+  return "text-red-600"; // red-500
 }
 
 export function getConfidenceBadgeColor(interval: ConfidenceInterval) {

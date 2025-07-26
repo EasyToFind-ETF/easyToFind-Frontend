@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, TrendingUp, TrendingDown } from "lucide-react";
 
+import MyPageETFCard from "@/components/ui/MyPageETFCard";
+
 interface ETFData {
   etf_code: string;
   etf_name: string;
@@ -58,9 +60,9 @@ const ETFScoreCircle = ({ score }: { score: number }) => {
   const strokeDashoffset = strokeDasharray * (1 - percentage / 100);
 
   const getScoreColor = (score: number) => {
-    if (score >= 65) return "#22c55e";
-    if (score >= 35) return "#f59e0b";
-    return "#ef4444";
+    if (score >= 3500) return "text-red-500";
+    if (score >= 2500) return "text-blue-500";
+    return "text-gray-500";
   };
 
   return (
@@ -226,7 +228,7 @@ export default function MyPage() {
 
   const formatChange = (change: string) => {
     const changeNum = Number.parseFloat(change);
-    return changeNum > 0 ? `+${change}` : change;
+    return changeNum.toFixed(2); // + 기호 제거하고 소수점 2자리만 반환
   };
 
   const getCurrentPeriodLabel = () => {
@@ -241,12 +243,12 @@ export default function MyPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center py-20">
           {mbtiType ? (
-            <p className="text-lg text-gray-700">
-              <span className="text-2xl font-semibold text-blue-600">
-                {userName}
+            <p className="text-2xl font-semibold text-gray-700">
+              <span className="text-2xl font-semibold">
+                {userName} 님의 투자 유형은
               </span>
-              님의 투자 유형은{" "}
-              <span className="text-2xl font-bold text-green-600">
+             <br />
+              <span className="text-2xl font-bold text-blue-600">
                 "{mbtiType}"
               </span>
               입니다.
@@ -300,93 +302,18 @@ export default function MyPage() {
               </span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
-              {etfCards.map((etf) => {
-                const currentReturn = etf[selectedPeriod];
-                const returnValue = Number.parseFloat(currentReturn);
-
-                return (
-                  <Card
-                    key={etf.etf_code}
-                    className="hover:shadow-md transition-shadow rounded-3xl"
-                    style={{
-                      height: "300px",
-                      border: "1px",
-                      borderColor: "#e0e0e0",
-                      borderRadius: "1rem",
-                    }}
-                  >
-                    <CardContent className="p-10">
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-base text-gray-900 leading-tight">
-                            {etf.etf_name}
-                          </h3>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleLike(etf.etf_code)}
-                          className="p-2 h-auto"
-                        >
-                          <Heart
-                            className={`w-5 h-5 ${
-                              etf.isLiked
-                                ? "fill-red-500 text-red-500"
-                                : "text-gray-400"
-                            }`}
-                          />
-                        </Button>
-                      </div>
-
-                      <div className="space-y-3 pt-2">
-                        <div className="text-lg font-bold text-gray-900">
-                          {formatPrice(etf.latest_price)}원
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {etf.provider}
-                        </div>
-
-                        {etf.total_score && (
-                          <div className="flex justify-center py-3">
-                            <ETFScoreCircle score={etf.total_score} />
-                          </div>
-                        )}
-
-                        <div className="flex items-end justify-between">
-                          <div className="flex items-center space-x-1">
-                            {isNaN(returnValue) ? (
-                              <span className="text-sm font-medium text-gray-400">
-                                -
-                              </span>
-                            ) : (
-                              <>
-                                {returnValue > 0 ? (
-                                  <TrendingUp className="w-4 h-4 text-red-500" />
-                                ) : (
-                                  <TrendingDown className="w-4 h-4 text-blue-500" />
-                                )}
-                                <span
-                                  className={`text-sm font-medium ${
-                                    returnValue > 0
-                                      ? "text-red-500"
-                                      : "text-blue-500"
-                                  }`}
-                                >
-                                  {formatChange(currentReturn)}%
-                                </span>
-                              </>
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {getCurrentPeriodLabel()}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-24">
+              {etfCards.map((etf) => (
+                <MyPageETFCard
+                  key={etf.etf_code}
+                  etf={etf}
+                  selectedPeriod={selectedPeriod}
+                  onToggleLike={toggleLike}
+                  formatPrice={formatPrice}
+                  formatChange={formatChange}
+                  getCurrentPeriodLabel={getCurrentPeriodLabel}
+                />
+              ))}
             </div>
           )}
         </div>

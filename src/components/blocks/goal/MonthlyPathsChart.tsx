@@ -325,7 +325,7 @@ export const MonthlyPathsChart = ({
 
       // 랜덤 샘플들
       if (data.random_samples) {
-        const colors = ["#3b82f6", "#10b981", "#8b5cf6", "#f97316", "#ef4444"];
+        const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6"];
 
         data.random_samples.slice(0, 5).forEach((path, index) => {
           const lineSeries = chart.addSeries(LineSeries, {
@@ -349,11 +349,11 @@ export const MonthlyPathsChart = ({
       // 기존 데이터 구조 처리 (호환성 유지)
       const paths = monthlyPaths as number[][];
       const colors = [
-        "#3b82f6", // blue-500
-        "#10b981", // green-500
-        "#8b5cf6", // purple-500
-        "#f97316", // orange-500
         "#ef4444", // red-500
+        "#f97316", // orange-500
+        "#eab308", // yellow-500
+        "#22c55e", // green-500
+        "#3b82f6", // blue-500
       ];
 
       const topPaths = paths.slice(0, 5);
@@ -456,7 +456,6 @@ export const MonthlyPathsChart = ({
       className={`bg-white rounded-2xl p-6 border border-gray-200 ${className}`}
     >
       <div className="flex items-center gap-2 mb-4">
-        <TrendingUp className="w-5 h-5 text-blue-600" />
         <h4 className="text-lg font-semibold text-gray-800">
           {isNewDataStructure
             ? "포트폴리오 가치 예측 (Monte Carlo 시뮬레이션)"

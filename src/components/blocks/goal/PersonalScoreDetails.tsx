@@ -1,5 +1,6 @@
 import { PersonalScoreDetails as PersonalScoreDetailsType } from "@/types/goal";
 import { BarChart3, TrendingUp, Shield, Zap, Target } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface PersonalScoreDetailsProps {
   details: PersonalScoreDetailsType;
@@ -79,10 +80,10 @@ export const PersonalScoreDetails = ({
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="flex items-center gap-2 mb-4">
-        <BarChart3 className="w-5 h-5 text-gray-600" />
         <h4 className="text-lg font-semibold text-gray-800">
           개인화 점수 상세 분석
         </h4>
+        <Tooltip content="개인화 점수는 안정성(25%), 유동성(25%), 성장성(25%), 분산투자(25%) 4개 팩터의 가중 평균으로 계산됩니다. 각 팩터는 사용자의 투자 성향과 ETF의 특성을 종합적으로 분석하여 산출됩니다." />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -93,51 +94,33 @@ export const PersonalScoreDetails = ({
           return (
             <div
               key={key}
-              className={`${config.bgColor} rounded-2xl p-4 border border-gray-200`}
+              className="bg-white rounded-2xl p-4 border border-gray-200"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Icon className={`w-4 h-4 ${config.color}`} />
-                <span className="text-sm font-medium text-gray-700">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-gray-800">
                   {config.label}
                 </span>
-              </div>
-
-              <div className="flex items-end gap-2 mb-2">
-                <span className={`text-2xl font-bold ${config.color}`}>
-                  {value.toFixed(1)}
+                <span className={`text-lg font-bold ${
+                  value >= 80 ? "text-green-600" : value >= 60 ? "text-blue-600" : value >= 40 ? "text-yellow-600" : value >= 20 ? "text-orange-600" : "text-red-600"
+                }`}>
+                  {value.toFixed(2)}
                 </span>
-                <span className="text-sm text-gray-500">%</span>
               </div>
 
               {/* 진행률 바 */}
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-500 ${
-                    value >= 70
-                      ? "bg-green-500"
-                      : value >= 40
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
+                    value >= 80 ? "bg-green-600" : value >= 60 ? "bg-blue-600" : value >= 40 ? "bg-yellow-600" : value >= 20 ? "bg-orange-600" : "bg-red-600"
                   }`}
                   style={{ width: `${value}%` }}
                 />
               </div>
 
-              <p className="text-xs text-gray-600 mt-2">{config.description}</p>
+              <p className="text-xs text-gray-600">{config.description}</p>
             </div>
           );
         })}
-      </div>
-
-      <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200">
-        <h5 className="text-sm font-semibold text-gray-800 mb-2">
-          점수 계산 방식
-        </h5>
-        <p className="text-xs text-gray-600 leading-relaxed">
-          개인화 점수는 안정성(25%), 유동성(25%), 성장성(25%), 분산투자(25%) 4개
-          팩터의 가중 평균으로 계산됩니다. 각 팩터는 사용자의 투자 성향과 ETF의
-          특성을 종합적으로 분석하여 산출됩니다.
-        </p>
       </div>
     </div>
   );

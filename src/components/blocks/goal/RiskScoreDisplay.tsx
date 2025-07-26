@@ -40,24 +40,28 @@ export function RiskScoreDisplay({
   const classes = getSizeClasses();
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-blue-600";
-    if (score >= 40) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-blue-600"; // blue-500
+    if (score >= 60) return "text-green-600"; // green-500
+    if (score >= 40) return "text-yellow-600"; // yellow-500
+    if (score >= 20) return "text-orange-600"; // orange-500
+    return "text-red-600"; // red-500
   };
+  
 
   const getScoreLevel = (score: number) => {
     if (score >= 80) return "매우 우수";
     if (score >= 60) return "우수";
     if (score >= 40) return "보통";
-    return "주의";
+    if (score >= 20) return "주의";
+    return "매우 주의";
   };
 
   const getScoreBadgeColor = (score: number) => {
-    if (score >= 80) return "bg-green-100 text-green-800";
-    if (score >= 60) return "bg-blue-100 text-blue-800";
-    if (score >= 40) return "bg-yellow-100 text-yellow-800";
-    return "bg-red-100 text-red-800";
+    if (score >= 80) return "bg-blue-100 text-blue-800"; // blue-500
+    if (score >= 60) return "bg-green-100 text-green-800"; // green-500
+    if (score >= 40) return "bg-yellow-100 text-yellow-800"; // yellow-500
+    if (score >= 20) return "bg-orange-100 text-orange-800"; // orange-500
+    return "bg-red-100 text-red-800"; // red-500
   };
 
   return (

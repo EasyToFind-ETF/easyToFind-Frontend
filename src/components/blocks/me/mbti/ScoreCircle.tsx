@@ -49,7 +49,7 @@ export default function ScoreCircle({ percent }: { percent: number }) {
         fill="#22c55e"
         dominantBaseline="middle"
       >
-        {percent}%
+        {percent}점
       </text>
     </svg>
   );

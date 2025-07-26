@@ -58,13 +58,11 @@ export default function ETFCard({
 
   // 점수에 따른 등급 반환
   const getScoreGrade = (score: number) => {
-    if (score >= 90) return { grade: "A+", color: "#008000" };
-    if (score >= 80) return { grade: "A", color: "#32CD32" };
-    if (score >= 70) return { grade: "B+", color: "#FFA500" };
-    if (score >= 60) return { grade: "B", color: "#FF5A3D" };
-    if (score >= 50) return { grade: "C+", color: "#FF0000" };
-    if (score >= 30) return { grade: "C", color: "#FF0000" };
-    return { grade: "D", color: "#FF0000" };
+    if (score >= 80) return { grade: "A", color: "#3b82f6" }; // blue-500
+    if (score >= 60) return { grade: "B", color: "#22c55e" }; // green-500
+    if (score >= 40) return { grade: "C", color: "#eab308" }; // yellow-500
+    if (score >= 20) return { grade: "D", color: "#f97316" }; // orange-500
+    return { grade: "E", color: "#ef4444" }; // red-500
   };
 
   const scoreGrade = getScoreGrade(score);

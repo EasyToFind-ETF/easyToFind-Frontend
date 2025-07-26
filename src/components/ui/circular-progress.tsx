@@ -29,9 +29,11 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   const strokeDashoffset = circumference - (progress / max) * circumference;
 
   const getColor = (value: number) => {
-    if (value >= 70) return "#10B981"; // green-500
-    if (value >= 40) return "#F59E0B"; // yellow-500
-    return "#EF4444"; // red-500
+    if (value >= 80) return "#3b82f6"; // blue-500
+    if (value >= 60) return "#22c55e"; // green-500
+    if (value >= 40) return "#eab308"; // yellow-500
+    if (value >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   const finalColor = color === "#4DB6FF" ? getColor(numericValue) : color;

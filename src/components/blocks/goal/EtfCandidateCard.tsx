@@ -130,29 +130,29 @@ export const EtfCandidateCard = ({
 
   // 개인화 점수 색상 결정 (ETFDetailRisk 스타일)
   const getPersonalScoreColor = (score: number) => {
-    if (score >= 90) return "#008000"; // 매우 안전 (진한 초록)
-    if (score >= 80) return "#32CD32"; // 안전 (초록)
-    if (score >= 60) return "#FFA500"; // 보통 (주황)
-    if (score >= 40) return "#FF5A3D"; // 위험 (주황빨강)
-    return "#FF0000"; // 매우 위험 (빨강)
+    if (score >= 80) return "#3b82f6"; // blue-500
+    if (score >= 60) return "#22c55e"; // green-500
+    if (score >= 40) return "#eab308"; // yellow-500
+    if (score >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   // 성공률 색상 결정 (ETFDetailRisk 스타일)
   const getSuccessRateColor = (rate: number) => {
-    if (rate >= 90) return "#008000"; // 매우 안전 (진한 초록)
-    if (rate >= 80) return "#32CD32"; // 안전 (초록)
-    if (rate >= 60) return "#FFA500"; // 보통 (주황)
-    if (rate >= 40) return "#FF5A3D"; // 위험 (주황빨강)
-    return "#FF0000"; // 매우 위험 (빨강)
+    if (rate >= 80) return "#3b82f6"; // blue-500
+    if (rate >= 60) return "#22c55e"; // green-500
+    if (rate >= 40) return "#eab308"; // yellow-500
+    if (rate >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   // 종합 점수 색상 결정 (ETFDetailRisk 스타일)
   const getGoalScoreColor = (score: number) => {
-    if (score >= 90) return "#008000"; // 매우 안전 (진한 초록)
-    if (score >= 80) return "#32CD32"; // 안전 (초록)
-    if (score >= 60) return "#FFA500"; // 보통 (주황)
-    if (score >= 40) return "#FF5A3D"; // 위험 (주황빨강)
-    return "#FF0000"; // 매우 위험 (빨강)
+    if (score >= 80) return "#3b82f6"; // blue-500
+    if (score >= 60) return "#22c55e"; // green-500
+    if (score >= 40) return "#eab308"; // yellow-500
+    if (score >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   return (

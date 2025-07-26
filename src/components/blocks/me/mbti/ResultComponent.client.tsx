@@ -126,10 +126,11 @@ export default function ResultComponentClient({
 
   // 점수에 따른 색상 반환 함수
   const getScoreColor = (score: number) => {
-    if (score >= 70) return "#22c55e"; // 초록색
-    if (score >= 40) return "#f97316"; // 주황색
-    if (score >= 15) return "#eab308"; // 노란색
-    return "#ef4444"; // 빨간색
+    if (score >= 80) return "#3b82f6"; // blue-500
+    if (score >= 60) return "#22c55e"; // green-500
+    if (score >= 40) return "#eab308"; // yellow-500
+    if (score >= 20) return "#f97316"; // orange-500
+    return "#ef4444"; // red-500
   };
 
   return (
