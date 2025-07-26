@@ -8,7 +8,7 @@ import {
   toggleFavorite as toggleFavoriteAPI,
   fetchFavoriteEtfCodes,
 } from "@/services/etfFavoriteService";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import FilterTabs from "@/components/blocks/ETFFind/FilterTabs";
 import FilterButtons from "@/components/blocks/ETFFind/FilterButtons";
@@ -18,9 +18,6 @@ import HoldingTable from "@/components/blocks/ETFFind/HoldingTable";
 import CompareModal from "@/components/blocks/ETFCompare/ETFComapreModal";
 
 export default function FindPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
   const [selectedTab, setSelectedTab] = useState("유형별");
   const [selectedType, setSelectedType] = useState("전체");
   const [selectedTheme, setSelectedTheme] = useState("전체");
@@ -35,6 +32,7 @@ export default function FindPage() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState<any[]>([]);
   const [showPlaceholder, setShowPlaceholder] = useState(true);
+  const router = useRouter();
   const tabList = ["유형별", "테마별", "관심별"];
   const assetFilters = [
     "전체",
@@ -119,134 +117,9 @@ export default function FindPage() {
     }
   };
 
-  // 검색 실행 함수 (URL 파라미터용)
-  const executeSearchWithQuery = async (query: string) => {
-    setIsLoading(true);
-
-    const params: any = {
-      query: query,
-      sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
-    };
-
-    if (selectedTab === "관심별") {
-      params.isFavorite = true;
-    } else {
-      if (selectedType !== "전체") params.assetClass = selectedType;
-      if (selectedTheme !== "전체") params.theme = selectedTheme;
-    }
-
-    try {
-      if (viewMode === "ETF로 보기") {
-        const data: any[] = await fetchEtfData(params);
-        const formatted = (data as any[]).map((etf) => ({
-          name: etf.etf_name,
-          etfCode: etf.etf_code,
-          nav: etf.latest_price,
-          week1: etf.week1 ?? "-",
-          month1: etf.month1 ?? "-",
-          month3: etf.month3 ?? "-",
-          month6: etf.month6 ?? "-",
-          year1: etf.year1 ?? "-",
-          year3: etf.year3 ?? "-",
-          inception: etf.inception ?? "-",
-        }));
-        setEtfData(formatted);
-
-        // 관심 ETF 세팅
-        try {
-          const favoriteCodes = await fetchFavoriteEtfCodes();
-          setFavoriteEtfCodes(favoriteCodes);
-        } catch (err: any) {
-          console.warn(
-            "💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)",
-            err
-          );
-        }
-      } else {
-        const data: any[] = await fetchHoldingsData(params);
-        const formatted = (data as any[]).map((holding) => ({
-          etfName: holding.etf_name,
-          etfCode: holding.etf_code,
-          holdingName: holding.holding_name,
-          weight: holding.weight_pct,
-        }));
-        setHoldingsData(formatted);
-      }
-    } catch (err) {
-      console.error("데이터 불러오기 실패:", err);
-      if (viewMode === "ETF로 보기") setEtfData([]);
-      else setHoldingsData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 검색 실행 함수
-  const executeSearch = async () => {
-    setIsLoading(true);
-
-    const params: any = {
-      query: searchQuery,
-      sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
-    };
-
-    if (selectedTab === "관심별") {
-      params.isFavorite = true;
-    } else {
-      if (selectedType !== "전체") params.assetClass = selectedType;
-      if (selectedTheme !== "전체") params.theme = selectedTheme;
-    }
-
-    try {
-      if (viewMode === "ETF로 보기") {
-        const data: any[] = await fetchEtfData(params);
-        const formatted = (data as any[]).map((etf) => ({
-          name: etf.etf_name,
-          etfCode: etf.etf_code,
-          nav: etf.latest_price,
-          week1: etf.week1 ?? "-",
-          month1: etf.month1 ?? "-",
-          month3: etf.month3 ?? "-",
-          month6: etf.month6 ?? "-",
-          year1: etf.year1 ?? "-",
-          year3: etf.year3 ?? "-",
-          inception: etf.inception ?? "-",
-        }));
-        setEtfData(formatted);
-
-        // 관심 ETF 세팅
-        try {
-          const favoriteCodes = await fetchFavoriteEtfCodes();
-          setFavoriteEtfCodes(favoriteCodes);
-        } catch (err: any) {
-          console.warn(
-            "💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)",
-            err
-          );
-        }
-      } else {
-        const data: any[] = await fetchHoldingsData(params);
-        const formatted = (data as any[]).map((holding) => ({
-          etfName: holding.etf_name,
-          etfCode: holding.etf_code,
-          holdingName: holding.holding_name,
-          weight: holding.weight_pct,
-        }));
-        setHoldingsData(formatted);
-      }
-    } catch (err) {
-      console.error("데이터 불러오기 실패:", err);
-      if (viewMode === "ETF로 보기") setEtfData([]);
-      else setHoldingsData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      // 현재 페이지에서 검색할 때는 URL을 업데이트하지 않고 바로 검색 실행
-      executeSearch();
+      router.push(`/find?query=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -266,31 +139,71 @@ export default function FindPage() {
     }
   };
 
-  // URL 파라미터에서 검색어 가져오기 및 초기 검색 실행
+  // 🔥 API 요청 트리거
   useEffect(() => {
-    const query = searchParams.get("query");
-    if (query) {
-      setSearchQuery(query);
-      setShowPlaceholder(false);
-      // URL 파라미터에서 검색어가 있으면 자동으로 검색 실행
-      setTimeout(() => {
-        executeSearchWithQuery(query);
-      }, 100); // 약간의 지연을 주어 searchQuery가 설정된 후 실행
-    } else {
-      // 검색어가 없으면 모든 ETF 목록을 가져오기
-      setTimeout(() => {
-        executeSearchWithQuery("");
-      }, 100);
-    }
-  }, [searchParams]);
+    const fetchData = async () => {
+      setIsLoading(true);
 
-  // 🔥 API 요청 트리거 (필터 변경 시에만 실행)
-  useEffect(() => {
-    // 초기 로드 시에는 실행하지 않음 (URL 파라미터 처리에서 실행됨)
-    if (searchQuery) {
-      executeSearch();
-    }
-  }, [selectedType, selectedTheme, viewMode, selectedTab]);
+      const params: any = {
+        query: searchQuery,
+        sort: viewMode === "ETF로 보기" ? "etf_code" : "weight_pct",
+      };
+
+      if (selectedTab === "관심별") {
+        params.isFavorite = true;
+      } else {
+        if (selectedType !== "전체") params.assetClass = selectedType;
+        if (selectedTheme !== "전체") params.theme = selectedTheme;
+      }
+
+      try {
+        if (viewMode === "ETF로 보기") {
+          const data: any[] = await fetchEtfData(params);
+          const formatted = (data as any[]).map((etf) => ({
+            name: etf.etf_name,
+            etfCode: etf.etf_code,
+            nav: etf.latest_price,
+            week1: etf.week1 ?? "-",
+            month1: etf.month1 ?? "-",
+            month3: etf.month3 ?? "-",
+            month6: etf.month6 ?? "-",
+            year1: etf.year1 ?? "-",
+            year3: etf.year3 ?? "-",
+            inception: etf.inception ?? "-",
+          }));
+          setEtfData(formatted);
+
+          // 관심 ETF 세팅
+          try {
+            const favoriteCodes = await fetchFavoriteEtfCodes();
+            setFavoriteEtfCodes(favoriteCodes);
+          } catch (err: any) {
+            console.warn(
+              "💥 관심 ETF 목록 가져오기 실패 (비로그인일 수 있음)",
+              err
+            );
+          }
+        } else {
+          const data: any[] = await fetchHoldingsData(params);
+          const formatted = (data as any[]).map((holding) => ({
+            etfName: holding.etf_name,
+            etfCode: holding.etf_code,
+            holdingName: holding.holding_name,
+            weight: holding.weight_pct,
+          }));
+          setHoldingsData(formatted);
+        }
+      } catch (err) {
+        console.error("데이터 불러오기 실패:", err);
+        if (viewMode === "ETF로 보기") setEtfData([]);
+        else setHoldingsData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [searchQuery, selectedType, selectedTheme, viewMode, selectedTab]);
 
   // 비교하기 버튼 클릭 핸들러
   const handleCompareClick = async () => {
@@ -421,6 +334,7 @@ export default function FindPage() {
             count={
               viewMode === "ETF로 보기" ? etfData.length : holdingsData.length
             }
+            selectedTab={selectedTab}
           />
 
           {isLoading ? (
