@@ -54,7 +54,7 @@ export default function GoalPlannerpage() {
             <div>
               <div
                 className="bg-white rounded-3xl p-8 shadow-lg"
-                style={{ borderRadius: "2rem" }}
+                style={{ borderRadius: "4rem" }}
               >
                 <div className="flex items-center justify-center gap-4">
                   <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -102,13 +102,13 @@ export default function GoalPlannerpage() {
         </div>
 
         {/* 푸터 정보 */}
-        <div className="mt-16 text-center">
+        {/* <div className="mt-16 text-center">
           <div className="inline-flex items-center mb-16 gap-3 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
             <span className="text-gray-700 font-medium">
               과거 데이터 기반 분석 • 투자 성향 자동 반영
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );

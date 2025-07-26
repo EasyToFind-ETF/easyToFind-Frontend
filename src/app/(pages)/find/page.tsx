@@ -276,6 +276,11 @@ export default function FindPage() {
       setTimeout(() => {
         executeSearchWithQuery(query);
       }, 100); // 약간의 지연을 주어 searchQuery가 설정된 후 실행
+    } else {
+      // 검색어가 없으면 모든 ETF 목록을 가져오기
+      setTimeout(() => {
+        executeSearchWithQuery("");
+      }, 100);
     }
   }, [searchParams]);
 

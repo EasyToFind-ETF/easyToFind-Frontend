@@ -197,7 +197,8 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
             <Button
               type="submit"
               disabled={isLoading || !isYearsValid}
-              className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-16 py-6 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="bg-[#0046ff] hover:bg-[#3DA5EE] text-white font-bold text-xl px-28 py-8 rounded-3xl shadow-lg transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              style={{ borderRadius: "2rem" }}
             >
               {isLoading ? (
                 <div className="flex items-center gap-3">
