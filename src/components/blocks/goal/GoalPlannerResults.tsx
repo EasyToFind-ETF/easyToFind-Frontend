@@ -268,49 +268,29 @@ export const GoalPlannerResults = ({
               목표 달성 확률과 개인 맞춤 점수를 고려한 최적의 ETF들입니다
             </p>
 
-            {/* 정렬 버튼들 */}
+            {/* 정렬 버튼 + 드롭다운 */}
             <div className="flex flex-col items-center gap-4 mb-6">
               <div className="flex gap-2">
-                <button
-                  onClick={() => handleSort("goal_score")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                    sortBy === "goal_score"
-                      ? "bg-[#0046ff] text-white border-[#0046ff]"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                  }`}
-                >
-                  종합 점수
-                </button>
-                <button
-                  onClick={() => handleSort("success_rate")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                    sortBy === "success_rate"
-                      ? "bg-[#0046ff] text-white border-[#0046ff]"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                  }`}
-                >
-                  성공률
-                </button>
-                <button
-                  onClick={() => handleSort("confidence")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                    sortBy === "confidence"
-                      ? "bg-[#0046ff] text-white border-[#0046ff]"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                  }`}
-                >
-                  신뢰도
-                </button>
-                <button
-                  onClick={() => handleSort("risk_score")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                    sortBy === "risk_score"
-                      ? "bg-[#0046ff] text-white border-[#0046ff]"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                  }`}
-                >
-                  리스크 점수
-                </button>
+                {["goal_score", "success_rate", "confidence", "risk_score"].map(
+                  (key) => (
+                    <button
+                      key={key}
+                      onClick={() => handleSort(key as typeof sortBy)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                        sortBy === key
+                          ? "bg-[#0046ff] text-white border-[#0046ff]"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
+                      }`}
+                    >
+                      {{
+                        goal_score: "종합 점수",
+                        success_rate: "성공률",
+                        confidence: "신뢰도",
+                        risk_score: "리스크 점수",
+                      }[key]}
+                    </button>
+                  )
+                )}
               </div>
 
               {/* 정렬 방향 드롭다운 */}
@@ -326,10 +306,6 @@ export const GoalPlannerResults = ({
                     }`}
                   />
                 </button>
-
-                  {/* ETF 카드 */}
-                  <div className="p-8">
-                    <EtfCandidateCard etf={etf} targetYears={targetYears} />
 
                 {isSortDropdownOpen && (
                   <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
@@ -352,18 +328,18 @@ export const GoalPlannerResults = ({
                       }`}
                     >
                       오름차순
-
+                    </button>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
+          {/* ETF 카드 목록 */}
           <div className="grid gap-4">
             {sortedEtfCandidates.map((etf, index) => (
               <div key={etf.etf_code || etf.code} className="relative">
-                {/* ETF 카드 */}
-                <div className=" p-8">
+                <div className="p-8">
                   <EtfCandidateCard etf={etf} targetYears={targetYears} />
                 </div>
               </div>
@@ -371,6 +347,7 @@ export const GoalPlannerResults = ({
           </div>
         </div>
       ) : (
+        // 후보 ETF 없음
         <div className="text-center py-12">
           <div
             className="bg-yellow-50 border border-yellow-200 rounded-3xl p-8 max-w-2xl mx-auto"
@@ -383,12 +360,11 @@ export const GoalPlannerResults = ({
               추천 ETF를 찾을 수 없습니다
             </h3>
             <p className="text-yellow-700 text-lg">
-              입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시
-              시도해보세요.
+              입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시 시도해보세요.
             </p>
           </div>
         </div>
       )}
     </div>
   );
-};
+  }
