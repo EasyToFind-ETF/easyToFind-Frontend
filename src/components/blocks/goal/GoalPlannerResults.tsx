@@ -346,9 +346,7 @@ export const GoalPlannerResults = ({
                
 
                   {/* ETF 카드 */}
-                  <div
-                    className=" p-8 hover:shadow-xl transition-shadow"
-                  >
+                  <div className="p-8">
                     <EtfCandidateCard etf={etf} targetYears={targetYears} />
                   </div>
                 </div>

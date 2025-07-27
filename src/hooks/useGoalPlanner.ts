@@ -16,10 +16,10 @@ export const useGoalPlanner = () => {
 
   // 1. 사용자 입력 상태 관리 (5년 한정 MVP)
   const [input, setInput] = useState<GoalPlannerRequest>({
-    targetAmount: 100_000_000,
-    targetYears: 5, // 기본값을 5년으로 변경
+    targetAmount: 0,
+    targetYears: 0, // placeholder가 보이도록 0으로 설정
     initialAmount: 0,
-    monthlyContribution: 300_000,
+    monthlyContribution: 0, // placeholder가 보이도록 0으로 설정
     riskProfile: 50, // 기본값, 나중에 사용자 위험 성향으로 업데이트
     useMonteCarlo: true, // 항상 Monte Carlo 사용
   });
