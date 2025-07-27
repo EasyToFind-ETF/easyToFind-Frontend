@@ -297,7 +297,7 @@ export default function FindPageClient() {
   // 🔥 API 요청 트리거 (필터 변경 시에만 실행)
   useEffect(() => {
     // 초기 로드 시에는 실행하지 않음 (URL 파라미터 처리에서 실행됨)
-    if (searchQuery) {
+    if (hasInitialized) {
       executeSearch();
     }
   }, [selectedType, selectedTheme, viewMode, selectedTab]);
@@ -431,7 +431,7 @@ export default function FindPageClient() {
             count={
               viewMode === "ETF로 보기" ? etfData.length : holdingsData.length
             }
-            selectedTab={""}
+            selectedTab={selectedTab}
           />
 
           {isLoading ? (
