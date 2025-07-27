@@ -30,7 +30,10 @@ export const GoalPlannerResults = ({
   // 드롭다운 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsSortDropdownOpen(false);
       }
     };
@@ -141,17 +144,20 @@ export const GoalPlannerResults = ({
 
       return sortOrder === "desc" ? -comparison : comparison;
     });
-    
+
     // 디버깅: 정렬 결과 출력
     console.log("정렬 기준:", sortBy, "정렬 방향:", sortOrder);
-    console.log("정렬된 ETF들:", sorted.map(etf => ({
-      name: etf.etf_name,
-      goal_score: etf.goal_score,
-      success_rate: etf.success_rate,
-      riskAdjustedScore: etf.riskAdjustedScore,
-      confidence_interval: etf.confidence_interval
-    })));
-    
+    console.log(
+      "정렬된 ETF들:",
+      sorted.map((etf) => ({
+        name: etf.etf_name,
+        goal_score: etf.goal_score,
+        success_rate: etf.success_rate,
+        riskAdjustedScore: etf.riskAdjustedScore,
+        confidence_interval: etf.confidence_interval,
+      }))
+    );
+
     return sorted;
   }, [etfCandidates, sortBy, sortOrder]);
 
@@ -203,176 +209,186 @@ export const GoalPlannerResults = ({
           )}
         </div>
 
-
-                  {/* 필요수익률 + 전체 시뮬레이션 결과를 나란히 */}
-          <div className="flex flex-col md:flex-row gap-6 mb-2 items-start">
-            {/* 필요 CAGR 표시 */}
-            <div className="rounded-3xl p-6 flex-1" style={{ borderRadius: "2rem" }}>
-              <div className="flex flex-col gap-2 mb-4">
-                <span className="text-lg font-semibold text-gray-800">필요 수익률</span>
-                <div className="flex flex-col items-start py-4">
-                  <div className="text-4xl font-bold text-[#0046ff] mb-1">
-                    {isNaN(neededCAGR) ? "계산 중..." : neededCAGR.toFixed(2)}
-                    <span className="text-xl">%</span>
-                  </div>
-                  <p className="text-gray-600 text-base">
-                    목표 달성을 위해 필요한 연평균 수익률
-                  </p>
+        {/* 필요수익률 + 전체 시뮬레이션 결과를 나란히 */}
+        <div className="flex flex-col md:flex-row gap-6 mb-2 items-start">
+          {/* 필요 CAGR 표시 */}
+          <div
+            className="rounded-3xl p-6 flex-1"
+            style={{ borderRadius: "2rem" }}
+          >
+            <div className="flex flex-col gap-2 mb-4">
+              <span className="text-lg font-semibold text-gray-800">
+                필요 수익률
+              </span>
+              <div className="flex flex-col items-start py-4">
+                <div className="text-4xl font-bold text-[#0046ff] mb-1">
+                  {isNaN(neededCAGR) ? "계산 중..." : neededCAGR.toFixed(2)}
+                  <span className="text-xl">%</span>
                 </div>
+                <p className="text-gray-600 text-base">
+                  목표 달성을 위해 필요한 연평균 수익률
+                </p>
               </div>
-            </div>
-
-            {/* 전체 시뮬레이션 결과 */}
-            <div className="flex-1">
-              <OverallSimulationResults results={results} />
             </div>
           </div>
 
-          {/* 신뢰도 정보 알림 */}
-          {reliabilityInfo && (
-            <div
-              className={`rounded-3xl p-4 border mb-2 ${reliabilityInfo.color}`}
-              style={{ borderRadius: "2rem" }}
-            >
-              <div className="flex items-center gap-2">
-                <reliabilityInfo.icon className="w-5 h-5" />
-                <div className="text-sm font-medium">
-                  {reliabilityInfo.message}
-                </div>
+          {/* 전체 시뮬레이션 결과 */}
+          <div className="flex-1">
+            <OverallSimulationResults results={results} />
+          </div>
+        </div>
+
+        {/* 신뢰도 정보 알림 */}
+        {reliabilityInfo && (
+          <div
+            className={`rounded-3xl p-4 border mb-2 ${reliabilityInfo.color}`}
+            style={{ borderRadius: "2rem" }}
+          >
+            <div className="flex items-center gap-2">
+              <reliabilityInfo.icon className="w-5 h-5" />
+              <div className="text-sm font-medium">
+                {reliabilityInfo.message}
               </div>
             </div>
-          )}
-
-
+          </div>
+        )}
 
         {/* 점수 체계 안내 */}
         <ScoreExplanation />
-        </div>
-        
-        
-        {/* ETF 추천 리스트 */}
-        {candidateCount > 0 ? (
-          <div className="mt-16">
-            <div className="text-center mb-6">
-              <h3 className="text-3xl font-semibold text-gray-800 mb-2">
-                추천 ETF 리스트
-              </h3>
-              <p className="text-gray-600 text-base mb-3">
-                목표 달성 확률과 개인 맞춤 점수를 고려한 최적의 ETF들입니다
-              </p>
+      </div>
 
-              {/* 정렬 버튼들 */}
-              <div className="flex flex-col items-center gap-4 mb-6">
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleSort("goal_score")}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                      sortBy === "goal_score"
-                        ? "bg-[#0046ff] text-white border-[#0046ff]"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                    }`}
-                  >
-                    종합 점수
-                  </button>
-                  <button
-                    onClick={() => handleSort("success_rate")}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                      sortBy === "success_rate"
-                        ? "bg-[#0046ff] text-white border-[#0046ff]"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                    }`}
-                  >
-                    성공률
-                  </button>
-                  <button
-                    onClick={() => handleSort("confidence")}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                      sortBy === "confidence"
-                        ? "bg-[#0046ff] text-white border-[#0046ff]"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                    }`}
-                  >
-                    신뢰도
-                  </button>
-                  <button
-                    onClick={() => handleSort("risk_score")}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
-                      sortBy === "risk_score"
-                        ? "bg-[#0046ff] text-white border-[#0046ff]"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
-                    }`}
-                  >
-                    리스크 점수
-                  </button>
-                </div>
-                
-                {/* 정렬 방향 드롭다운 */}
-                <div className="relative self-end" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                    className="flex items-center gap-2 px-4 py-2 bg-transparent text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 transition-colors"
-                  >
-                    {sortOrder === "desc" ? "내림차순" : "오름차순"}
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? "rotate-180" : ""}`} />
-                  </button>
-                  
-                  {isSortDropdownOpen && (
-                    <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
-                      <button
-                        onClick={() => handleSortOrder("desc")}
-                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
-                          sortOrder === "desc" ? "bg-blue-50 text-blue-600" : "text-gray-700"
-                        }`}
-                      >
-                        내림차순
-                      </button>
-                      <button
-                        onClick={() => handleSortOrder("asc")}
-                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
-                          sortOrder === "asc" ? "bg-blue-50 text-blue-600" : "text-gray-700"
-                        }`}
-                      >
-                        오름차순
-                      </button>
-                    </div>
-                  )}
-                </div>
+      {/* ETF 추천 리스트 */}
+      {candidateCount > 0 ? (
+        <div className="mt-16">
+          <div className="text-center mb-6">
+            <h3 className="text-3xl font-semibold text-gray-800 mb-2">
+              추천 ETF 리스트
+            </h3>
+            <p className="text-gray-600 text-base mb-3">
+              목표 달성 확률과 개인 맞춤 점수를 고려한 최적의 ETF들입니다
+            </p>
+
+            {/* 정렬 버튼들 */}
+            <div className="flex flex-col items-center gap-4 mb-6">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleSort("goal_score")}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    sortBy === "goal_score"
+                      ? "bg-[#0046ff] text-white border-[#0046ff]"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
+                  }`}
+                >
+                  종합 점수
+                </button>
+                <button
+                  onClick={() => handleSort("success_rate")}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    sortBy === "success_rate"
+                      ? "bg-[#0046ff] text-white border-[#0046ff]"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
+                  }`}
+                >
+                  성공률
+                </button>
+                <button
+                  onClick={() => handleSort("confidence")}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    sortBy === "confidence"
+                      ? "bg-[#0046ff] text-white border-[#0046ff]"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
+                  }`}
+                >
+                  신뢰도
+                </button>
+                <button
+                  onClick={() => handleSort("risk_score")}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    sortBy === "risk_score"
+                      ? "bg-[#0046ff] text-white border-[#0046ff]"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
+                  }`}
+                >
+                  리스크 점수
+                </button>
               </div>
-            </div>
 
-            <div className="grid gap-4">
-              {sortedEtfCandidates.map((etf, index) => (
-                <div key={etf.etf_code || etf.code} className="relative">
-               
+              {/* 정렬 방향 드롭다운 */}
+              <div className="relative self-end" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                  className="flex items-center gap-2 px-4 py-2 bg-transparent text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  {sortOrder === "desc" ? "내림차순" : "오름차순"}
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      isSortDropdownOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
                   {/* ETF 카드 */}
                   <div className="p-8">
                     <EtfCandidateCard etf={etf} targetYears={targetYears} />
+
+                {isSortDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                    <button
+                      onClick={() => handleSortOrder("desc")}
+                      className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                        sortOrder === "desc"
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      내림차순
+                    </button>
+                    <button
+                      onClick={() => handleSortOrder("asc")}
+                      className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                        sortOrder === "asc"
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      오름차순
+
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div
-              className="bg-yellow-50 border border-yellow-200 rounded-3xl p-8 max-w-2xl mx-auto"
-              style={{ borderRadius: "2rem" }}
-            >
-              <div className="flex items-center justify-center mb-6">
-                <span className="text-yellow-600 text-5xl">⚠️</span>
+                )}
               </div>
-              <h3 className="text-2xl font-semibold text-yellow-800 mb-3">
-                추천 ETF를 찾을 수 없습니다
-              </h3>
-              <p className="text-yellow-700 text-lg">
-                입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시
-                시도해보세요.
-              </p>
             </div>
           </div>
-        )}
-      
+
+          <div className="grid gap-4">
+            {sortedEtfCandidates.map((etf, index) => (
+              <div key={etf.etf_code || etf.code} className="relative">
+                {/* ETF 카드 */}
+                <div className=" p-8">
+                  <EtfCandidateCard etf={etf} targetYears={targetYears} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <div
+            className="bg-yellow-50 border border-yellow-200 rounded-3xl p-8 max-w-2xl mx-auto"
+            style={{ borderRadius: "2rem" }}
+          >
+            <div className="flex items-center justify-center mb-6">
+              <span className="text-yellow-600 text-5xl">⚠️</span>
+            </div>
+            <h3 className="text-2xl font-semibold text-yellow-800 mb-3">
+              추천 ETF를 찾을 수 없습니다
+            </h3>
+            <p className="text-yellow-700 text-lg">
+              입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시
+              시도해보세요.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
