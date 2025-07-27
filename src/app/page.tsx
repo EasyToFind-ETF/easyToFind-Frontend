@@ -179,7 +179,7 @@ export default function Home() {
                 style={{ caretColor: "white", borderRadius: "3rem" }}
                 placeholder={
                   showPlaceholder
-                    ? "상품명 혹은 증권코드로 원하는 ETF를 검색해보세요"
+                    ? "상품명 혹은 종목명으로 원하는 ETF를 검색해보세요"
                     : ""
                 }
                 value={search}
@@ -340,7 +340,7 @@ export default function Home() {
               {/* 오른쪽 스크롤 카드 영역 */}
               <div className="flex-1 overflow-hidden">
                 <div className="overflow-x-auto scrollbar-hover pb-4">
-                  <div className="flex gap-4 min-w-max">
+                  <div className="flex gap-4 min-w-max px-4">
                     {loading ? (
                       <div className="flex items-center justify-center h-64 w-full">
                         <div className="animate-spin rounded-3xl h-12 w-12 border-b-2 border-[#0046ff]"></div>
