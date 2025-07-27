@@ -71,14 +71,18 @@ export default function ETFCard({
   };
 
   return (
-    <div 
-      onClick={handleCardClick}
-      className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-200 hover:shadow-xl transition-all duration-300 min-w-[320px] flex-shrink-0 cursor-pointer hover:scale-[1.02]"
-    >
+<div
+  onClick={handleCardClick}
+  className="w-[25vw] max-w-[300px] min-w-[250px]
+             bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-200 
+             hover:shadow-xl transition-all duration-300 
+             cursor-pointer hover:scale-[1.02]"
+>
+
       <div className="flex flex-col">
         {/* Top Section */}
         <div className="flex items-center justify-between mb-3">
-          <span className="text-lg font-bold text-gray-700">{index}</span>
+          <span className="text-lg font-bold text-gray-700">{etf_code}</span>
          {/* 하트 버튼 */}
          <button
           onClick={handleHeartClick}
@@ -105,9 +109,11 @@ export default function ETFCard({
         </div>
 
         {/* Product Name */}
-        <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight min-h-[3.5rem] flex items-start">
-          <span className="line-clamp-2">{etf_name}</span>
+        <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight min-h-[3.5rem]">
+          <span className="block w-full break-words line-clamp-2">{etf_name}</span>
         </h3>
+
+
         
         {/* Product Code */}
         <p className="text-sm text-gray-600 mb-3">{etf_code}</p>
@@ -119,7 +125,7 @@ export default function ETFCard({
 
         {/* Return Rate */}
         <div className="text-end mb-8">
-          <span className={`text-3xl font-medium ${isPositive ? 'text-blue-500' : 'text-red-500'}`}>
+          <span className={`text-3xl font-medium ${isPositive ? 'text-red-600' : 'text-blue-600'}`}>
             {isPositive ? '+' : ''}{returnRate.toFixed(2)}%
           </span>
           <p className="text-xs text-gray-500">*1주 수익률</p>

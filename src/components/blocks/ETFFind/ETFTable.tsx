@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ETFView } from "../../../types/ETFView";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 
 const MAX_SELECT = 5;
 
@@ -126,14 +127,29 @@ export default function ETFTable({
                 <td className="py-3 px-2">{renderRate(etf.inception)}</td>
                 {/* 하트 아이콘 */}
                 <td className="py-3 pl-2 pr-4">
-                  <span
-                    style={{ cursor: "pointer" }}
+                  <button
                     onClick={() => onToggleFavorite(etf.etfCode, isFavorite)}
-                    className={isFavorite ? "text-red-500" : "text-gray-300"}
-                    title={isFavorite ? "관심 해제" : "관심 등록"}
+                    className="p-2 rounded-full transition-colors"
+                    aria-label={isFavorite ? "관심 해제" : "관심 등록"}
                   >
-                    &#10084;
-                  </span>
+                    <svg
+                      className={`w-4 h-4 transition-colors ${
+                        isFavorite
+                          ? "text-red-500 fill-current"
+                          : "text-gray-400 hover:text-red-400"
+                      }`}
+                      fill={isFavorite ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                      />
+                    </svg>
+                  </button>
                 </td>
               </tr>
             );
