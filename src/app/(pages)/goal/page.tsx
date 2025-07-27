@@ -59,7 +59,7 @@ export default function GoalPlannerpage() {
             <div>
               <div
                 className="bg-white rounded-3xl p-8 shadow-lg"
-                // style={{ borderRadius: "4rem" }}
+                style={{ borderRadius: "2.5rem" }}
               >
                 <div className="flex items-center justify-center gap-4">
                   <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
