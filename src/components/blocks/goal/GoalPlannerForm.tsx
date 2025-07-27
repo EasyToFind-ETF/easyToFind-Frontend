@@ -88,7 +88,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="targetAmount"
                     name="targetAmount"
                     type="number"
-                    value={input.targetAmount || ""}
+                    value={input.targetAmount === 0 ? "" : input.targetAmount}
                     onChange={handleInputChange}
                     min={10000}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -119,7 +119,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="targetYears"
                     name="targetYears"
                     type="number"
-                    value={input.targetYears || ""}
+                    value={input.targetYears === 0 ? "" : input.targetYears}
                     onChange={handleInputChange}
                     min={1}
                     max={5}
@@ -166,7 +166,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="initialAmount"
                     name="initialAmount"
                     type="number"
-                    value={input.initialAmount || ""}
+                    value={input.initialAmount === 0 ? "" : input.initialAmount}
                     onChange={handleInputChange}
                     min={0}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -197,7 +197,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="monthlyContribution"
                     name="monthlyContribution"
                     type="number"
-                    value={input.monthlyContribution || ""}
+                    value={input.monthlyContribution === 0 ? "" : input.monthlyContribution}
                     onChange={handleInputChange}
                     min={0}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

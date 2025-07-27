@@ -157,7 +157,7 @@ export const EtfCandidateCard = ({
 
   return (
     <div
-      className="bg-white rounded-3xl w-full px-16 py-16 shadow-lg"
+      className="bg-white rounded-3xl w-full px-16 py-16 shadow-lg transition-transform duration-300 hover:scale-105"
       style={{ borderRadius: "4rem" }}
     >
       {/* ETF 기본 정보 */}

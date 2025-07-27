@@ -327,6 +327,10 @@ export const GoalPlannerResults = ({
                   />
                 </button>
 
+                  {/* ETF 카드 */}
+                  <div className="p-8">
+                    <EtfCandidateCard etf={etf} targetYears={targetYears} />
+
                 {isSortDropdownOpen && (
                   <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
                     <button
@@ -348,7 +352,7 @@ export const GoalPlannerResults = ({
                       }`}
                     >
                       오름차순
-                    </button>
+
                   </div>
                 )}
               </div>
