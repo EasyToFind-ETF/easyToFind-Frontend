@@ -102,7 +102,7 @@ export const Header = () => {
             href="/goal"
             className={cn("transition-colors hover:text-foreground/80")}
           >
-            전략 분석
+            시뮬레이션
           </Link>
         </nav>
 

@@ -273,7 +273,7 @@ export default function FindPage() {
                   style={{ caretColor: "white" }}
                   placeholder={
                     showPlaceholder
-                      ? "상품명 혹은 증권코드로 원하는 ETF를 검색해보세요"
+                      ? "상품명 혹은 종목명으로 원하는 ETF를 검색해보세요"
                       : ""
                   }
                   value={searchQuery}
