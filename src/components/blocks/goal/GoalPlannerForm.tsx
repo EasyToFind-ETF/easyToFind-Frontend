@@ -44,7 +44,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
     const initialAmount = Number(input.initialAmount) || 0;
     const monthlyContribution = Number(input.monthlyContribution) || 0;
     const targetYears = Number(input.targetYears) || 0;
-    
+
     const totalMonthlyContributions = monthlyContribution * 12 * targetYears;
     return initialAmount + totalMonthlyContributions;
   };
@@ -88,7 +88,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="targetAmount"
                     name="targetAmount"
                     type="number"
-                    value={input.targetAmount === 0 ? "" : input.targetAmount}
+                    value={input.targetAmount || ""}
                     onChange={handleInputChange}
                     min={10000}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -100,7 +100,9 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm mt-3">
-                  현재 입력: {formatCurrency(input.targetAmount)}원
+                  {input.targetAmount > 0
+                    ? `현재 입력: ${formatCurrency(input.targetAmount)}원`
+                    : "목표 금액을 입력해주세요"}
                 </p>
               </div>
 
@@ -119,7 +121,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="targetYears"
                     name="targetYears"
                     type="number"
-                    value={input.targetYears === 0 ? "" : input.targetYears}
+                    value={input.targetYears || ""}
                     onChange={handleInputChange}
                     min={1}
                     max={5}
@@ -131,11 +133,15 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     년
                   </div>
                 </div>
-                {!isYearsValid && (
+                {!isYearsValid && input.targetYears > 0 ? (
                   <p className="text-red-500 text-sm mt-3">
                     목표 기간은 1~5년 사이여야 합니다.
                   </p>
-                )}
+                ) : input.targetYears === 0 ? (
+                  <p className="text-gray-600 text-sm mt-3">
+                    투자 기간을 입력해주세요 (1-5년)
+                  </p>
+                ) : null}
               </div>
 
               {/* 초기 투자금 */}
@@ -147,26 +153,13 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                   >
                     초기 투자금
                   </Label>
-                  <div className="group relative">
-                    <HelpCircle className="w-5 h-5 text-gray-400 cursor-help" />
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                      투자 원금: {formatCurrency(calculateTotalInvestment())}원
-                      <br />
-                      <span className="text-xs text-gray-300">
-                        초기투자금({formatCurrency(Number(input.initialAmount) || 0)}원) + 
-                        월적립액({formatCurrency(Number(input.monthlyContribution) || 0)}원) × 12 × 
-                        투자기간({Number(input.targetYears) || 0}년)
-                      </span>
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                    </div>
-                  </div>
                 </div>
                 <div className="relative">
                   <Input
                     id="initialAmount"
                     name="initialAmount"
                     type="number"
-                    value={input.initialAmount === 0 ? "" : input.initialAmount}
+                    value={input.initialAmount || ""}
                     onChange={handleInputChange}
                     min={0}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -178,13 +171,15 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm mt-3">
-                  현재 입력: {formatCurrency(input.initialAmount)}원
+                  {input.initialAmount > 0
+                    ? `현재 입력: ${formatCurrency(input.initialAmount)}원`
+                    : "초기 투자금을 입력해주세요"}
                 </p>
               </div>
 
               {/* 월 적립액 */}
               <div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center gap-2">
                   <Label
                     htmlFor="monthlyContribution"
                     className="text-xl font-semibold text-gray-800"
@@ -197,7 +192,7 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                     id="monthlyContribution"
                     name="monthlyContribution"
                     type="number"
-                    value={input.monthlyContribution === 0 ? "" : input.monthlyContribution}
+                    value={input.monthlyContribution || ""}
                     onChange={handleInputChange}
                     min={0}
                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 text-lg font-bold h-20 rounded-3xl px-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -209,10 +204,29 @@ export const GoalPlannerForm = ({ planner }: GoalPlannerFormProps) => {
                   </div>
                 </div>
                 <p className="text-gray-600 text-sm mt-3">
-                  현재 입력: {formatCurrency(input.monthlyContribution)}원
+                  {input.monthlyContribution > 0
+                    ? `현재 입력: ${formatCurrency(
+                        input.monthlyContribution
+                      )}원`
+                    : "월 적립액을 입력해주세요"}
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* 실시간 투자 원금 정보 */}
+          <div className="text-center -mt-0">
+            <p className="text-lg text-gray-800 mb-2">
+              총 투자 원금:{" "}
+              <span className="font-bold">
+                {formatCurrency(calculateTotalInvestment())}원
+              </span>
+            </p>
+            <p className="text-sm text-gray-600">
+              (초기투자금 {formatCurrency(Number(input.initialAmount) || 0)}원 +
+              월적립액 {formatCurrency(Number(input.monthlyContribution) || 0)}
+              원 × 12 × {Number(input.targetYears) || 0}년)
+            </p>
           </div>
 
           {/* 분석 버튼 */}

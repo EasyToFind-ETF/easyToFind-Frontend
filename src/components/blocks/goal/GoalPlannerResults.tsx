@@ -282,12 +282,14 @@ export const GoalPlannerResults = ({
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200"
                       }`}
                     >
-                      {{
-                        goal_score: "종합 점수",
-                        success_rate: "성공률",
-                        confidence: "신뢰도",
-                        risk_score: "리스크 점수",
-                      }[key]}
+                      {
+                        {
+                          goal_score: "종합 점수",
+                          success_rate: "성공률",
+                          confidence: "신뢰도",
+                          risk_score: "리스크 점수",
+                        }[key]
+                      }
                     </button>
                   )
                 )}
