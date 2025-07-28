@@ -9,6 +9,7 @@ import { SuccessRateDisplay } from "./SuccessRateDisplay";
 import { RiskScoreDisplay } from "./RiskScoreDisplay";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Info,
   ChevronDown,
@@ -30,6 +31,7 @@ export const EtfCandidateCard = ({
   targetYears?: number;
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const router = useRouter();
 
   // 백엔드 응답 구조에 맞게 필드 매핑
   const code = etf.etf_code || (etf as any).code || "";
@@ -155,6 +157,21 @@ export const EtfCandidateCard = ({
     return "#ef4444"; // red-500
   };
 
+  // ETF 상세페이지로 이동하는 함수
+  const handleEtfNameClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("🔗 ETF 이름 클릭됨:", { code, name });
+
+    if (code) {
+      console.log("🚀 ETF 상세페이지로 이동:", `/etfs/${code}`);
+      router.push(`/etfs/${code}`);
+    } else {
+      console.log("❌ ETF 코드가 없어서 이동할 수 없음");
+    }
+  };
+
   return (
     <div
       className="bg-white rounded-3xl w-full px-16 py-16 shadow-lg transition-transform duration-300 hover:scale-105"
@@ -164,7 +181,13 @@ export const EtfCandidateCard = ({
       <div className="mb-8">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">{name}</h3>
+            <h3
+              className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer hover:text-blue-600 transition-colors duration-200 select-none"
+              onClick={handleEtfNameClick}
+              style={{ userSelect: "none" }}
+            >
+              {name}
+            </h3>
             <p className="text-lg text-gray-800 mb-3">{code}</p>
             {(assetClass || theme) && (
               <div className="flex gap-3">
@@ -178,7 +201,6 @@ export const EtfCandidateCard = ({
                     {theme}
                   </span>
                 )}
-               
               </div>
             )}
           </div>
@@ -186,7 +208,6 @@ export const EtfCandidateCard = ({
           <div className="flex items-center gap-2">
             {hasMonteCarloData ? (
               <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                
                 Monte Carlo
               </div>
             ) : (
