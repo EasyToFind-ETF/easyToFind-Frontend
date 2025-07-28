@@ -362,12 +362,11 @@ export const GoalPlannerResults = ({
               추천 ETF를 찾을 수 없습니다
             </h3>
             <p className="text-yellow-700 text-lg">
-              입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시
-              시도해보세요.
+              입력하신 조건에 맞는 ETF가 없습니다. 다른 조건으로 다시 시도해보세요.
             </p>
           </div>
         </div>
       )}
     </div>
   );
-};
+  }
