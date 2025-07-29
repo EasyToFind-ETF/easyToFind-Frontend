@@ -9,6 +9,7 @@ import {
   LineSeries,
   AreaData,
   AreaSeries,
+  Time, // Time 타입 추가
 } from "lightweight-charts";
 import { TrendingUp } from "lucide-react";
 
@@ -50,20 +51,90 @@ const getCurrentDate = () => {
   )}-${String(now.getDate()).padStart(2, "0")}`;
 };
 
-// 현재 날짜부터 시작하는 날짜 배열 생성
-const generateDateArray = (months: number) => {
-  const dates = [];
-  const startDate = new Date();
+// 현재 날짜부터 시작하는 날짜 배열 생성 (Time 타입 반환)
+const generateDateArray = (months: number): Time[] => {
+  const dates: Time[] = [];
+  const startDate = new Date(); // 오늘 날짜 유지
+  startDate.setHours(0, 0, 0, 0); // 시간만 정규화
+
+  console.log("🔍 generateDateArray 시작:", {
+    months,
+    startDate: startDate.toISOString(),
+    startDateMonth: startDate.getMonth(),
+    startDateDay: startDate.getDate(),
+  });
 
   for (let i = 0; i < months; i++) {
     const date = new Date(startDate);
-    date.setMonth(date.getMonth() + i);
-    dates.push(
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`
-    );
+    const originalDay = date.getDate();
+
+    // 월을 더함
+    date.setMonth(startDate.getMonth() + i);
+
+    // 날짜가 변경되었다면 (존재하지 않는 날짜였던 경우)
+    if (date.getDate() !== originalDay) {
+      // 해당 월의 마지막 날로 조정
+      const lastDayOfMonth = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0
+      );
+      date.setDate(lastDayOfMonth.getDate());
+    }
+
+    const timestamp = Math.floor(date.getTime() / 1000) as Time;
+
+    console.log(`📅 월 ${i + 1}:`, {
+      originalDay,
+      finalDate: date.toISOString(),
+      timestamp,
+      month: date.getMonth(),
+      day: date.getDate(),
+    });
+
+    dates.push(timestamp);
   }
 
-  return dates;
+  // 중복 제거 및 정렬
+  const uniqueDates = [...new Set(dates)].sort((a, b) => Number(a) - Number(b));
+
+  console.log("🔍 최종 날짜 배열:", {
+    originalLength: dates.length,
+    uniqueLength: uniqueDates.length,
+    removedDuplicates: dates.length - uniqueDates.length,
+    firstDate: new Date(Number(uniqueDates[0]) * 1000).toISOString(),
+    lastDate: new Date(
+      Number(uniqueDates[uniqueDates.length - 1]) * 1000
+    ).toISOString(),
+  });
+
+  return uniqueDates;
+};
+
+// 데이터 검증 함수 추가
+const validateChartData = <T extends { time: Time; value: number }>(
+  data: T[],
+  seriesName: string
+): T[] => {
+  // 중복 제거 및 정렬
+  const uniqueData = data.filter(
+    (item, index, self) =>
+      index === 0 || Number(item.time) !== Number(self[index - 1].time)
+  );
+
+  const sortedData = uniqueData.sort((a, b) => Number(a.time) - Number(b.time));
+
+  console.log(`🔍 ${seriesName} 데이터 검증:`, {
+    originalLength: data.length,
+    finalLength: sortedData.length,
+    removedDuplicates: data.length - sortedData.length,
+    firstTime: sortedData[0] ? Number(sortedData[0].time) : null,
+    lastTime: sortedData[sortedData.length - 1]
+      ? Number(sortedData[sortedData.length - 1].time)
+      : null,
+  });
+
+  return sortedData;
 };
 
 export const MonthlyPathsChart = ({
@@ -214,12 +285,12 @@ export const MonthlyPathsChart = ({
 
         const area95Data: AreaData[] = data.fan_bands.p95.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        area95Series.setData(area95Data);
+        area95Series.setData(validateChartData(area95Data, "Fan 95%"));
         seriesRef.current.push(area95Series);
 
         // 25%~75% 영역 (더 진한 파랑)
@@ -232,12 +303,12 @@ export const MonthlyPathsChart = ({
 
         const area75Data: AreaData[] = data.fan_bands.p75.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        area75Series.setData(area75Data);
+        area75Series.setData(validateChartData(area75Data, "Fan 75%"));
         seriesRef.current.push(area75Series);
 
         // 중앙값 라인 (굵은 선)
@@ -251,12 +322,12 @@ export const MonthlyPathsChart = ({
 
         const medianData: LineData[] = data.fan_bands.p50.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        medianSeries.setData(medianData);
+        medianSeries.setData(validateChartData(medianData, "Median"));
         seriesRef.current.push(medianSeries);
       }
 
@@ -273,12 +344,12 @@ export const MonthlyPathsChart = ({
 
         const principalData: LineData[] = data.principal_line.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        principalSeries.setData(principalData);
+        principalSeries.setData(validateChartData(principalData, "Principal"));
         seriesRef.current.push(principalSeries);
       }
 
@@ -295,12 +366,12 @@ export const MonthlyPathsChart = ({
 
         const bestData: LineData[] = data.representative.p95.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        bestSeries.setData(bestData);
+        bestSeries.setData(validateChartData(bestData, "Best"));
         seriesRef.current.push(bestSeries);
 
         // 최악 성과 (하위 5%)
@@ -314,12 +385,12 @@ export const MonthlyPathsChart = ({
 
         const worstData: LineData[] = data.representative.p05.map(
           (value, index) => ({
-            time: dateArray[index],
+            time: dateArray[index] as Time, // 타입 캐스팅 추가
             value: value,
           })
         );
 
-        worstSeries.setData(worstData);
+        worstSeries.setData(validateChartData(worstData, "Worst"));
         seriesRef.current.push(worstSeries);
       }
 
@@ -337,11 +408,13 @@ export const MonthlyPathsChart = ({
           });
 
           const lineData: LineData[] = path.map((value, monthIndex) => ({
-            time: dateArray[monthIndex],
+            time: dateArray[monthIndex] as Time, // 타입 캐스팅 추가
             value: value,
           }));
 
-          lineSeries.setData(lineData);
+          lineSeries.setData(
+            validateChartData(lineData, `Random Sample ${index + 1}`)
+          );
           seriesRef.current.push(lineSeries);
         });
       }
@@ -382,14 +455,14 @@ export const MonthlyPathsChart = ({
             const dateIndex = yearStartMonth;
             if (dateIndex < dateArray.length) {
               data.push({
-                time: dateArray[dateIndex],
+                time: dateArray[dateIndex] as Time, // 타입 캐스팅 추가
                 value: yearAverage,
               });
             }
           }
         }
 
-        lineSeries.setData(data);
+        lineSeries.setData(validateChartData(data, `Path ${index + 1}`));
         seriesRef.current.push(lineSeries);
       });
     }
